@@ -9,10 +9,11 @@ import {
 	Settings,
 	ShoppingCart,
 	Users,
+	CircleDashed,
 } from 'lucide-react';
 
 // Mapping object for icons
-const iconMap: { [key: string]: React.ComponentType } = {
+const iconMap: { [key: string]: React.ComponentType<any> } = {
 	Home: Home,
 	ShoppingCart: ShoppingCart,
 	Package: Package,
@@ -22,8 +23,16 @@ const iconMap: { [key: string]: React.ComponentType } = {
 };
 import { Button } from '@/components/ui/button';
 import { menu } from '@/lib/dummy-data';
-
+import { usePathname } from 'next/navigation';
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion';
 export default function Sidebar() {
+	const pathname = usePathname();
+
 	return (
 		<div className="hidden border-r bg-muted/40 md:block">
 			<div className="flex h-full max-h-screen flex-col gap-2">
@@ -45,7 +54,9 @@ export default function Sidebar() {
 								<Link
 									key={e.id}
 									href={e.path} // Use the path from the menu object
-									className="hover:bg-muted flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+									className={`hover:bg-muted flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
+										pathname === e.path ? 'bg-muted text-primary' : ''
+									}`}
 								>
 									{IconComponent && <IconComponent className="h-4 w-4" />}
 
@@ -53,8 +64,51 @@ export default function Sidebar() {
 								</Link>
 							);
 						})}
+						<Accordion type="single" collapsible className="w-full">
+							<AccordionItem
+								value="item-1"
+								className="hover:bg-muted border-b-0 w-full rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+							>
+								<AccordionTrigger className="hover:no-underline p-0">
+									<p className="flex items-center gap-3 ">
+										<Settings className="h-4 w-4" />
+										Setting
+									</p>
+								</AccordionTrigger>
+								<AccordionContent className="pb-0 mt-2">
+									<Link
+										href="#"
+										className="hover:bg-muted  flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+									>
+										<CircleDashed className="h-4 w-4" />
+										Setting
+									</Link>
+								</AccordionContent>
+							</AccordionItem>
+							<AccordionItem
+								value="item-2"
+								className="hover:bg-muted  border-b-0 w-full rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+							>
+								<AccordionTrigger className="hover:no-underline p-0">
+									<p className="flex items-center gap-3 ">
+										<Settings className="h-4 w-4" />
+										Setting
+									</p>
+								</AccordionTrigger>
+								<AccordionContent className="pb-0 mt-2">
+									<Link
+										href="#"
+										className="hover:bg-muted flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+									>
+										<CircleDashed className="h-4 w-4" />
+										Setting
+									</Link>
+								</AccordionContent>
+							</AccordionItem>
+						</Accordion>
 					</nav>
 				</div>
+
 				<div className="mt-auto p-4">
 					<Link
 						href="#"

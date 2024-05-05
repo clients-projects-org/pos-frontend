@@ -35,4 +35,10 @@ export const menu = [
 		path: '/supplier',
 		icon: 'LineChart',
 	},
+	{
+		id: 5,
+		name: 'Category',
+		path: '/system/category',
+		icon: 'LineChart',
+	},
 ];
