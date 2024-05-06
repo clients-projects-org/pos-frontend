@@ -13,7 +13,9 @@ import Link from 'next/link';
 export function MenuItem() {
 	return menu.map((e: MenuType, i) => (
 		<div key={i}>
-			{e.title && <h1 className="mb-2 font-semibold">{e.title}</h1>}
+			{e.title && (
+				<h1 className="mb-2 font-semibold text-sm sm:text-base">{e.title}</h1>
+			)}
 			{e.children.map((subItem) => {
 				const IconComponent =
 					subItem.icon && (Ic as unknown as IconType)[subItem.icon];
@@ -28,10 +30,10 @@ export function MenuItem() {
 						<AccordionItem
 							key={subItem.id}
 							value={`item-${subItem.id}`}
-							className="hover:bg-muted border-b-0 w-full rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary my-3"
+							className="hover:bg-muted border-b-0 w-full rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary my-1 sm:my-3 "
 						>
 							<AccordionTrigger className="hover:no-underline p-0">
-								<p className="flex items-center gap-3 ">
+								<p className="flex items-center gap-3 text-xs sm:text-sm">
 									{IconComponent && <IconComponent className="h-4 w-4" />}
 									{subItem.name}
 								</p>
@@ -41,7 +43,7 @@ export function MenuItem() {
 									<Link
 										key={subChild.id}
 										href={subChild.path as string}
-										className="hover:bg-muted  flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+										className="hover:bg-muted  flex items-center gap-3 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm"
 									>
 										<Ic.CircleDotDashed className="h-4 w-4" />
 										{subChild.name}
@@ -54,14 +56,14 @@ export function MenuItem() {
 					<Link
 						key={subItem.id}
 						href={subItem.path as string}
-						className="hover:bg-muted flex items-center gap-3 my-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+						className="hover:bg-muted flex items-center gap-3 my-1 sm:my-2 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm"
 					>
 						{IconComponent && <IconComponent className="h-4 w-4" />}
 						{subItem.name}
 					</Link>
 				);
 			})}
-			{e.hr && <hr className="my-3" />}
+			{e.hr && <hr className="my-1 sm:my-3" />}
 		</div>
 	));
 }
