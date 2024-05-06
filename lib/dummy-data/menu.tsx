@@ -4,6 +4,35 @@ export const menu = [
 		name: 'Home',
 		path: '/',
 		icon: 'Home',
+		title: 'Main',
+		children: [
+			{
+				id: 1,
+				name: 'Dashboard',
+				path: '/',
+				icon: 'Home',
+				children: [
+					{
+						id: 1,
+						name: 'Admin Dashboard',
+						path: '/',
+						icon: 'Home',
+					},
+					{
+						id: 1,
+						name: 'Sales Dashboard',
+						path: '/',
+						icon: 'Home',
+					},
+				],
+			},
+		],
+	},
+	{
+		id: 6,
+		name: 'Category',
+		path: '/system/category',
+		icon: 'LineChart',
 	},
 	{
 		id: 2,
@@ -33,12 +62,6 @@ export const menu = [
 		id: 5,
 		name: 'Supplier',
 		path: '/supplier',
-		icon: 'LineChart',
-	},
-	{
-		id: 5,
-		name: 'Category',
-		path: '/system/category',
 		icon: 'LineChart',
 	},
 ];

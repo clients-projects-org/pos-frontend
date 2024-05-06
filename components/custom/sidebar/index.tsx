@@ -64,7 +64,12 @@ export default function Sidebar() {
 								</Link>
 							);
 						})}
-						<Accordion type="single" collapsible className="w-full">
+						<Accordion
+							type="single"
+							collapsible
+							defaultValue="item-2"
+							className="w-full"
+						>
 							<AccordionItem
 								value="item-1"
 								className="hover:bg-muted border-b-0 w-full rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
