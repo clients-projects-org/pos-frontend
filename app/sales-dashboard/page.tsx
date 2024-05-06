@@ -51,10 +51,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageTitle from '@/components/custom/PageTitle';
 
-export default function Dashboard() {
+export default function SalesDashboard() {
 	return (
 		<>
-			<PageTitle title="Admin Dashboard" />
+			<PageTitle title="Sales Dashboard" />
 			<div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
 				<Card x-chunk="dashboard-01-chunk-0">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

@@ -19,7 +19,7 @@ export const menu: MenuType[] = [
 					{
 						id: 2,
 						name: 'Sales Dashboard',
-						path: '/',
+						path: '/sales-dashboard',
 					},
 				],
 			},
