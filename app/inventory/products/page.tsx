@@ -22,11 +22,13 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DataTableDemo } from '@/lib/test';
 
 export default function Products() {
 	return (
 		<>
 			<PageTitle title="Products" />
+			<DataTableDemo />
 			<div className="grid flex-1 items-start gap-4   md:gap-8">
 				<Tabs defaultValue="all">
 					<div className="flex items-center">
