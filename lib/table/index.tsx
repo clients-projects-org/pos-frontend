@@ -15,7 +15,7 @@ import {
 	Table as TanTable,
 	ColumnDef,
 } from '@tanstack/react-table';
-import { ChevronDown, File, ListFilter, PlusCircle } from 'lucide-react';
+import { File, ListFilter, PlusCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -35,6 +35,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { ColumnFIlter } from './t-components';
 interface TableBoxProps<DataType> {
 	columns: ColumnDef<DataType>[];
 	data: DataType[];
@@ -70,172 +71,108 @@ export function TableBox<DataType>({ columns, data }: TableBoxProps<DataType>) {
 
 	return (
 		<div className="w-full">
-			<div className="flex items-center py-4">
-				<Input
-					placeholder="Filter emails..."
-					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-					onChange={(event) =>
-						table.getColumn('name')?.setFilterValue(event.target.value)
-					}
-					className="max-w-sm"
-				/>
-				<div className="ml-auto flex items-center gap-3">
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline" className="ml-auto">
-								<ListFilter className="ml-2 h-4 w-4" /> Filter
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Filter by</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuCheckboxItem checked>
-								Active
-							</DropdownMenuCheckboxItem>
-							<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-							<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline" className="ml-auto">
-								<File className="ml-2 h-4 w-4" /> Export
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Filter by</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuCheckboxItem checked>
-								Active
-							</DropdownMenuCheckboxItem>
-							<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-							<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline" className="ml-auto">
-								Columns <ChevronDown className="ml-2 h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							{table
-								.getAllColumns()
-								.filter((column) => column.getCanHide())
-								.map((column) => {
-									return (
-										<DropdownMenuCheckboxItem
-											key={column.id}
-											className="capitalize"
-											checked={column.getIsVisible()}
-											onCheckedChange={(value) =>
-												column.toggleVisibility(!!value)
-											}
-										>
-											{column.id}
-										</DropdownMenuCheckboxItem>
-									);
-								})}
-						</DropdownMenuContent>
-					</DropdownMenu>
-					<Button size="sm" className="gap-1">
-						<PlusCircle className="ml-2 h-4 w-4" />
-						<span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-							Add Product
-						</span>
-					</Button>
-				</div>
-			</div>
-			<div className="rounded-md border">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead className="pb-3" key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
-											{header.column.getCanFilter() ? (
-												<div>
-													<Filter column={header.column} table={table} />
-												</div>
-											) : null}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && 'selected'}
-								>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext()
-											)}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={columns.length}
-									className="h-24 text-center"
-								>
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
-			<div className="flex items-center justify-end space-x-2 py-4">
-				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredSelectedRowModel().rows.length > 0 ? (
-						`${table.getFilteredSelectedRowModel().rows.length} of ${
-							table.getFilteredRowModel().rows.length
-						} row(s) selected.`
-					) : (
-						<div className="text-xs text-muted-foreground">
-							Showing <strong>1-10</strong> of <strong>32</strong> products
-						</div>
-					)}
-				</div>
-				<div className="space-x-2">
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
-					>
-						Previous
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-					>
-						Next
-					</Button>
-				</div>
-			</div>
+			<SearchFilter table={table} />
+			<TB table={table} columns={columns} />
+			<Footer table={table} />
 		</div>
 	);
 }
 
+function TB<ProductType>({
+	table,
+	columns,
+}: {
+	table: TanTable<ProductType>;
+	columns: ColumnDef<ProductType>[];
+}) {
+	return (
+		<div className="rounded-md border">
+			<Table>
+				<TableHeader>
+					{table.getHeaderGroups().map((headerGroup) => (
+						<TableRow key={headerGroup.id}>
+							{headerGroup.headers.map((header) => {
+								return (
+									<TableHead className="pb-3" key={header.id}>
+										{header.isPlaceholder
+											? null
+											: flexRender(
+													header.column.columnDef.header,
+													header.getContext()
+											  )}
+										{header.column.getCanFilter() ? (
+											<div>
+												<Filter column={header.column} table={table} />
+											</div>
+										) : null}
+									</TableHead>
+								);
+							})}
+						</TableRow>
+					))}
+				</TableHeader>
+				<TableBody>
+					{table.getRowModel().rows?.length ? (
+						table.getRowModel().rows.map((row) => (
+							<TableRow
+								key={row.id}
+								data-state={row.getIsSelected() && 'selected'}
+							>
+								{row.getVisibleCells().map((cell) => (
+									<TableCell key={cell.id}>
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</TableCell>
+								))}
+							</TableRow>
+						))
+					) : (
+						<TableRow>
+							<TableCell colSpan={columns.length} className="h-24 text-center">
+								No results.
+							</TableCell>
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+		</div>
+	);
+}
+
+function Footer<ProductType>({ table }: { table: TanTable<ProductType> }) {
+	return (
+		<div className="flex items-center justify-end space-x-2 py-4">
+			<div className="flex-1 text-sm text-muted-foreground">
+				{table.getFilteredSelectedRowModel().rows.length > 0 ? (
+					`${table.getFilteredSelectedRowModel().rows.length} of ${
+						table.getFilteredRowModel().rows.length
+					} row(s) selected.`
+				) : (
+					<div className="text-xs text-muted-foreground">
+						Showing <strong>1-10</strong> of <strong>32</strong> products
+					</div>
+				)}
+			</div>
+			<div className="space-x-2">
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => table.previousPage()}
+					disabled={!table.getCanPreviousPage()}
+				>
+					Previous
+				</Button>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => table.nextPage()}
+					disabled={!table.getCanNextPage()}
+				>
+					Next
+				</Button>
+			</div>
+		</div>
+	);
+}
 function Filter({
 	column,
 	table,
@@ -286,6 +223,65 @@ function Filter({
 			placeholder={`Search...`}
 			className="w-36 border shadow rounded px-2 py-1"
 		/>
+	);
+}
+
+function SearchFilter<ProductType>({
+	table,
+}: {
+	table: TanTable<ProductType>;
+}) {
+	return (
+		<div className="flex items-center py-4">
+			<Input
+				placeholder="Filter emails..."
+				value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+				onChange={(event) =>
+					table.getColumn('name')?.setFilterValue(event.target.value)
+				}
+				className="max-w-sm"
+			/>
+			<div className="ml-auto flex items-center gap-3">
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="ml-auto">
+							<ListFilter className="ml-2 h-4 w-4" /> Filter
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuLabel>Filter by</DropdownMenuLabel>
+						<DropdownMenuSeparator />
+						<DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
+						<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
+						<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="ml-auto">
+							<File className="ml-2 h-4 w-4" /> Export
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuLabel>Filter by</DropdownMenuLabel>
+						<DropdownMenuSeparator />
+						<DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
+						<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
+						<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+
+				{/* column filter  */}
+				<ColumnFIlter<ProductType> table={table} />
+
+				<Button size="sm" className="gap-1">
+					<PlusCircle className="ml-2 h-4 w-4" />
+					<span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+						Add Product
+					</span>
+				</Button>
+			</div>
+		</div>
 	);
 }
 

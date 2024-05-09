@@ -4,6 +4,7 @@ import {
 	ProductColumns,
 	ProductData,
 	ProductType,
+	SearchFilter,
 } from '@/lib/table/table-details';
 import { TableDemo } from '@/lib/test';
 
@@ -13,7 +14,7 @@ export default function Products() {
 			<PageTitle title="Products" />
 
 			<TableBox<ProductType> columns={ProductColumns} data={ProductData} />
-			<TableDemo />
+			{/* <TableDemo /> */}
 		</>
 	);
 }
