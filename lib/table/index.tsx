@@ -71,7 +71,7 @@ export function TableBox<DataType>({ columns, data }: TableBoxProps<DataType>) {
 
 	return (
 		<div className="w-full">
-			<SearchFilter table={table} />
+			{/* <SearchFilter table={table} /> */}
 			<TB table={table} columns={columns} />
 			<Footer table={table} />
 		</div>
@@ -232,7 +232,7 @@ function SearchFilter<ProductType>({
 	table: TanTable<ProductType>;
 }) {
 	return (
-		<div className="flex items-center py-4">
+		<div className="flex items-center py-4 gap-2">
 			<Input
 				placeholder="Filter emails..."
 				value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
@@ -274,7 +274,7 @@ function SearchFilter<ProductType>({
 				{/* column filter  */}
 				<ColumnFIlter<ProductType> table={table} />
 
-				<Button size="sm" className="gap-1">
+				<Button size="sm" className="gap-1" style={{ minWidth: '128px' }}>
 					<PlusCircle className="ml-2 h-4 w-4" />
 					<span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
 						Add Product
