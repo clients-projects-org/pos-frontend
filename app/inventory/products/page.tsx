@@ -4,7 +4,6 @@ import {
 	ProductColumns,
 	ProductData,
 	ProductType,
-	SearchFilter,
 } from '@/lib/table/table-details';
 import { TableDemo } from '@/lib/test';
 

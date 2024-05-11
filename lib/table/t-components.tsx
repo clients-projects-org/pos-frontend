@@ -17,8 +17,9 @@ export function ColumnFIlter<DataType>({
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" className="ml-auto">
-					Columns <ChevronDown className="ml-2 h-4 w-4" />
+				<Button variant="outline" className="">
+					<span className="sr-only sm:not-sr-only">Columns</span>
+					<ChevronDown className="h-4 w-4 sm:ml-2" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">

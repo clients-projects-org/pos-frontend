@@ -1,20 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { ColumnDef, Table as TanTable } from '@tanstack/react-table';
-import {
-	ArrowUpDown,
-	File,
-	ListFilter,
-	MoreHorizontal,
-	PlusCircle,
-} from 'lucide-react';
+import { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
@@ -22,8 +15,6 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
-import { Input } from '@/components/ui/input';
-import { ColumnFIlter } from '../t-components';
 
 export const ProductData: ProductType[] = [
 	{
@@ -43,6 +34,132 @@ export const ProductData: ProductType[] = [
 		status: 'active',
 		price: 50,
 		total_sells: 30,
+	},
+	{
+		id: 'm5gr84i3',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 3',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i4',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 4',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i5',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 5',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i6',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 6',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i7',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 7',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i8',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 8',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i91',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i21',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 2',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 50,
+		total_sells: 30,
+	},
+	{
+		id: 'm5gr84i31',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 3',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i41',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 4',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i15',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 5',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i61',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 6',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i71',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 7',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
+	},
+	{
+		id: 'm5gr84i81',
+		image: 'https://ui.shadcn.com/placeholder.svg',
+		name: 'Cotton Sweater 8',
+		created_at: '2022-11-01T00:00:00.000Z',
+		status: 'active',
+		price: 100,
+		total_sells: 100,
 	},
 ];
 

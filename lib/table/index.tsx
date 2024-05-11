@@ -71,7 +71,7 @@ export function TableBox<DataType>({ columns, data }: TableBoxProps<DataType>) {
 
 	return (
 		<div className="w-full">
-			{/* <SearchFilter table={table} /> */}
+			<SearchFilter table={table} />
 			<TB table={table} columns={columns} />
 			<Footer table={table} />
 		</div>
@@ -147,32 +147,34 @@ function Footer<ProductType>({ table }: { table: TanTable<ProductType> }) {
 						table.getFilteredRowModel().rows.length
 					} row(s) selected.`
 				) : (
-					<div className="text-xs text-muted-foreground">
-						Showing <strong>1-10</strong> of <strong>32</strong> products
+					<div className="flex items-center justify-between space-x-2 py-4">
+						<Pagination table={table} />
+						<div className="space-x-2">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => table.previousPage()}
+								disabled={!table.getCanPreviousPage()}
+							>
+								Previous
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => table.nextPage()}
+								disabled={!table.getCanNextPage()}
+							>
+								Next
+							</Button>
+						</div>
 					</div>
 				)}
-			</div>
-			<div className="space-x-2">
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.previousPage()}
-					disabled={!table.getCanPreviousPage()}
-				>
-					Previous
-				</Button>
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.nextPage()}
-					disabled={!table.getCanNextPage()}
-				>
-					Next
-				</Button>
 			</div>
 		</div>
 	);
 }
+
+// header filter
 function Filter({
 	column,
 	table,
@@ -232,20 +234,21 @@ function SearchFilter<ProductType>({
 	table: TanTable<ProductType>;
 }) {
 	return (
-		<div className="flex items-center py-4 gap-2">
+		<div className="flex items-center py-4 gap-2 flex-col lg:flex-row">
 			<Input
 				placeholder="Filter emails..."
 				value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
 				onChange={(event) =>
 					table.getColumn('name')?.setFilterValue(event.target.value)
 				}
-				className="max-w-sm"
+				className="  w-full"
 			/>
-			<div className="ml-auto flex items-center gap-3">
+			<div className="lg:ml-auto flex w-full lg:w-auto items-center gap-3 ">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							<ListFilter className="ml-2 h-4 w-4" /> Filter
+						<Button variant="outline" className=" ">
+							<ListFilter className="h-4 w-4 sm:mr-2" />
+							<span className="sr-only sm:not-sr-only">Filter</span>
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
@@ -258,8 +261,9 @@ function SearchFilter<ProductType>({
 				</DropdownMenu>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							<File className="ml-2 h-4 w-4" /> Export
+						<Button variant="outline" className=" ">
+							<File className="h-4 w-4 sm:mr-2" />
+							<span className="sr-only sm:not-sr-only">Export</span>
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
@@ -274,14 +278,87 @@ function SearchFilter<ProductType>({
 				{/* column filter  */}
 				<ColumnFIlter<ProductType> table={table} />
 
-				<Button size="sm" className="gap-1" style={{ minWidth: '128px' }}>
-					<PlusCircle className="ml-2 h-4 w-4" />
-					<span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+				<Button size="sm" className="gap-1">
+					<PlusCircle className="h-4 w-4 ml-0" />
+					<span className="sr-only sm:not-sr-only !whitespace-nowrap">
 						Add Product
 					</span>
 				</Button>
 			</div>
 		</div>
+	);
+}
+
+function Pagination<ProductType>({ table }: { table: TanTable<ProductType> }) {
+	return (
+		<>
+			<div className="flex items-center gap-2">
+				<button
+					className="border rounded p-1"
+					onClick={() => table.firstPage()}
+					disabled={!table.getCanPreviousPage()}
+				>
+					{'<<'}
+				</button>
+				<button
+					className="border rounded p-1"
+					onClick={() => table.previousPage()}
+					disabled={!table.getCanPreviousPage()}
+				>
+					{'<'}
+				</button>
+				<button
+					className="border rounded p-1"
+					onClick={() => table.nextPage()}
+					disabled={!table.getCanNextPage()}
+				>
+					{'>'}
+				</button>
+				<button
+					className="border rounded p-1"
+					onClick={() => table.lastPage()}
+					disabled={!table.getCanNextPage()}
+				>
+					{'>>'}
+				</button>
+				<span className="flex items-center gap-1">
+					<div>Page</div>
+					<strong>
+						{table.getState().pagination.pageIndex + 1} of{' '}
+						{table.getPageCount().toLocaleString()}
+					</strong>
+				</span>
+				<span className="flex items-center gap-1">
+					| Go to page:
+					<input
+						type="number"
+						defaultValue={table.getState().pagination.pageIndex + 1}
+						onChange={(e) => {
+							const page = e.target.value ? Number(e.target.value) - 1 : 0;
+							table.setPageIndex(page);
+						}}
+						className="border p-1 rounded w-16"
+					/>
+				</span>
+				<select
+					value={table.getState().pagination.pageSize}
+					onChange={(e) => {
+						table.setPageSize(Number(e.target.value));
+					}}
+				>
+					{[10, 20, 30, 40, 50].map((pageSize) => (
+						<option key={pageSize} value={pageSize}>
+							Show {pageSize}
+						</option>
+					))}
+				</select>
+			</div>
+			{/* <div>
+				Showing {table.getRowModel().rows.length.toLocaleString()} of{' '}
+				{table.getRowCount().toLocaleString()} Rows
+			</div>
+			<pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre> */}
+		</>
 	);
 }
 
