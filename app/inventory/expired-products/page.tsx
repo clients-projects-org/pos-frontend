@@ -1,5 +1,4 @@
 import PageTitle from '@/components/custom/PageTitle';
-import { Modal } from '@/components/modal';
 import { TableBox } from '@/lib/table';
 import {
 	ProductColumns,
@@ -7,12 +6,12 @@ import {
 	ProductType,
 } from '@/lib/table/table-details';
 
-export default function Category() {
+export default function Products() {
 	return (
 		<>
-			<PageTitle title="Category" />
+			<PageTitle title="Expired Product" />
+
 			<TableBox<ProductType> columns={ProductColumns} data={ProductData} />
-			<Modal />
 		</>
 	);
 }

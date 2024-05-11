@@ -15,8 +15,23 @@ import {
 	Table as TanTable,
 	ColumnDef,
 } from '@tanstack/react-table';
-import { File, ListFilter, PlusCircle } from 'lucide-react';
-
+import {
+	ChevronLeft,
+	ChevronsLeft,
+	ChevronsRight,
+	File,
+	ListFilter,
+	PlusCircle,
+} from 'lucide-react';
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
@@ -291,44 +306,16 @@ function SearchFilter<ProductType>({
 
 function Pagination<ProductType>({ table }: { table: TanTable<ProductType> }) {
 	return (
-		<>
-			<div className="flex items-center gap-2">
-				<button
-					className="border rounded p-1"
-					onClick={() => table.firstPage()}
-					disabled={!table.getCanPreviousPage()}
-				>
-					{'<<'}
-				</button>
-				<button
-					className="border rounded p-1"
-					onClick={() => table.previousPage()}
-					disabled={!table.getCanPreviousPage()}
-				>
-					{'<'}
-				</button>
-				<button
-					className="border rounded p-1"
-					onClick={() => table.nextPage()}
-					disabled={!table.getCanNextPage()}
-				>
-					{'>'}
-				</button>
-				<button
-					className="border rounded p-1"
-					onClick={() => table.lastPage()}
-					disabled={!table.getCanNextPage()}
-				>
-					{'>>'}
-				</button>
-				<span className="flex items-center gap-1">
+		<div>
+			<div className="flex items-center gap-2 mb-2">
+				<span className="flex items-center gap-1 whitespace-nowrap">
 					<div>Page</div>
 					<strong>
 						{table.getState().pagination.pageIndex + 1} of{' '}
 						{table.getPageCount().toLocaleString()}
 					</strong>
 				</span>
-				<span className="flex items-center gap-1">
+				<span className="flex items-center gap-1  whitespace-nowrap">
 					| Go to page:
 					<input
 						type="number"
@@ -340,25 +327,61 @@ function Pagination<ProductType>({ table }: { table: TanTable<ProductType> }) {
 						className="border p-1 rounded w-16"
 					/>
 				</span>
-				<select
-					value={table.getState().pagination.pageSize}
-					onChange={(e) => {
-						table.setPageSize(Number(e.target.value));
-					}}
+			</div>
+			<div className="flex items-center gap-2">
+				<button
+					className="border rounded p-1"
+					onClick={() => table.firstPage()}
+					disabled={!table.getCanPreviousPage()}
 				>
-					{[10, 20, 30, 40, 50].map((pageSize) => (
-						<option key={pageSize} value={pageSize}>
-							Show {pageSize}
-						</option>
-					))}
-				</select>
+					<ChevronsLeft />
+				</button>
+				<button
+					className="border rounded p-1"
+					onClick={() => table.previousPage()}
+					disabled={!table.getCanPreviousPage()}
+				>
+					<ChevronLeft />
+				</button>
+				<button
+					className="border rounded p-1"
+					onClick={() => table.nextPage()}
+					disabled={!table.getCanNextPage()}
+				>
+					<ChevronLeft />
+				</button>
+				<button
+					className="border rounded p-1"
+					onClick={() => table.lastPage()}
+					disabled={!table.getCanNextPage()}
+				>
+					<ChevronsRight />
+				</button>
+
+				<Select
+					value={table.getState().pagination.pageSize.toString()}
+					onValueChange={(value) => table.setPageSize(Number(value))}
+				>
+					<SelectTrigger className="h-8">
+						<SelectValue placeholder="Select page size" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectGroup>
+							{[10, 20, 30, 40, 50].map((pageSize) => (
+								<SelectItem key={pageSize} value={pageSize.toString()}>
+									Show {pageSize}
+								</SelectItem>
+							))}
+						</SelectGroup>
+					</SelectContent>
+				</Select>
 			</div>
 			{/* <div>
 				Showing {table.getRowModel().rows.length.toLocaleString()} of{' '}
 				{table.getRowCount().toLocaleString()} Rows
 			</div>
 			<pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre> */}
-		</>
+		</div>
 	);
 }
 

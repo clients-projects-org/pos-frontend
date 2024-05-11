@@ -5,7 +5,6 @@ import {
 	ProductData,
 	ProductType,
 } from '@/lib/table/table-details';
-import { TableDemo } from '@/lib/test';
 
 export default function Products() {
 	return (
@@ -13,7 +12,6 @@ export default function Products() {
 			<PageTitle title="Products" />
 
 			<TableBox<ProductType> columns={ProductColumns} data={ProductData} />
-			{/* <TableDemo /> */}
 		</>
 	);
 }
