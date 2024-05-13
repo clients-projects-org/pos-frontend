@@ -16,6 +16,7 @@ import {
 	ColumnDef,
 } from '@tanstack/react-table';
 import {
+	ChevronDown,
 	ChevronLeft,
 	ChevronsLeft,
 	ChevronsRight,
@@ -28,7 +29,6 @@ import {
 	SelectContent,
 	SelectGroup,
 	SelectItem,
-	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
@@ -50,7 +50,6 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { ColumnFIlter } from './t-components';
 interface TableBoxProps<DataType> {
 	columns: ColumnDef<DataType>[];
 	data: DataType[];
@@ -108,7 +107,7 @@ function TB<ProductType>({
 						<TableRow key={headerGroup.id}>
 							{headerGroup.headers.map((header) => {
 								return (
-									<TableHead className="pb-3" key={header.id}>
+									<TableHead className="py-3" key={header.id}>
 										{header.isPlaceholder
 											? null
 											: flexRender(
@@ -117,7 +116,7 @@ function TB<ProductType>({
 											  )}
 										{header.column.getCanFilter() ? (
 											<div>
-												<Filter column={header.column} table={table} />
+												{/* <Filter column={header.column} table={table} /> */}
 											</div>
 										) : null}
 									</TableHead>
@@ -217,7 +216,7 @@ function Filter({
 					])
 				}
 				placeholder={`Min`}
-				className="w-24 border shadow rounded px-2 py-1"
+				className="w-full border shadow rounded px-2 py-1"
 			/>
 			<input
 				type="number"
@@ -229,7 +228,7 @@ function Filter({
 					])
 				}
 				placeholder={`Max`}
-				className="w-24 border shadow rounded px-2 py-1"
+				className="w-full border shadow rounded px-2 py-1"
 			/>
 		</div>
 	) : (
@@ -238,7 +237,7 @@ function Filter({
 			value={(columnFilterValue ?? '') as string}
 			onChange={(e) => column.setFilterValue(e.target.value)}
 			placeholder={`Search...`}
-			className="w-36 border shadow rounded px-2 py-1"
+			className="w-full border shadow rounded px-2 py-1"
 		/>
 	);
 }
@@ -257,6 +256,7 @@ function SearchFilter<ProductType>({
 					table.getColumn('name')?.setFilterValue(event.target.value)
 				}
 				className="  w-full"
+				autoComplete="off"
 			/>
 			<div className="lg:ml-auto flex w-full lg:w-auto items-center gap-3 ">
 				<DropdownMenu>
@@ -367,7 +367,7 @@ function Pagination<ProductType>({ table }: { table: TanTable<ProductType> }) {
 					</SelectTrigger>
 					<SelectContent>
 						<SelectGroup>
-							{[10, 20, 30, 40, 50].map((pageSize) => (
+							{[10, 20, 30, 40, 50, 100, 200].map((pageSize) => (
 								<SelectItem key={pageSize} value={pageSize.toString()}>
 									Show {pageSize}
 								</SelectItem>
@@ -382,6 +382,36 @@ function Pagination<ProductType>({ table }: { table: TanTable<ProductType> }) {
 			</div>
 			<pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre> */}
 		</div>
+	);
+}
+
+function ColumnFIlter<DataType>({ table }: { table: TanTable<DataType> }) {
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline" className="">
+					<span className="sr-only sm:not-sr-only">Columns</span>
+					<ChevronDown className="h-4 w-4 sm:ml-2" />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end">
+				{table
+					.getAllColumns()
+					.filter((column) => column.getCanHide())
+					.map((column) => {
+						return (
+							<DropdownMenuCheckboxItem
+								key={column.id}
+								className="capitalize"
+								checked={column.getIsVisible()}
+								onCheckedChange={(value) => column.toggleVisibility(!!value)}
+							>
+								{column.id}
+							</DropdownMenuCheckboxItem>
+						);
+					})}
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

@@ -1,3 +1,4 @@
+import { DynamicIcon } from '@/components/actions';
 import {
 	Accordion,
 	AccordionContent,
@@ -5,8 +6,7 @@ import {
 	AccordionTrigger,
 } from '@/components/ui/accordion';
 import { menu } from '@/lib/dummy-data';
-import { IconType, MenuType } from '@/lib/type';
-import * as Ic from 'lucide-react';
+import { MenuType } from '@/lib/type';
 
 import Link from 'next/link';
 
@@ -17,9 +17,6 @@ export function MenuItem() {
 				<h1 className="mb-2 font-semibold text-sm sm:text-base">{e.title}</h1>
 			)}
 			{e.children.map((subItem) => {
-				const IconComponent =
-					subItem.icon && (Ic as unknown as IconType)[subItem.icon];
-				// const IconComponent = subItem.icon && iconMap[subItem.icon];
 				return subItem.children ? (
 					<Accordion
 						key={subItem.id}
@@ -34,7 +31,7 @@ export function MenuItem() {
 						>
 							<AccordionTrigger className="hover:no-underline p-0">
 								<p className="flex items-center gap-3 text-xs sm:text-sm">
-									{IconComponent && <IconComponent className="h-4 w-4" />}
+									<DynamicIcon icon={subItem.icon} className="h-4 w-4" />
 									{subItem.name}
 								</p>
 							</AccordionTrigger>
@@ -45,7 +42,7 @@ export function MenuItem() {
 										href={subChild.path as string}
 										className="hover:bg-muted  flex items-center gap-3 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm"
 									>
-										<Ic.CircleDotDashed className="h-4 w-4" />
+										<DynamicIcon icon="CircleDotDashed" className="h-4 w-4" />
 										{subChild.name}
 									</Link>
 								))}
@@ -58,7 +55,7 @@ export function MenuItem() {
 						href={subItem.path as string}
 						className="hover:bg-muted flex items-center gap-3 my-1 sm:my-2 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm"
 					>
-						{IconComponent && <IconComponent className="h-4 w-4" />}
+						<DynamicIcon icon={subItem.icon} className="h-4 w-4" />
 						{subItem.name}
 					</Link>
 				);

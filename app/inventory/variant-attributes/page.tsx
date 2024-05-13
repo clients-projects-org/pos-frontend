@@ -11,7 +11,7 @@ import { CategoryType } from '@/lib/type';
 export default function Category() {
 	return (
 		<>
-			<PageTitle title="Category" />
+			<PageTitle title="Variant Attributes" />
 			<TableBox<CategoryType> columns={categoryColumn} data={categoryData} />
 			<Modal />
 		</>

@@ -15,172 +15,31 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
-import { ProductType } from '@/lib/type';
 
-export const ProductData: ProductType[] = [
+export const expProductData: expProductType[] = [
 	{
 		id: 'm5gr84i9',
 		image: 'https://ui.shadcn.com/placeholder.svg',
 		name: 'Cotton Sweater',
 		created_at: '2022-11-01T00:00:00.000Z',
 		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i2',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 2',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 50,
-		qty: 10,
-		total_sells: 30,
-	},
-	{
-		id: 'm5gr84i3',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 3',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i4',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 4',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i5',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 5',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i6',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 6',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i7',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 7',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i8',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 8',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i91',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i21',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 2',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 50,
-		qty: 10,
-		total_sells: 30,
-	},
-	{
-		id: 'm5gr84i31',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 3',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i41',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 4',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i15',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 5',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i61',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 6',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i71',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 7',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
-		qty: 10,
-		total_sells: 100,
-	},
-	{
-		id: 'm5gr84i81',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Cotton Sweater 8',
-		created_at: '2022-11-01T00:00:00.000Z',
-		status: 'active',
-		selling_price: 100,
+		price: 100,
 		qty: 10,
 		total_sells: 100,
 	},
 ];
 
-export const ProductColumns: ColumnDef<ProductType>[] = [
+export type expProductType = {
+	id: string;
+	image: string;
+	name: string;
+	status: 'draft' | 'active' | 'pending' | 'hold' | 'canceled';
+	price: number;
+	qty: number;
+	total_sells: number;
+	created_at: string;
+};
+export const ProductColumns: ColumnDef<expProductType>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -256,7 +115,7 @@ export const ProductColumns: ColumnDef<ProductType>[] = [
 		enableSorting: true,
 	},
 	{
-		accessorKey: 'selling_price',
+		accessorKey: 'price',
 		header: ({ column }) => {
 			return (
 				<Button
@@ -268,9 +127,7 @@ export const ProductColumns: ColumnDef<ProductType>[] = [
 				</Button>
 			);
 		},
-		cell: ({ row }) => (
-			<div className="lowercase">{row.getValue('selling_price')}</div>
-		),
+		cell: ({ row }) => <div className="lowercase">{row.getValue('price')}</div>,
 	},
 	{
 		accessorKey: 'qty',

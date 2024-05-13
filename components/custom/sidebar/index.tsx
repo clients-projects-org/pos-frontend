@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Bell, Package2, Settings } from 'lucide-react';
+import { Bell, Package2 } from 'lucide-react';
 
 // Mapping object for icons
 

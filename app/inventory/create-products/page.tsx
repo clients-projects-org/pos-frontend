@@ -1,7 +1,6 @@
 'use client';
 import { Bird, CalendarIcon, Rabbit, Turtle, Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
 	Select,
 	SelectContent,
@@ -11,19 +10,11 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import PageTitle from '@/components/custom/PageTitle';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
 import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { format } from 'date-fns';
-
 import {
 	Popover,
 	PopoverContent,
@@ -33,7 +24,6 @@ import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -133,7 +123,7 @@ export default function CreateProducts() {
 										<FormField
 											control={form.control}
 											name="username"
-											render={({ field }) => (
+											render={() => (
 												<FormItem>
 													<FormLabel>Username</FormLabel>
 													<FormControl>
@@ -206,7 +196,7 @@ export default function CreateProducts() {
 										<FormField
 											control={form.control}
 											name="username"
-											render={({ field }) => (
+											render={() => (
 												<FormItem>
 													<FormLabel>Username</FormLabel>
 													<FormControl>
@@ -674,7 +664,7 @@ export default function CreateProducts() {
 										<FormField
 											control={form.control}
 											name="username"
-											render={({ field }) => (
+											render={() => (
 												<FormItem>
 													<FormLabel>Product Description</FormLabel>
 													<FormControl>
@@ -693,7 +683,7 @@ export default function CreateProducts() {
 										<FormField
 											control={form.control}
 											name="username"
-											render={({ field }) => (
+											render={() => (
 												<FormItem>
 													<FormLabel>Select</FormLabel>
 													<FormControl>
