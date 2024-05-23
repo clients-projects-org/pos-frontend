@@ -68,6 +68,18 @@ export type UserType = {
 	role?: UseRole;
 	image?: ImageType;
 };
+export type RoleType = {
+	_id?: string;
+	name?: string;
+	slug?: string;
+	status?: string;
+	image?: ImageType;
+	created_by?: UserType;
+	createdAt?: string;
+	updatedAt?: string;
+	__v?: number;
+	id?: string;
+};
 
 export type SupplierType = {
 	id: string;
@@ -99,6 +111,7 @@ export type WarehouseType = {
 export type ImageType = {
 	image?: string;
 	image_type: 'image' | 'icon';
+	_id?: string;
 };
 
 // category type

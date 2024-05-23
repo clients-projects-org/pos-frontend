@@ -13,7 +13,7 @@ export const DynamicIcon = ({
 	[key: string]: any; // Allow other arbitrary props
 }) => {
 	// Check if icon is provided and exists in IconType
-	const SelectedIcon = icon && (Ic as unknown as IconType)[icon];
+	const SelectedIcon = icon && (Ic as unknown as IconType)[icon || 'Aperture'];
 
 	// If SelectedIcon exists, render it with additional props
 	if (SelectedIcon) {

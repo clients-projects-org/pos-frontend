@@ -22,7 +22,7 @@ export default function Sidebar() {
 					</Button>
 				</div>
 				<div className="flex-1">
-					<nav className="grid gap-0 items-start px-2 text-sm font-medium lg:px-4 select-none  ">
+					<nav className="grid gap-0 items-start px-2 text-sm font-medium lg:px-4 select-none   h-sidebar overflow-y-auto">
 						<MenuItem />
 					</nav>
 				</div>
