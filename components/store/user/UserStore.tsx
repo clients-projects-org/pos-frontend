@@ -19,7 +19,6 @@ import { toast } from '@/components/ui/use-toast';
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -45,24 +44,26 @@ export function UserStore() {
 		name: z.string().min(2, {
 			message: 'Username must be at least 2 characters.',
 		}),
-		email: z.string().min(2, {
-			message: 'Username must be at least 2 characters.',
+		email: z.string().email({
+			message: 'Invalid email address.',
 		}),
 		description: z.string().min(2, {
-			message: 'Username must be at least 2 characters.',
+			message: 'Description must be at least 2 characters.',
 		}),
-		role: z.string({
-			message: 'Username must be at least 2 characters.',
-		}),
+		role: z.string(), // assuming role is a string, if it's an object, update accordingly
+		image: z
+			.object({
+				image: z.string().url({
+					message: 'Invalid image URL.',
+				}),
+				image_type: z.enum(['image', 'icon']),
+			})
+			.optional(),
+		code: z.string().optional(),
+		slug: z.string().optional(),
+		created_at: z.date().optional(),
 	});
-	// name: 'Abdur Shobur',
-	// description: 'admin',
-	// email: 'abdurshobur.developer@gmail.com',
-	// image: {
-	// 	image_type: 'image',
-	// 	image: 'https://ui.shadcn.com/placeholder.svg',
-	// },
-	// role: 'admin',
+
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
@@ -70,6 +71,10 @@ export function UserStore() {
 			description: '',
 			email: '',
 			role: '',
+			image: {
+				image: '',
+				image_type: 'image',
+			},
 		},
 	});
 
@@ -84,6 +89,7 @@ export function UserStore() {
 			),
 		});
 	}
+	console.log(form.getValues());
 	return (
 		<>
 			<Dialog>
@@ -168,12 +174,11 @@ export function UserStore() {
 								/>
 								<FormField
 									control={form.control}
-									name="description"
+									name="image.image_type"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Image or Icon</FormLabel>
 											<FormControl>
-												{/* <Textarea placeholder="shadcn" {...field} /> */}
 												<ImageIcoRadio />
 											</FormControl>
 											<FormMessage />
@@ -182,28 +187,20 @@ export function UserStore() {
 								/>
 								<FormField
 									control={form.control}
-									name="description"
+									name="image"
 									render={({ field }) => (
 										<FormItem>
 											<FormControl>
-												<ImageSelect />
+												{field.value?.image_type === 'image' ? (
+													<ImageSelect />
+												) : (
+													<IconSelect />
+												)}
 											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
-								{/* <FormField
-									control={form.control}
-									name="description"
-									render={({ field }) => (
-										<FormItem>
-											<FormControl>
-												<IconSelect />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/> */}
 								<FormField
 									control={form.control}
 									name="description"
@@ -223,7 +220,6 @@ export function UserStore() {
 								</DialogFooter>
 							</form>
 						</Form>
-						<IconSelect />
 					</div>
 				</DialogContent>
 			</Dialog>
