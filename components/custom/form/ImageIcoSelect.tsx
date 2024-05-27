@@ -1,10 +1,5 @@
 'use client';
 import * as React from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { useController } from 'react-hook-form';
-
-import { cn } from '@/lib/utils';
-import * as Ic from 'lucide-react';
 import {
 	Command,
 	CommandEmpty,
@@ -19,19 +14,22 @@ import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { DynamicIcon } from '@/components/actions';
 import { LucideIcons } from '@/lib/icons';
+import { LineLoader } from '../loader';
+import { CropDemo } from './ImageCrop';
+import ReactCrop, { type Crop } from 'react-image-crop';
+import CropTest from './test';
+// import { ImageCrop } from './test';
 
-export function ImageIcoRadio() {
-	const { field } = useController({ name: 'image.image_type' });
-
+export function ImageIcoRadio({ ...field }) {
 	return (
 		<RadioGroup
-			defaultValue="image"
+			onValueChange={field.onChange}
 			value={field.value}
-			onChange={field.onChange}
+			defaultValue="image"
 			className="flex items-center gap-4"
 		>
 			<div className="flex items-center space-x-2">
-				<RadioGroupItem checked value="image" id="r1" />
+				<RadioGroupItem value="image" id="r1" />
 				<Label htmlFor="r1">Image</Label>
 			</div>
 			<div className="flex items-center space-x-2">
@@ -54,7 +52,7 @@ export function ImageSelect() {
 					width="20"
 				/>
 			</button>
-
+			<CropTest />
 			<button
 				type="button"
 				className="flex aspect-square h-10 w-10 items-center justify-center rounded-md border border-dashed "
@@ -66,10 +64,29 @@ export function ImageSelect() {
 	);
 }
 
-export function IconSelect() {
+export default function IconSelect() {
 	const [value, setValue] = React.useState('');
+	const [isLoading, setIsLoading] = React.useState(true);
 
-	return (
+	React.useEffect(() => {
+		const performMapOperation = () => {
+			LucideIcons.map((framework) => {
+				return framework;
+			});
+
+			setIsLoading(false);
+		};
+
+		const timeout = setTimeout(() => {
+			performMapOperation();
+		}, 1000);
+
+		return () => clearTimeout(timeout);
+	}, []);
+
+	return isLoading ? (
+		<LineLoader />
+	) : (
 		<Command className="border">
 			<CommandInput placeholder="Search Icon..." />
 			<CommandList>
@@ -82,12 +99,16 @@ export function IconSelect() {
 							onSelect={(currentValue) => {
 								setValue(currentValue === value ? '' : currentValue);
 							}}
-							className="cursor-pointer"
+							className={`cursor-pointer ${
+								value === framework ? 'bg-accent ' : ' '
+							}`}
 						>
 							<DynamicIcon
 								icon={framework}
 								className={`w-full ${
-									value === framework ? 'text-red-600' : 'text-white'
+									value === framework
+										? 'text-sky-600 '
+										: 'dark:text-white text-stone-800'
 								}`}
 							/>
 						</CommandItem>
