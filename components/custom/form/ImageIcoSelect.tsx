@@ -15,10 +15,6 @@ import Image from 'next/image';
 import { DynamicIcon } from '@/components/actions';
 import { LucideIcons } from '@/lib/icons';
 import { LineLoader } from '../loader';
-import { CropDemo } from './ImageCrop';
-import ReactCrop, { type Crop } from 'react-image-crop';
-import CropTest from './test';
-// import { ImageCrop } from './test';
 
 export function ImageIcoRadio({ ...field }) {
 	return (
@@ -40,7 +36,33 @@ export function ImageIcoRadio({ ...field }) {
 	);
 }
 
+import Resizer from 'react-image-file-resizer';
+
 export function ImageSelect() {
+	const [imageSrc, setImageSrc] = React.useState(
+		'https://ui.shadcn.com/placeholder.svg'
+	);
+
+	const handleImageUpload = (event: HTMLFieldSetElement) => {
+		const file = event.target.files[0];
+		if (file) {
+			Resizer.imageFileResizer(
+				file,
+				300,
+				300,
+				'JPEG',
+				70, // quality percentage
+				0,
+				(uri) => {
+					return setImageSrc(uri as string);
+				},
+				'base64',
+				300,
+				300
+			);
+		}
+	};
+
 	return (
 		<div className="flex items-center gap-2">
 			<button type="button" className="h-10">
@@ -48,14 +70,27 @@ export function ImageSelect() {
 					alt="Product image"
 					className="aspect-square rounded-md object-cover h-10 w-10"
 					height="20"
-					src="https://ui.shadcn.com/placeholder.svg"
+					src={imageSrc}
 					width="20"
 				/>
 			</button>
-			<CropTest />
+			<input
+				id="image-upload"
+				type="file"
+				accept="image/*"
+				style={{ display: 'none' }}
+				onChange={handleImageUpload}
+			/>
+
 			<button
 				type="button"
-				className="flex aspect-square h-10 w-10 items-center justify-center rounded-md border border-dashed "
+				className="flex aspect-square h-10 w-10 items-center justify-center rounded-md border border-dashed"
+				onClick={() => {
+					const imageUploadElement = document.getElementById('image-upload');
+					if (imageUploadElement) {
+						imageUploadElement.click();
+					}
+				}}
 			>
 				<DynamicIcon icon="Upload" className="h-4 w-4 text-muted-foreground" />
 				<span className="sr-only">Upload</span>
