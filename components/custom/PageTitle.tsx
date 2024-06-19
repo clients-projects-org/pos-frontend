@@ -35,3 +35,22 @@ export default function PageTitle({
 		</div>
 	);
 }
+
+export function PageTitleNoBack({
+	title,
+	children,
+}: {
+	title: string;
+	children?: React.ReactNode;
+}) {
+	return (
+		<div className="flex justify-between gap-1 items-center">
+			<div>
+				<h1 className="text-lg font-semibold md:text-2xl capitalize">
+					{title}
+				</h1>
+			</div>
+			<div>{children}</div>
+		</div>
+	);
+}

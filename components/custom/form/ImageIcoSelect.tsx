@@ -15,7 +15,8 @@ import Image from 'next/image';
 import { DynamicIcon } from '@/components/actions';
 import { LucideIcons } from '@/lib/icons';
 import { LineLoader } from '../loader';
-
+import { Skeleton } from '@/components/ui/skeleton';
+import { image } from '@/assets/image';
 export function ImageIcoRadio({ ...field }) {
 	return (
 		<RadioGroup
@@ -36,44 +37,63 @@ export function ImageIcoRadio({ ...field }) {
 	);
 }
 
-import Resizer from 'react-image-file-resizer';
-
 export function ImageSelect() {
-	const [imageSrc, setImageSrc] = React.useState(
-		'https://ui.shadcn.com/placeholder.svg'
-	);
+	const [imageSrc, setImageSrc] = React.useState<string>(image.placeholder);
+	const [warning, setWarning] = React.useState<string>('');
+	const [loading, setLoading] = React.useState<boolean>(false);
 
-	const handleImageUpload = (event: HTMLFieldSetElement) => {
-		const file = event.target.files[0];
+	const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setLoading(true);
+		const file = event.target.files?.[0];
+
 		if (file) {
-			Resizer.imageFileResizer(
-				file,
-				300,
-				300,
-				'JPEG',
-				70, // quality percentage
-				0,
-				(uri) => {
-					return setImageSrc(uri as string);
-				},
-				'base64',
-				300,
-				300
-			);
+			const img = new window.Image();
+			const objectUrl = URL.createObjectURL(file);
+			img.src = objectUrl;
+
+			img.onload = () => {
+				setLoading(false);
+				if (file.size > 150 * 1024) {
+					setWarning('Image Size will be less then 150Kb');
+					URL.revokeObjectURL(objectUrl); // Clean up the object URL
+					setImageSrc(image.placeholder);
+					return;
+				}
+
+				if (img.width > 200 || img.height > 200) {
+					setWarning('Image hight and width less then 200px');
+					URL.revokeObjectURL(objectUrl); // Clean up the object URL
+					setImageSrc(image.placeholder);
+					return;
+				}
+
+				setWarning('');
+				setImageSrc(objectUrl);
+			};
+
+			img.onerror = () => {
+				setLoading(false);
+				setWarning('Failed to load the image.');
+				URL.revokeObjectURL(objectUrl); // Clean up the object URL
+				setImageSrc(image.placeholder);
+			};
 		}
 	};
 
 	return (
 		<div className="flex items-center gap-2">
-			<button type="button" className="h-10">
-				<Image
-					alt="Product image"
-					className="aspect-square rounded-md object-cover h-10 w-10"
-					height="20"
-					src={imageSrc}
-					width="20"
-				/>
-			</button>
+			{loading && <Skeleton className="h-10 w-10 rounded-xl" />}
+			{!loading && (
+				<button type="button" className="h-10">
+					<Image
+						alt="Product image"
+						className="aspect-square rounded-md object-cover h-10 w-10"
+						height={40}
+						src={imageSrc}
+						width={40}
+					/>
+				</button>
+			)}
 			<input
 				id="image-upload"
 				type="file"
@@ -81,12 +101,13 @@ export function ImageSelect() {
 				style={{ display: 'none' }}
 				onChange={handleImageUpload}
 			/>
-
 			<button
 				type="button"
 				className="flex aspect-square h-10 w-10 items-center justify-center rounded-md border border-dashed"
 				onClick={() => {
-					const imageUploadElement = document.getElementById('image-upload');
+					const imageUploadElement = document.getElementById(
+						'image-upload'
+					) as HTMLInputElement;
 					if (imageUploadElement) {
 						imageUploadElement.click();
 					}
@@ -95,10 +116,22 @@ export function ImageSelect() {
 				<DynamicIcon icon="Upload" className="h-4 w-4 text-muted-foreground" />
 				<span className="sr-only">Upload</span>
 			</button>
+			<div>
+				{imageSrc === image.placeholder && !warning && (
+					<>
+						<p className="text-yellow-500 text-xs ">
+							Image Size will be less then 150Kb
+						</p>
+						<p className="text-yellow-500 text-xs ">
+							Image hight and width less then 200px
+						</p>
+					</>
+				)}
+				{warning && <p className="text-red-500 text-xs ">{warning}</p>}
+			</div>
 		</div>
 	);
 }
-
 export default function IconSelect() {
 	const [value, setValue] = React.useState('');
 	const [isLoading, setIsLoading] = React.useState(true);
@@ -114,7 +147,7 @@ export default function IconSelect() {
 
 		const timeout = setTimeout(() => {
 			performMapOperation();
-		}, 1000);
+		}, 100);
 
 		return () => clearTimeout(timeout);
 	}, []);

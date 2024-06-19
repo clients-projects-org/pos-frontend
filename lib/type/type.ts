@@ -67,6 +67,7 @@ export type UserType = {
 	created_at?: string;
 	role?: UseRole;
 	image?: ImageType;
+	status?: StatusType;
 };
 export type RoleType = {
 	_id?: string;

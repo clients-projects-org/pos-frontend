@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -33,7 +32,8 @@ import {
 } from '@/components/ui/select';
 import { ImageIcoRadio, ImageSelect } from '@/components/custom/form';
 import { LineLoader } from '@/components/custom/loader';
-export function UserStore() {
+
+export function RolePermissionStore() {
 	const FormSchema = z.object({
 		name: z.string().min(2, {
 			message: 'Username must be at least 2 characters.',
