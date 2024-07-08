@@ -132,6 +132,8 @@ export default function Page({ params }: { params: { slug: string } }) {
 		// if all permission
 		case slug.startsWith('permission'):
 			return <PermissionDetailsComponent slug={slug} />;
+
+		// default all
 		default:
 			return (
 				<>
