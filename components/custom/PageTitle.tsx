@@ -21,7 +21,7 @@ export default function PageTitle({
 				{!isHomePage && (
 					<button
 						onClick={() => router.back()}
-						className="flex items-center gap-1 border py-1 px-2 rounded-md text-sm"
+						className="flex items-center gap-1 border py-1 px-2 rounded-md text-sm mb-2"
 					>
 						<DynamicIcon icon="ChevronLeft" className="h-4 w-4" />
 						<span>Back</span>
