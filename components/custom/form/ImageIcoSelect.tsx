@@ -152,6 +152,11 @@ export default function IconSelect() {
 		return () => clearTimeout(timeout);
 	}, []);
 
+	const iconList = React.useMemo(
+		() => LucideIcons.map((icon) => icon),
+		[LucideIcons]
+	);
+
 	return isLoading ? (
 		<LineLoader />
 	) : (
@@ -160,7 +165,7 @@ export default function IconSelect() {
 			<CommandList>
 				<CommandEmpty>No Icon found.</CommandEmpty>
 				<CommandGroup className="IconsViewGrid">
-					{LucideIcons.map((framework) => (
+					{iconList.map((framework) => (
 						<CommandItem
 							key={framework}
 							value={framework}

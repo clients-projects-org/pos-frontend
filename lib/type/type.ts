@@ -64,9 +64,11 @@ export type UserType = {
 	name?: string;
 	slug?: string;
 	email?: string;
+	phone?: string;
 	created_at?: string;
 	role?: UseRole;
-	image?: ImageType;
+	image?: string;
+	image_type: ImageType;
 	status?: StatusType;
 };
 export type RoleType = {
@@ -74,7 +76,8 @@ export type RoleType = {
 	name?: string;
 	slug?: string;
 	status?: string;
-	image?: ImageType;
+	image?: string;
+	image_type: ImageType;
 	created_by?: UserType;
 	createdAt?: string;
 	updatedAt?: string;
@@ -90,7 +93,8 @@ export type SupplierType = {
 	email?: string;
 	phone: string;
 	address: string;
-	image: ImageType;
+	image?: string;
+	image_type: ImageType;
 	description: string;
 	status: StatusType;
 	created_at?: string;
@@ -109,11 +113,7 @@ export type WarehouseType = {
 };
 
 // icon/image type
-export type ImageType = {
-	image?: string;
-	image_type: 'image' | 'icon';
-	_id?: string;
-};
+export type ImageType = 'image' | 'icon';
 
 // category type
 export type CategoryType = {
@@ -122,7 +122,8 @@ export type CategoryType = {
 	description?: string;
 	name?: string;
 	slug?: string;
-	image?: ImageType;
+	image?: string;
+	image_type: ImageType;
 	created_at?: string;
 	crated_by?: UserType;
 	status?: StatusType;
@@ -134,7 +135,8 @@ export type SubCategoryType = {
 	description?: string;
 	name?: string;
 	slug?: string;
-	image?: ImageType;
+	image?: string;
+	image_type: ImageType;
 	created_at?: string;
 	crated_by?: UserType;
 	status?: StatusType;
@@ -147,7 +149,8 @@ export type BrandType = {
 	description?: string;
 	name?: string;
 	slug?: string;
-	image?: ImageType;
+	image?: string;
+	image_type: ImageType;
 	created_at?: string;
 	crated_by?: UserType;
 	status?: StatusType;
@@ -160,7 +163,8 @@ export type UnitType = {
 	name?: string;
 	short_name?: string;
 	slug?: string;
-	image?: ImageType;
+	image?: string;
+	image_type: ImageType;
 	created_at?: string;
 	crated_by?: UserType;
 	status?: StatusType;
@@ -172,7 +176,8 @@ export type VariantType = {
 	name?: string;
 	value?: string[];
 	slug?: string;
-	image?: ImageType;
+	image?: string;
+	image_type: ImageType;
 	created_at?: string;
 	crated_by?: UserType;
 	status?: StatusType;

@@ -45,14 +45,10 @@ export function UserStore() {
 			message: 'Description must be at least 2 characters.',
 		}),
 		role: z.string(), // assuming role is a string, if it's an object, update accordingly
-		image: z
-			.object({
-				image: z.string({
-					message: 'Invalid image URL.',
-				}),
-				image_type: z.enum(['image', 'icon']),
-			})
-			.optional(),
+		image: z.string({
+			message: 'Invalid image URL.',
+		}),
+		image_type: z.enum(['image', 'icon']),
 		code: z.string().optional(),
 	});
 
@@ -63,10 +59,8 @@ export function UserStore() {
 			description: '',
 			email: '',
 			role: '',
-			image: {
-				image: '',
-				image_type: 'image',
-			},
+			image: '',
+			image_type: 'image',
 		},
 	});
 
@@ -145,7 +139,7 @@ export function UserStore() {
 							/>
 							<FormField
 								control={methods.control}
-								name="image.image_type"
+								name="image_type"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Image or Icon</FormLabel>
@@ -160,11 +154,11 @@ export function UserStore() {
 
 						<FormField
 							control={methods.control}
-							name="image"
+							name="image_type"
 							render={({ field }) => (
 								<FormItem>
 									<FormControl>
-										{field.value?.image_type === 'image' ? (
+										{field.value === 'image' ? (
 											<ImageSelect />
 										) : (
 											<Suspense fallback={<LineLoader />}>

@@ -95,7 +95,7 @@ export function RolePermissionStore() {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>User Name</FormLabel>
+										<FormLabel>Role Name</FormLabel>
 										<FormControl>
 											<Input placeholder="shadcn" {...field} />
 										</FormControl>

@@ -1,12 +1,11 @@
 'use client';
 import { DynamicIcon } from '@/components/actions';
 import PageTitle, { PageTitleNoBack } from '@/components/custom/PageTitle';
-import { Button } from '@/components/ui/button';
 import { CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { useGetRolesQuery } from '@/lib/features/role';
 
-import { RoleType, UserType } from '@/lib/type';
+import { UserType } from '@/lib/type';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -37,14 +36,14 @@ export default function RoleAndPermissions() {
 					>
 						<CardContent className="p-0 ">
 							<div className="flex items-center space-x-4 rounded-md border p-4">
-								{user?.image?.image_type === 'icon' ? (
-									<DynamicIcon icon={user?.image?.image as string} />
+								{user?.image === 'icon' ? (
+									<DynamicIcon icon={user?.image as string} />
 								) : (
 									<Image
 										alt="Product image"
 										className="aspect-square rounded-md object-cover"
 										height="40"
-										src={user?.image?.image as string}
+										src={user?.image as string}
 										width="40"
 									/>
 								)}
@@ -85,14 +84,14 @@ export default function RoleAndPermissions() {
 					>
 						<CardContent className="p-0 ">
 							<div className="flex items-center space-x-4 rounded-md border p-4">
-								{user?.image?.image_type === 'icon' ? (
-									<DynamicIcon icon={user?.image?.image as string} />
+								{user?.image === 'icon' ? (
+									<DynamicIcon icon={user?.image as string} />
 								) : (
 									<Image
 										alt="Product image"
 										className="aspect-square rounded-md object-cover"
 										height="40"
-										src={user?.image?.image as string}
+										src={user?.image as string}
 										width="40"
 									/>
 								)}
@@ -120,10 +119,8 @@ const users: UserType[] = [
 		created_at: '2024-05-18T04:16:13.111Z',
 		description: 'admin',
 		email: 'abdurshobur.developer@gmail.com',
-		image: {
-			image_type: 'image',
-			image: 'https://ui.shadcn.com/placeholder.svg',
-		},
+		image_type: 'image',
+		image: 'https://ui.shadcn.com/placeholder.svg',
 		name: 'Abdur Shobur',
 		role: 'admin',
 		slug: 'adminsasd423da4',
@@ -134,10 +131,8 @@ const users: UserType[] = [
 		created_at: '2024-05-18T04:16:13.111Z',
 		description: 'admin',
 		email: 'abdurshobur.developer@gmail.com',
-		image: {
-			image_type: 'image',
-			image: 'https://ui.shadcn.com/placeholder.svg',
-		},
+		image_type: 'image',
+		image: 'https://ui.shadcn.com/placeholder.svg',
 		name: 'Abdur Shobur',
 		role: 'admin',
 		slug: 'adminsasd423da4',
@@ -148,10 +143,8 @@ const users: UserType[] = [
 		created_at: '2024-05-18T04:16:13.111Z',
 		description: 'admin',
 		email: 'abdurshobur.developer@gmail.com',
-		image: {
-			image_type: 'image',
-			image: 'https://ui.shadcn.com/placeholder.svg',
-		},
+		image_type: 'image',
+		image: 'https://ui.shadcn.com/placeholder.svg',
 		name: 'Abdur Shobur',
 		role: 'admin',
 		slug: 'adminsasd423da4',
@@ -162,10 +155,8 @@ const users: UserType[] = [
 		created_at: '2024-05-18T04:16:13.111Z',
 		description: 'admin',
 		email: 'abdurshobur.developer@gmail.com',
-		image: {
-			image_type: 'image',
-			image: 'https://ui.shadcn.com/placeholder.svg',
-		},
+		image_type: 'image',
+		image: 'https://ui.shadcn.com/placeholder.svg',
 		name: 'Abdur Shobur',
 		role: 'admin',
 		slug: 'adminsasd423da4',
