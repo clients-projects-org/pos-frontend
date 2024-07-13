@@ -19,8 +19,7 @@ import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DevPermissionType, DevRouteType, UserType } from '@/lib/type';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { ListFilter } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default function RoleAndPermissions() {
 	const { data } = useGetRolesQuery();
@@ -45,7 +44,7 @@ export default function RoleAndPermissions() {
 				{/* filter  */}
 				<div className="mt-2">
 					<TabList>
-						<TabListItem name="All" onClick={() => {}} active />
+						<TabListItem name="All" onClick={() => {}} active count={10} />
 						<TabListItem name="Active" onClick={() => {}} />
 						<TabListItem name="Deactivated" onClick={() => {}} />
 						<TabListItem name="Draft" onClick={() => {}} />
@@ -112,7 +111,13 @@ export default function RoleAndPermissions() {
 						{/* filter  */}
 						<div className="mt-2">
 							<TabList>
-								<TabListItem name="All" onClick={() => {}} active />
+								<TabListItem
+									name="All"
+									onClick={() => {
+										alert('all');
+									}}
+									active
+								/>
 								<TabListItem name="Active" onClick={() => {}} />
 								<TabListItem name="Deactivated" onClick={() => {}} />
 								<TabListItem name="Draft" onClick={() => {}} />
@@ -129,7 +134,8 @@ export default function RoleAndPermissions() {
 							>
 								<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
 									<span>{dev.name}</span>
-									<div className="ml-auto flex items-center gap-1">
+									<div className="ml-auto flex items-center gap-2">
+										<Badge className="text-xs">Badge</Badge>
 										<DropDownThreeDot>
 											<DropDownDotItem
 												icon="SquarePen"
@@ -144,6 +150,11 @@ export default function RoleAndPermissions() {
 												onChange={() => {}}
 											/>
 											<DropdownMenuSeparator />
+											<DropDownDotItem
+												icon="CircleCheckBig"
+												name="Active"
+												onChange={() => {}}
+											/>
 											<DropDownDotItem
 												icon="CircleSlash2"
 												name="Disable"
