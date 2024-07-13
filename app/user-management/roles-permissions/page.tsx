@@ -130,7 +130,7 @@ export default function RoleAndPermissions() {
 						{devPermission.data?.data?.map((dev: DevPermissionType) => (
 							<div
 								key={dev.slug}
-								className="text-gray-900 px-4 py-2  border border-gray-200 rounded-lg   dark:border-gray-600 dark:text-white"
+								className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white"
 							>
 								<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
 									<span>{dev.name}</span>
