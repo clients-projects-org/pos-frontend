@@ -4,6 +4,8 @@ export type IconType = {
 	>;
 };
 
+export type StatusType = 'draft' | 'active' | 'deactivate';
+
 // menu
 export type MenuItemType = {
 	id: number;
@@ -52,7 +54,7 @@ export type DiscountType = {
 	rate?: '20';
 };
 
-export type StatusType = 'draft' | 'active' | 'deactivate';
+// export type StatusType = 'draft' | 'active' | 'deactivate';
 
 // user type
 export type UseRole = 'admin' | 'supper admin' | 'staff' | 'user';
