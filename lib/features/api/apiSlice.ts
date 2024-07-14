@@ -7,11 +7,8 @@ const baseQuery = fetchBaseQuery({
 
 export const apiSlice = createApi({
 	reducerPath: 'api',
-	baseQuery: async (args, api, extraOptions) => {
-		let result = await baseQuery(args, api, extraOptions);
-
-		return result;
-	},
-	tagTypes: [],
+	baseQuery,
 	endpoints: () => ({}),
+	refetchOnReconnect: true,
+	refetchOnFocus: true,
 });

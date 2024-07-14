@@ -1,30 +1,25 @@
 'use client';
 import { DynamicIcon } from '@/components/actions';
-import {
-	DropDownDotItem,
-	DropDownThreeDot,
-	ListItem,
-	TabList,
-	TabListItem,
-} from '@/components/custom/list-item';
+import { ListItem, TabList, TabListItem } from '@/components/custom/list-item';
 import { LineLoader } from '@/components/custom/loader';
 import { ApiError } from '@/components/custom/notifications';
 import PageTitle, { PageTitleNoBack } from '@/components/custom/PageTitle';
 import { CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { isEmptyArray } from '@/lib/actions';
-import { useGetDevPermissionQuery } from '@/lib/features/dev-permission';
+import { confirm, isEmptyArray } from '@/lib/actions';
+import {
+	DevPermission,
+	useGetDevPermissionQuery,
+} from '@/lib/features/dev-permission';
 import { useGetRolesQuery } from '@/lib/features/role';
-import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DevPermissionType, DevRouteType, UserType } from '@/lib/type';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
 
 export default function RoleAndPermissions() {
 	const { data } = useGetRolesQuery();
 	const devPermission = useGetDevPermissionQuery();
-	console.log(devPermission);
+
 	return (
 		<>
 			<div>
@@ -92,7 +87,7 @@ export default function RoleAndPermissions() {
 			{/* is loading  dev permission */}
 			{devPermission.isLoading && <LineLoader />}
 
-			{/* permissions */}
+			{/* permissions title*/}
 			{!devPermission.isLoading && devPermission.data?.success && (
 				<>
 					<div>
@@ -109,65 +104,19 @@ export default function RoleAndPermissions() {
 						</PageTitleNoBack>
 
 						{/* filter  */}
-						<div className="mt-2">
-							<TabList>
-								<TabListItem
-									name="All"
-									onClick={() => {
-										alert('all');
-									}}
-									active
-								/>
-								<TabListItem name="Active" onClick={() => {}} />
-								<TabListItem name="Deactivated" onClick={() => {}} />
-								<TabListItem name="Draft" onClick={() => {}} />
-							</TabList>
-						</div>
+						<DevPermission.Filter />
 					</div>
-					{/* permissions  lists*/}
 
+					{/* permissions  lists*/}
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 						{devPermission.data?.data?.map((dev: DevPermissionType) => (
 							<div
-								key={dev.slug}
+								key={dev.id}
 								className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white"
 							>
 								<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
 									<span>{dev.name}</span>
-									<div className="ml-auto flex items-center gap-2">
-										<Badge className="text-xs">Badge</Badge>
-										<DropDownThreeDot>
-											<DropDownDotItem
-												icon="SquarePen"
-												name="Edit"
-												onChange={() => {
-													alert('edit');
-												}}
-											/>
-											<DropDownDotItem
-												icon="ScanEye"
-												name="View"
-												onChange={() => {}}
-											/>
-											<DropdownMenuSeparator />
-											<DropDownDotItem
-												icon="CircleCheckBig"
-												name="Active"
-												onChange={() => {}}
-											/>
-											<DropDownDotItem
-												icon="CircleSlash2"
-												name="Disable"
-												onChange={() => {}}
-											/>
-											<DropDownDotItem
-												icon="Trash2"
-												name="Delete"
-												onChange={() => {}}
-											/>
-										</DropDownThreeDot>
-									</div>
-									{/* <Switch checked={dev.status && dev.status === 'active'} /> */}
+									<DevPermission.Actions data={dev} />
 								</div>
 
 								{isEmptyArray(dev.routes) && (

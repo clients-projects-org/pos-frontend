@@ -4,7 +4,7 @@ export type IconType = {
 	>;
 };
 
-export type StatusType = 'draft' | 'active' | 'deactivate';
+export type StatusType = 'draft' | 'active' | 'deactivated';
 
 // menu
 export type MenuItemType = {

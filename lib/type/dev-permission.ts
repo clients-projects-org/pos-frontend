@@ -8,6 +8,7 @@ export type DevPermissionTitleType = {
 	image: string;
 
 	// only icon is best thats why image not choose
+	id?: string;
 	image_type: 'icon';
 };
 
@@ -22,6 +23,7 @@ export type DevRouteType = {
 	image_type: 'icon';
 
 	// value is
+	id?: string;
 	value: string;
 };
 
@@ -31,4 +33,5 @@ export type DevPermissionType = {
 	name: string;
 	slug: string;
 	status: StatusType;
+	id?: string;
 };

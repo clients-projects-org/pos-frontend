@@ -1,4 +1,5 @@
 'use client';
+import { Toaster } from '@/components/ui/toaster';
 
 import * as React from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
@@ -18,6 +19,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
 					</main>
 				</div>
 			</div>
+			<Toaster />
 		</NextThemesProvider>
 	);
 }
