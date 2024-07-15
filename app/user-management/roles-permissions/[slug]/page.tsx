@@ -1,6 +1,7 @@
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
-import { RolePermissionStore, UserStore } from '@/components/store';
+import { UserStore } from '@/components/store';
+import { DevPermissionStore } from '@/lib/features/dev-permission';
 import Link from 'next/link';
 
 const CreateRoleComponent = () => (
@@ -33,7 +34,7 @@ const CreatePermissionComponent = () => (
 				</span>
 			</Link>
 		</PageTitle>
-		<RolePermissionStore />
+		<DevPermissionStore />
 	</>
 );
 

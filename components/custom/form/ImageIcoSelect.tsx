@@ -165,7 +165,7 @@ export default function IconSelect() {
 			<CommandList>
 				<CommandEmpty>No Icon found.</CommandEmpty>
 				<CommandGroup className="IconsViewGrid">
-					{iconList.map((framework) => (
+					{iconList.slice(0, 80).map((framework) => (
 						<CommandItem
 							key={framework}
 							value={framework}
@@ -191,3 +191,15 @@ export default function IconSelect() {
 		</Command>
 	);
 }
+
+/* how can it optimize
+
+ - show only the  80 icons others will hide 
+ - if selected one only 80 show others will hide
+
+ - make a search for all icons
+ - if selected one only 80 show others will hide
+
+- make a popup then mange all and click ok then hide this
+
+*/

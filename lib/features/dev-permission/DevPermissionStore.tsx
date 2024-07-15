@@ -30,45 +30,70 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { ImageIcoRadio, ImageSelect } from '@/components/custom/form';
+import {
+	ImageIcoRadio,
+	ImageSelect,
+	SelectStatus,
+} from '@/components/custom/form';
 import { LineLoader } from '@/components/custom/loader';
 
-export function RolePermissionStore() {
+export function DevPermissionStore() {
+	// Define Zod schemas
+	const StatusTypeSchema = z.enum(['draft', 'active', 'deactivated']);
+
+	const RouteActionSchema = z.object({
+		name: z.string(),
+		status: StatusTypeSchema,
+		image: z.string(),
+		image_type: z.literal('icon'),
+		value: z.boolean(),
+	});
+
+	const DevRouteSchema = z.object({
+		name: z.string(),
+		status: StatusTypeSchema,
+		image: z.string(),
+		image_type: z.literal('icon'),
+		value: z.boolean(),
+		actions: z.array(RouteActionSchema),
+	});
+
 	const FormSchema = z.object({
-		name: z.string().min(2, {
-			message: 'Username must be at least 2 characters.',
-		}),
-		email: z.string().email({
-			message: 'Invalid email address.',
-		}),
-		description: z.string().min(2, {
-			message: 'Description must be at least 2 characters.',
-		}),
-		role: z.string(), // assuming role is a string, if it's an object, update accordingly
-		image: z
-			.object({
-				image: z.string({
-					message: 'Invalid image URL.',
-				}),
-				image_type: z.enum(['image', 'icon']),
-			})
-			.optional(),
-		code: z.string().optional(),
+		routes: z.array(DevRouteSchema),
+		name: z.string(),
+		status: StatusTypeSchema,
 	});
 
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
 			name: '',
-			description: '',
-			email: '',
-			role: '',
-			image: {
-				image: '',
-				image_type: 'image',
-			},
+			status: 'active',
+			routes: [
+				{
+					id: 1,
+					name: '',
+					image: '',
+					image_type: 'icon',
+					status: 'active',
+					actions: [
+						{
+							id: 1,
+							image: '',
+							image_type: 'icon',
+							name: '',
+							status: 'active',
+							value: false,
+						},
+					],
+					value: false,
+				},
+			],
 		},
 	});
+
+	// Define types
+	type DevPermissionType = z.infer<typeof FormSchema>;
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
 		console.log(data);
@@ -89,6 +114,47 @@ export function RolePermissionStore() {
 			<FormProvider {...methods}>
 				<Form {...methods}>
 					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
+						<div className="grid grid-cols-12 gap-3">
+							<div className="col-span-8">
+								<FormField
+									control={methods.control}
+									name="name"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Main Title</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="Add Main Title"
+													{...field}
+													type="text"
+													autoComplete="off"
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+							<div className="col-span-4">
+								<FormField
+									control={methods.control}
+									name="status"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Status</FormLabel>
+											<FormControl>
+												<SelectStatus
+													onChange={field.onChange}
+													placeholder="Select a Status"
+													items="actDeDraft"
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
 						<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 							<FormField
 								control={methods.control}

@@ -1,3 +1,4 @@
+'use client';
 import { ToastActionElement } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
 import ReactDOM from 'react-dom/client';
