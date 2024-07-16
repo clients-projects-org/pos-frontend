@@ -11,7 +11,9 @@ const SelectStatus = ({
 	onChange,
 	placeholder,
 	items,
+	defaultValue,
 }: {
+	defaultValue?: string;
 	placeholder: string;
 	onChange: (value: string) => void;
 	items: 'actDeDraft';
@@ -34,7 +36,7 @@ const SelectStatus = ({
 	};
 
 	return (
-		<Select onValueChange={onChange}>
+		<Select onValueChange={onChange} defaultValue={defaultValue}>
 			<SelectTrigger>
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>

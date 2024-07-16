@@ -3,10 +3,12 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { counterSlice } from './features/counter/counterSlice';
 import { quotesApiSlice } from './features/quotes/quotesApiSlice';
 import { apiSlice } from './features/api/apiSlice';
+import createSlice from './features/dev-permission/createSlice';
 
 // const rootReducer = combineSlices(counterSlice, quotesApiSlice);
 const rootReducer = combineReducers({
 	counter: counterSlice.reducer,
+	form: createSlice.reducer,
 	quotesApi: quotesApiSlice.reducer,
 	[apiSlice.reducerPath]: apiSlice.reducer, // Add the apiSlice.reducerPath
 });

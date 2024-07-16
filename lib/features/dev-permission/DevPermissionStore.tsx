@@ -2,16 +2,10 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from '@/components/ui/use-toast';
-import { Suspense, lazy } from 'react';
-
-// Lazy load the IconSelect component
-const IconSelect = lazy(
-	() => import('@/components/custom/form/ImageIcoSelect')
-);
-
+import { useEffect } from 'react';
 import {
 	Form,
 	FormControl,
@@ -20,28 +14,20 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
-import {
-	ImageIcoRadio,
-	ImageSelect,
-	SelectStatus,
-} from '@/components/custom/form';
-import { LineLoader } from '@/components/custom/loader';
+import { SelectStatus } from '@/components/custom/form';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { addAction, addRoute, removeAction, removeRoute } from './createSlice';
+import { DynamicIcon } from '@/components/actions';
 
 export function DevPermissionStore() {
+	const dispatch = useAppDispatch();
+	const formState = useAppSelector((state) => state.form);
+	console.log({ formState });
 	// Define Zod schemas
 	const StatusTypeSchema = z.enum(['draft', 'active', 'deactivated']);
 
 	const RouteActionSchema = z.object({
+		id: z.string(),
 		name: z.string(),
 		status: StatusTypeSchema,
 		image: z.string(),
@@ -50,6 +36,7 @@ export function DevPermissionStore() {
 	});
 
 	const DevRouteSchema = z.object({
+		id: z.string(),
 		name: z.string(),
 		status: StatusTypeSchema,
 		image: z.string(),
@@ -66,37 +53,16 @@ export function DevPermissionStore() {
 
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
-		defaultValues: {
-			name: '',
-			status: 'active',
-			routes: [
-				{
-					id: 1,
-					name: '',
-					image: '',
-					image_type: 'icon',
-					status: 'active',
-					actions: [
-						{
-							id: 1,
-							image: '',
-							image_type: 'icon',
-							name: '',
-							status: 'active',
-							value: false,
-						},
-					],
-					value: false,
-				},
-			],
-		},
+		defaultValues: formState,
 	});
+	const { control, handleSubmit, reset } = methods;
 
-	// Define types
-	type DevPermissionType = z.infer<typeof FormSchema>;
+	useEffect(() => {
+		reset(formState);
+	}, [formState, reset]);
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
-		console.log(data);
+		console.log({ data });
 		toast({
 			title: 'You submitted the following values:',
 			description: (
@@ -106,157 +72,248 @@ export function DevPermissionStore() {
 			),
 		});
 	}
-	console.log(methods.getValues());
+	// console.log(methods.getValues());
 	// const methods = useForm();
 	// const onSubmit = (data) => console.log(data);
 	return (
-		<div className="max-w-5xl mx-auto w-full border p-4 rounded">
+		<div className="max-w-5xl mx-auto w-full border border-red-200 dark:border-red-950 p-4 rounded">
 			<FormProvider {...methods}>
 				<Form {...methods}>
-					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
-						<div className="grid grid-cols-12 gap-3">
-							<div className="col-span-8">
-								<FormField
-									control={methods.control}
-									name="name"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Main Title</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Add Main Title"
-													{...field}
-													type="text"
-													autoComplete="off"
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+					<form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+						<div className="border border-blue-200 dark:border-blue-950 p-3">
+							<div className="flex justify-between">
+								<h5 className="mb-2 underline">Main Details</h5>
 							</div>
-							<div className="col-span-4">
-								<FormField
-									control={methods.control}
-									name="status"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Status</FormLabel>
-											<FormControl>
-												<SelectStatus
-													onChange={field.onChange}
-													placeholder="Select a Status"
-													items="actDeDraft"
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+							<div className="grid grid-cols-12 gap-3 ">
+								<div className="col-span-8">
+									<FormField
+										control={control}
+										name="name"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Main Title</FormLabel>
+												<FormControl>
+													<Input
+														placeholder="Add Main Title"
+														{...field}
+														type="text"
+														autoComplete="off"
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+								<div className="col-span-4">
+									<FormField
+										control={control}
+										name="status"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Status</FormLabel>
+												<FormControl>
+													<SelectStatus
+														onChange={field.onChange}
+														placeholder="Select a Status"
+														items="actDeDraft"
+														defaultValue={formState.status}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
 							</div>
-						</div>
-						<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-							<FormField
-								control={methods.control}
-								name="name"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Role Name</FormLabel>
-										<FormControl>
-											<Input placeholder="shadcn" {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>User Email</FormLabel>
-										<FormControl>
-											<Input placeholder="shadcn" {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="role"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Role</FormLabel>
-										<FormControl>
-											<Select onValueChange={field.onChange}>
-												<SelectTrigger>
-													<SelectValue placeholder="Select a Role" />
-												</SelectTrigger>
-												<SelectContent>
-													<SelectGroup>
-														<SelectLabel>Fruits</SelectLabel>
-														<SelectItem value="apple">Apple</SelectItem>
-														<SelectItem value="banana">Banana</SelectItem>
-														<SelectItem value="blueberry">Blueberry</SelectItem>
-														<SelectItem value="grapes">Grapes</SelectItem>
-														<SelectItem value="pineapple">Pineapple</SelectItem>
-													</SelectGroup>
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="image.image_type"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Image or Icon</FormLabel>
-										<FormControl>
-											<ImageIcoRadio {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
 						</div>
 
-						<FormField
-							control={methods.control}
-							name="image"
-							render={({ field }) => (
-								<FormItem>
-									<FormControl>
-										{field.value?.image_type === 'image' ? (
-											<ImageSelect />
-										) : (
-											<Suspense fallback={<LineLoader />}>
-												<IconSelect />
-											</Suspense>
-										)}
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={methods.control}
-							name="description"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Description</FormLabel>
-									<FormControl>
-										<Textarea placeholder="shadcn" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<div className="border  border-blue-200 dark:border-blue-950  p-3 space-y-6 ">
+							<div className="flex justify-between mb-3">
+								<h5 className="mb-2 underline">Routes</h5>
+								<Button
+									variant="secondary"
+									type="button"
+									onClick={() => dispatch(addRoute())}
+									size="sm"
+								>
+									<DynamicIcon icon="CirclePlus" className="h-4 w-4" />
+								</Button>
+							</div>
+							{formState.routes.map((route, routeIndex) => (
+								<div
+									key={routeIndex}
+									className="border border-green-200 dark:border-green-950 p-3 space-y-3"
+								>
+									<div className="grid grid-cols-12 gap-3">
+										<div className="col-span-8">
+											<Controller
+												name={`routes.${routeIndex}.name`}
+												control={control}
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Route Name</FormLabel>
+														<FormControl>
+															<Input
+																placeholder="Add Route Name"
+																{...field}
+																type="text"
+																autoComplete="off"
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</div>
+										<div className="col-span-2">
+											<Controller
+												name={`routes.${routeIndex}.status`}
+												control={control}
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Status</FormLabel>
+														<FormControl>
+															<SelectStatus
+																onChange={field.onChange}
+																placeholder="Select a Status"
+																items="actDeDraft"
+																defaultValue={field.value}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</div>
+										<div className="col-span-1 space-y-2">
+											<FormLabel>Choose</FormLabel>
+											<Button
+												variant="outline"
+												className="w-full"
+												type="button"
+											>
+												Icon
+											</Button>
+										</div>
+										<div className="col-span-1 space-y-2">
+											<FormLabel>Actions</FormLabel>
+											<Button
+												type="button"
+												variant="outline"
+												className="flex w-full"
+												disabled={formState.routes.length === 1}
+												onClick={() =>
+													dispatch(removeRoute({ routeId: route.id }))
+												}
+											>
+												<DynamicIcon icon="Trash2" className="h-4 w-4" />
+											</Button>
+										</div>
+									</div>
+									<div className="border border-yellow-200 dark:border-cyan-950 p-3 space-y-3">
+										<div className="flex justify-between mb-3">
+											<h5 className="mb-2 underline">Actions</h5>
+											<Button
+												variant="secondary"
+												type="button"
+												size="sm"
+												onClick={() =>
+													dispatch(addAction({ routeId: route.id }))
+												}
+											>
+												<DynamicIcon icon="CirclePlus" className="h-4 w-4" />
+											</Button>
+										</div>
+										{route.actions.map((action, actionIndex) => (
+											<div
+												key={actionIndex}
+												className="grid grid-cols-12 gap-3"
+											>
+												<div className="col-span-8">
+													<Controller
+														name={`routes.${routeIndex}.actions.${actionIndex}.name`}
+														control={control}
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel>Action Name</FormLabel>
+																<FormControl>
+																	<Input
+																		placeholder="Add Action Name"
+																		{...field}
+																		type="text"
+																		autoComplete="off"
+																	/>
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+												</div>
+												<div className="col-span-2">
+													<Controller
+														name={`routes.${routeIndex}.actions.${actionIndex}.status`}
+														control={control}
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel>Status</FormLabel>
+																<FormControl>
+																	<SelectStatus
+																		onChange={field.onChange}
+																		placeholder="Select a Status"
+																		items="actDeDraft"
+																		defaultValue={field.value}
+																	/>
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+												</div>
+												<div className="col-span-1 space-y-2">
+													<FormLabel>Choose</FormLabel>
+													<Button
+														variant="outline"
+														className="w-full"
+														type="button"
+													>
+														Icon
+													</Button>
+												</div>
+												<div className="col-span-1 space-y-2">
+													<FormLabel>Actions</FormLabel>
+													<Button
+														type="button"
+														variant="outline"
+														className="flex w-full"
+														disabled={route.actions.length === 1}
+														onClick={() =>
+															dispatch(
+																removeAction({
+																	routeId: route.id,
+																	actionId: action.id,
+																})
+															)
+														}
+													>
+														<DynamicIcon icon="Trash2" className="h-4 w-4" />
+													</Button>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							))}
+						</div>
+
 						<div className="flex justify-end">
-							<Button type="submit">Create User</Button>
+							<Button
+								variant="outline"
+								className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600"
+								type="submit"
+							>
+								Create New Permission
+							</Button>
 						</div>
 					</form>
 				</Form>
