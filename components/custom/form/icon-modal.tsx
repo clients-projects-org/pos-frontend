@@ -12,6 +12,7 @@ import {
 import IconSelect from './ImageIcoSelect';
 import React, { useEffect } from 'react';
 import { DynamicIcon } from '@/components/actions';
+import Link from 'next/link';
 
 export function IconModal({
 	onSave,
@@ -46,10 +47,17 @@ export function IconModal({
 				className="max-w-6xl min-h-96"
 			>
 				<DialogHeader>
-					<DialogTitle>Edit profile</DialogTitle>
+					<DialogTitle>Icons</DialogTitle>
 					<DialogDescription>
-						Make changes to your profile here. Click save when you're done.
+						Select Icon here. Click save when you're done.
 					</DialogDescription>
+					<Link
+						className="text-sm underline text-blue-600"
+						href="https://lucide.dev/icons/"
+						target="_blank"
+					>
+						Icons Library
+					</Link>
 				</DialogHeader>
 				{/* icon component here */}
 

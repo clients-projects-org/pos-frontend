@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import { FInput, IconModal, SelectStatus } from '@/components/custom/form';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useRouter } from 'next/navigation';
 import {
 	addAction,
 	addRoute,
@@ -23,6 +24,8 @@ import React from 'react';
 import { toast } from '@/components/ui/use-toast';
 type InputType = React.ChangeEvent<HTMLInputElement>;
 export function DevPermissionStore() {
+	const router = useRouter();
+
 	const dispatch = useAppDispatch();
 	const formState = useAppSelector((state) => state.form);
 
@@ -98,6 +101,7 @@ export function DevPermissionStore() {
 			console.log(e);
 			dispatch(reset());
 			refetch();
+			router.push('/user-management/roles-permissions', { scroll: false });
 			toast({
 				title: 'You submitted the following values:',
 				description: (

@@ -3,7 +3,7 @@ import { apiSlice } from '../api/apiSlice';
 export const devPermissionApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getDevPermission: builder.query<any, void>({
-			query: () => `dev-permission`,
+			query: (payload) => `dev-permission?status=${payload ? payload : ''}`,
 		}),
 
 		deleteDevPermission: builder.mutation<any, string>({
@@ -20,6 +20,14 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 		}),
+
+		updateStatus: builder.mutation<any, any>({
+			query: ({ id, status }) => ({
+				url: `dev-permission/status/${id}`,
+				method: 'PUT',
+				body: { status },
+			}),
+		}),
 	}),
 });
 
@@ -27,4 +35,5 @@ export const {
 	useGetDevPermissionQuery,
 	useDeleteDevPermissionMutation,
 	useStoreDevPermissionMutation,
+	useUpdateStatusMutation,
 } = devPermissionApi;

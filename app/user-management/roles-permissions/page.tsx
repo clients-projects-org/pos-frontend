@@ -15,10 +15,13 @@ import { useGetRolesQuery } from '@/lib/features/role';
 import { DevPermissionType, DevRouteType, UserType } from '@/lib/type';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
 
 export default function RoleAndPermissions() {
+	const [value, setValue] = useState('active');
+
 	const { data } = useGetRolesQuery();
-	const devPermission = useGetDevPermissionQuery();
+	const devPermission = useGetDevPermissionQuery(value);
 
 	return (
 		<>
@@ -104,7 +107,7 @@ export default function RoleAndPermissions() {
 						</PageTitleNoBack>
 
 						{/* filter  */}
-						<DevPermission.Filter />
+						<DevPermission.Filter value={value} setValue={setValue} />
 					</div>
 
 					{/* permissions  lists*/}
@@ -116,7 +119,10 @@ export default function RoleAndPermissions() {
 							>
 								<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
 									<span>{dev.name}</span>
-									<DevPermission.Actions data={dev} />
+									<DevPermission.Actions
+										data={dev}
+										refetch={devPermission.refetch}
+									/>
 								</div>
 
 								{isEmptyArray(dev.routes) && (

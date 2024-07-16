@@ -17,6 +17,7 @@ import { LucideIcons } from '@/lib/icons';
 import { LineLoader } from '../loader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { image } from '@/assets/image';
+import { Button } from '@/components/ui/button';
 export function ImageIcoRadio({ ...field }) {
 	return (
 		<RadioGroup
@@ -140,6 +141,7 @@ export default function IconSelect({
 	setValue: Function;
 }) {
 	const [isLoading, setIsLoading] = React.useState(true);
+	const [load, setLoad] = React.useState(105);
 
 	React.useEffect(() => {
 		const performMapOperation = () => {
@@ -162,7 +164,14 @@ export default function IconSelect({
 		[LucideIcons]
 	);
 
-	console.log('first render i');
+	const handleLoadMore = () => {
+		if (iconList.length > load) {
+			setLoad(load + 300);
+			return;
+		}
+
+		setLoad(iconList.length);
+	};
 	return isLoading ? (
 		<LineLoader />
 	) : (
@@ -171,7 +180,7 @@ export default function IconSelect({
 			<CommandList>
 				<CommandEmpty>No Icon found.</CommandEmpty>
 				<CommandGroup className="IconsViewGrid">
-					{iconList.slice(0, 80).map((framework) => (
+					{iconList.slice(0, load).map((framework) => (
 						<CommandItem
 							key={framework}
 							value={framework}
@@ -194,6 +203,18 @@ export default function IconSelect({
 					))}
 				</CommandGroup>
 			</CommandList>
+			<div className="flex justify-center">
+				<Button
+					disabled={iconList.length <= load}
+					onClick={handleLoadMore}
+					className="w-fit"
+					type="button"
+					size="sm"
+					variant="outline"
+				>
+					Load more
+				</Button>
+			</div>
 		</Command>
 	);
 }

@@ -1,3 +1,4 @@
+'use client';
 import {
 	DropDownDotItem,
 	DropDownThreeDot,
@@ -6,18 +7,24 @@ import {
 } from '@/components/custom/list-item';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { DevPermissionType } from '@/lib/type';
+import { DevPermissionType, StatusType } from '@/lib/type';
 import {
 	useDeleteDevPermissionMutation,
 	useGetDevPermissionQuery,
+	useUpdateStatusMutation,
 } from './devPermissionSlice';
 import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import { ToastAction } from '@/components/ui/toast';
+import { useState } from 'react';
 
-const Actions = ({ data }: { data: DevPermissionType }) => {
-	const { refetch } = useGetDevPermissionQuery();
+const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
 	const [deleteDevPermission, { isLoading }] = useDeleteDevPermissionMutation();
+
+	const [updateStatus, { isLoading: updateStatusLoading }] =
+		useUpdateStatusMutation();
+
+	const loading = isLoading || updateStatusLoading;
 
 	const handleDelete = async (payload: string) => {
 		try {
@@ -48,65 +55,102 @@ const Actions = ({ data }: { data: DevPermissionType }) => {
 			console.error('Failed to delete the permission: ', err);
 		}
 	};
+
+	const handleStatusChange = async (status: StatusType) => {
+		try {
+			await updateStatus({ id: data.id, status }).unwrap();
+			refetch();
+		} catch (err) {
+			console.error('Failed to update the status: ', err);
+		}
+	};
+
 	return (
 		<div className="ml-auto flex items-center gap-2">
 			<Badge variant={badge(data.status)} className="text-xs capitalize">
 				{data.status}
 			</Badge>
 
-			<DropDownThreeDot isLoading={isLoading}>
+			{/* custom dropdown component  */}
+			<DropDownThreeDot isLoading={isLoading || updateStatusLoading}>
 				<DropDownDotItem
 					icon="SquarePen"
 					name="Edit"
 					onChange={() => {
 						alert('edit');
 					}}
-					disabled={isLoading}
+					disabled={loading}
 				/>
 				<DropDownDotItem
 					icon="ScanEye"
 					name="View"
 					onChange={() => {}}
-					disabled={isLoading}
+					disabled={loading}
 				/>
 				<DropdownMenuSeparator />
 				<DropDownDotItem
 					icon="CircleCheckBig"
 					name="Active"
-					onChange={() => {}}
-					disabled={isLoading}
+					onChange={() => data.id && handleStatusChange('active')}
+					disabled={loading}
 				/>
 				<DropDownDotItem
 					icon="CircleSlash2"
-					name="Disable"
-					onChange={() => {}}
-					disabled={isLoading}
+					name="Deactivated"
+					onChange={() => data.id && handleStatusChange('deactivated')}
+					disabled={loading}
+				/>
+				<DropDownDotItem
+					icon="CircleSlash2"
+					name="Draft"
+					onChange={() => data.id && handleStatusChange('draft')}
+					disabled={loading}
 				/>
 				<DropDownDotItem
 					icon="Trash2"
 					name="Delete"
 					onChange={() => data.id && handleDelete(data.id)}
-					disabled={isLoading}
+					disabled={loading}
 				/>
 			</DropDownThreeDot>
 		</div>
 	);
 };
 
-const Filter = () => {
+type ExtendedStatusType = StatusType | 'all';
+const Filter = ({
+	value,
+	setValue,
+}: {
+	value: ExtendedStatusType;
+	setValue: Function;
+}) => {
+	const statusHandler = (status: ExtendedStatusType) => {
+		setValue(status);
+	};
 	return (
 		<div className="mt-2">
 			<TabList>
 				<TabListItem
 					name="All"
-					onClick={() => {
-						alert('all');
-					}}
-					active
+					onClick={() => statusHandler('all')}
+					active={value === 'all'}
 				/>
-				<TabListItem name="Active" onClick={() => {}} />
-				<TabListItem name="Deactivated" onClick={() => {}} />
-				<TabListItem name="Draft" onClick={() => {}} />
+				<TabListItem
+					name="Active"
+					onClick={() => statusHandler('active')}
+					active={value === 'active'}
+				/>
+				<TabListItem
+					name="Deactivated"
+					onClick={() => statusHandler('deactivated')}
+					active={value === 'deactivated'}
+				/>
+				<TabListItem
+					name="Draft"
+					onClick={() => statusHandler('draft')}
+					active={value === 'draft'}
+				/>
 			</TabList>
 		</div>
 	);
