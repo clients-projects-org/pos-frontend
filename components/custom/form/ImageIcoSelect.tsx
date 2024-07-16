@@ -132,8 +132,13 @@ export function ImageSelect() {
 		</div>
 	);
 }
-export default function IconSelect() {
-	const [value, setValue] = React.useState('');
+export default function IconSelect({
+	value,
+	setValue,
+}: {
+	value: string;
+	setValue: Function;
+}) {
 	const [isLoading, setIsLoading] = React.useState(true);
 
 	React.useEffect(() => {
@@ -157,6 +162,7 @@ export default function IconSelect() {
 		[LucideIcons]
 	);
 
+	console.log('first render i');
 	return isLoading ? (
 		<LineLoader />
 	) : (

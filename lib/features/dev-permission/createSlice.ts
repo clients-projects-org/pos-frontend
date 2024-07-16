@@ -28,13 +28,13 @@ const initialState: formType = {
 		{
 			id: nanoid(),
 			name: '',
-			image: '',
+			image: 'BadgeAlert',
 			image_type: 'icon',
 			status: 'active',
 			actions: [
 				{
 					id: nanoid(),
-					image: '',
+					image: 'Atom',
 					image_type: 'icon',
 					name: '',
 					status: 'active',
@@ -54,13 +54,13 @@ const formSlice = createSlice({
 			state.routes.push({
 				id: nanoid(),
 				name: '',
-				image: '',
+				image: 'BadgeAlert',
 				image_type: 'icon',
 				status: 'active',
 				actions: [
 					{
 						id: nanoid(),
-						image: '',
+						image: 'Atom',
 						image_type: 'icon',
 						name: '',
 						status: 'active',
@@ -69,6 +69,28 @@ const formSlice = createSlice({
 				],
 				value: false,
 			});
+		},
+		updateField: (state, action) => {
+			const { key, value } = action.payload;
+			state[key as 'name' | 'status'] = value;
+		},
+
+		updateRoute: (state, action) => {
+			const { routeId, updates } = action.payload;
+			const route = state.routes.find((route) => route.id === routeId);
+			if (route) {
+				Object.assign(route, updates);
+			}
+		},
+		updateAction: (state, action) => {
+			const { routeId, actionId, updates } = action.payload;
+			const route = state.routes.find((route) => route.id === routeId);
+			if (route) {
+				const action = route.actions.find((action) => action.id === actionId);
+				if (action) {
+					Object.assign(action, updates);
+				}
+			}
 		},
 		removeRoute(state, action) {
 			const { routeId } = action.payload;
@@ -80,7 +102,7 @@ const formSlice = createSlice({
 			if (route) {
 				route.actions.push({
 					id: nanoid(),
-					image: '',
+					image: 'Atom',
 					image_type: 'icon',
 					name: '',
 					status: 'active',
@@ -97,9 +119,19 @@ const formSlice = createSlice({
 				);
 			}
 		},
+
+		reset: () => initialState,
 	},
 });
 
-export const { addRoute, removeRoute, addAction, removeAction } =
-	formSlice.actions;
+export const {
+	addRoute,
+	removeRoute,
+	addAction,
+	removeAction,
+	updateAction,
+	updateField,
+	updateRoute,
+	reset,
+} = formSlice.actions;
 export default formSlice;

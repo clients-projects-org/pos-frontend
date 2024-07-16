@@ -1,3 +1,4 @@
+'use client';
 import {
 	Select,
 	SelectContent,
@@ -6,6 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import React, { useEffect } from 'react';
 
 const SelectStatus = ({
 	onChange,
@@ -13,37 +15,39 @@ const SelectStatus = ({
 	items,
 	defaultValue,
 }: {
-	defaultValue?: string;
+	defaultValue: string;
 	placeholder: string;
 	onChange: (value: string) => void;
 	items: 'actDeDraft';
 }) => {
+	const [value, setValue] = React.useState(defaultValue);
+
+	useEffect(() => {
+		setValue(defaultValue);
+	}, [defaultValue]);
+
 	const options = {
 		actDeDraft: [
-			{
-				value: 'active',
-				label: 'Active',
-			},
-			{
-				value: 'deactivated',
-				label: 'Deactivated',
-			},
-			{
-				value: 'draft',
-				label: 'Draft',
-			},
+			{ value: 'active', label: 'Active' },
+			{ value: 'deactivated', label: 'Deactivated' },
+			{ value: 'draft', label: 'Draft' },
 		],
 	};
 
+	const handleChange = (value: string) => {
+		setValue(value);
+		onChange(value);
+	};
+
 	return (
-		<Select onValueChange={onChange} defaultValue={defaultValue}>
+		<Select value={value} onValueChange={handleChange}>
 			<SelectTrigger>
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>
 			<SelectContent>
 				<SelectGroup>
 					{options[items].map((item) => (
-						<SelectItem key={item.value} value={item.value.toString()}>
+						<SelectItem key={item.value} value={item.value}>
 							{item.label}
 						</SelectItem>
 					))}

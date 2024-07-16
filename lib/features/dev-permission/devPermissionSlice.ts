@@ -12,8 +12,19 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				method: 'DELETE',
 			}),
 		}),
+
+		storeDevPermission: builder.mutation<any, string>({
+			query: (payload) => ({
+				url: `dev-permission/store`,
+				method: 'POST',
+				body: payload,
+			}),
+		}),
 	}),
 });
 
-export const { useGetDevPermissionQuery, useDeleteDevPermissionMutation } =
-	devPermissionApi;
+export const {
+	useGetDevPermissionQuery,
+	useDeleteDevPermissionMutation,
+	useStoreDevPermissionMutation,
+} = devPermissionApi;
