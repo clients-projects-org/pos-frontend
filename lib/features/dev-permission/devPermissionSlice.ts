@@ -3,14 +3,17 @@ import { apiSlice } from '../api/apiSlice';
 export const devPermissionApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getDevPermission: builder.query<any, void>({
-			query: (payload) => `dev-permission?status=${payload ? payload : ''}`,
+			query: (payload) => `dev-permission?status=${payload}`,
+			providesTags: () => ['DevPermission'],
 		}),
 
 		deleteDevPermission: builder.mutation<any, string>({
-			query: (id) => ({
+			query: ({ id, type }) => ({
 				url: `dev-permission/${id}`,
 				method: 'DELETE',
+				body: { type },
 			}),
+			invalidatesTags: ['DevPermission'],
 		}),
 
 		storeDevPermission: builder.mutation<any, string>({
@@ -19,14 +22,29 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				method: 'POST',
 				body: payload,
 			}),
+			invalidatesTags: ['DevPermission'],
 		}),
 
 		updateStatus: builder.mutation<any, any>({
-			query: ({ id, status }) => ({
+			query: ({ id, status, type }) => ({
 				url: `dev-permission/status/${id}`,
 				method: 'PUT',
-				body: { status },
+				body: { status, type },
 			}),
+
+			invalidatesTags: (result, error, arg) => {
+				return [
+					'DevPermission',
+					{ type: 'DevPermission', id: arg.type.mainId },
+				];
+			},
+		}),
+
+		getById: builder.query<any, string>({
+			query: (id) => `dev-permission/${id}`,
+			providesTags: (result, error, id) => {
+				return [{ type: 'DevPermission', id: id }];
+			},
 		}),
 	}),
 });
@@ -36,4 +54,5 @@ export const {
 	useDeleteDevPermissionMutation,
 	useStoreDevPermissionMutation,
 	useUpdateStatusMutation,
+	useGetByIdQuery,
 } = devPermissionApi;

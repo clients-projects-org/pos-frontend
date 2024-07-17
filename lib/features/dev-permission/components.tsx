@@ -10,15 +10,34 @@ import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DevPermissionType, StatusType } from '@/lib/type';
 import {
 	useDeleteDevPermissionMutation,
-	useGetDevPermissionQuery,
 	useUpdateStatusMutation,
 } from './devPermissionSlice';
 import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import { ToastAction } from '@/components/ui/toast';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
-const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
+type typeProps = {
+	type: 'routes' | 'main' | 'actions';
+	mainId?: string;
+	actionsId?: string;
+	routesId?: string;
+};
+const Actions = ({
+	data,
+	isFor,
+	type = {
+		type: 'main',
+	},
+}: {
+	data: DevPermissionType;
+	isFor?: 'child';
+	type?: typeProps;
+}) => {
+	const router = useRouter();
+	const params = useParams<{ slug: string; item: string }>();
+
 	const [deleteDevPermission, { isLoading }] = useDeleteDevPermissionMutation();
 
 	const [updateStatus, { isLoading: updateStatusLoading }] =
@@ -26,7 +45,7 @@ const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
 
 	const loading = isLoading || updateStatusLoading;
 
-	const handleDelete = async (payload: string) => {
+	const handleDelete = async (id: string) => {
 		try {
 			const confirmed = await confirm({
 				message:
@@ -36,8 +55,7 @@ const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
 
 			if (confirmed) {
 				// Perform the delete action here
-				await deleteDevPermission(payload).unwrap();
-				refetch(); // Assuming refetch is a function to refresh data
+				await deleteDevPermission({ id, type }).unwrap();
 				const options: ToastOptions = {
 					title: 'Scheduled: Catch up',
 					description: 'Friday, February 10, 2023 at 5:57 PM',
@@ -48,6 +66,10 @@ const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
 					autoCloseDelay: 5000,
 				};
 				showToast(options);
+				if (params.slug.startsWith('permission')) {
+					console.log('first');
+					router.push('/user-management/roles-permissions');
+				}
 			} else {
 				console.log('Delete action cancelled');
 			}
@@ -56,10 +78,15 @@ const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
 		}
 	};
 
+	/*
+		if main id ok fine only [main id] 
+		if routes need [main id] and [routes id] 
+		if actions need [main id] and [routes id] and [actions id]
+	*/
+
 	const handleStatusChange = async (status: StatusType) => {
 		try {
-			await updateStatus({ id: data.id, status }).unwrap();
-			refetch();
+			await updateStatus({ id: data._id, status, type }).unwrap();
 		} catch (err) {
 			console.error('Failed to update the status: ', err);
 		}
@@ -67,7 +94,11 @@ const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
 
 	return (
 		<div className="ml-auto flex items-center gap-2">
-			<Badge variant={badge(data.status)} className="text-xs capitalize">
+			<Badge
+				variant={badge(data.status)}
+				style={{ fontSize: isFor === 'child' ? '10px' : '12px' }}
+				className={`text-xs capitalize ${isFor === 'child' ? 'py-0' : 'py-1'}`}
+			>
 				{data.status}
 			</Badge>
 
@@ -84,48 +115,61 @@ const Actions = ({ data, refetch }: { data: DevPermissionType }) => {
 				<DropDownDotItem
 					icon="ScanEye"
 					name="View"
-					onChange={() => {}}
+					onChange={() => {
+						router.push(
+							`/user-management/roles-permissions/permission-${data._id}`
+						);
+					}}
 					disabled={loading}
 				/>
 				<DropdownMenuSeparator />
-				<DropDownDotItem
-					icon="CircleCheckBig"
-					name="Active"
-					onChange={() => data.id && handleStatusChange('active')}
-					disabled={loading}
-				/>
-				<DropDownDotItem
-					icon="CircleSlash2"
-					name="Deactivated"
-					onChange={() => data.id && handleStatusChange('deactivated')}
-					disabled={loading}
-				/>
-				<DropDownDotItem
-					icon="CircleSlash2"
-					name="Draft"
-					onChange={() => data.id && handleStatusChange('draft')}
-					disabled={loading}
-				/>
-				<DropDownDotItem
-					icon="Trash2"
-					name="Delete"
-					onChange={() => data.id && handleDelete(data.id)}
-					disabled={loading}
-				/>
+				{data.status !== 'active' && (
+					<DropDownDotItem
+						icon="CircleCheckBig"
+						name="Active"
+						onChange={() => data._id && handleStatusChange('active')}
+						disabled={loading}
+					/>
+				)}
+
+				{data.status !== 'deactivated' && (
+					<DropDownDotItem
+						icon="CircleSlash2"
+						name="Deactivated"
+						onChange={() => data._id && handleStatusChange('deactivated')}
+						disabled={loading}
+					/>
+				)}
+
+				{data.status !== 'draft' && (
+					<DropDownDotItem
+						icon="PackageX"
+						name="Draft"
+						onChange={() => data._id && handleStatusChange('draft')}
+						disabled={loading}
+					/>
+				)}
+				{(data.status === 'draft' || isFor === 'child') && (
+					<DropDownDotItem
+						icon="Trash2"
+						name="Delete"
+						onChange={() => data._id && handleDelete(data._id)}
+						disabled={loading}
+					/>
+				)}
 			</DropDownThreeDot>
 		</div>
 	);
 };
 
-type ExtendedStatusType = StatusType | 'all';
 const Filter = ({
 	value,
 	setValue,
 }: {
-	value: ExtendedStatusType;
+	value: StatusType | 'all';
 	setValue: Function;
 }) => {
-	const statusHandler = (status: ExtendedStatusType) => {
+	const statusHandler = (status: StatusType | 'all') => {
 		setValue(status);
 	};
 	return (
@@ -136,6 +180,7 @@ const Filter = ({
 					onClick={() => statusHandler('all')}
 					active={value === 'all'}
 				/>
+
 				<TabListItem
 					name="Active"
 					onClick={() => statusHandler('active')}

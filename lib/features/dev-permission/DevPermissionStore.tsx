@@ -7,21 +7,23 @@ import { useRouter } from 'next/navigation';
 import {
 	addAction,
 	addRoute,
+	clearErrors,
 	removeAction,
 	removeRoute,
 	reset,
+	setErrors,
 	updateAction,
 	updateField,
 	updateRoute,
 } from './createSlice';
 import { DynamicIcon } from '@/components/actions';
-import {
-	useGetDevPermissionQuery,
-	useStoreDevPermissionMutation,
-} from './devPermissionSlice';
+import { useStoreDevPermissionMutation } from './devPermissionSlice';
 import { Label } from '@/components/ui/label';
 import React from 'react';
 import { toast } from '@/components/ui/use-toast';
+import { BarLoader } from '@/components/custom/loader';
+import { zod } from '@/lib/zod';
+
 type InputType = React.ChangeEvent<HTMLInputElement>;
 export function DevPermissionStore() {
 	const router = useRouter();
@@ -44,14 +46,12 @@ export function DevPermissionStore() {
 	) => {
 		dispatch(updateAction({ routeId, actionId, updates }));
 	};
-	// console.log({ formState });
 	// Define Zod schemas
-	const StatusTypeSchema = z.enum(['draft', 'active', 'deactivated']);
 
 	const RouteActionSchema = z.object({
 		id: z.string(),
-		name: z.string(),
-		status: StatusTypeSchema,
+		name: zod.name,
+		status: zod.status,
 		image: z.string(),
 		image_type: z.literal('icon'),
 		value: z.boolean(),
@@ -59,8 +59,8 @@ export function DevPermissionStore() {
 
 	const DevRouteSchema = z.object({
 		id: z.string(),
-		name: z.string(),
-		status: StatusTypeSchema,
+		name: zod.name,
+		status: zod.status,
 		image: z.string(),
 		image_type: z.literal('icon'),
 		value: z.boolean(),
@@ -69,18 +69,32 @@ export function DevPermissionStore() {
 
 	const FormSchema = z.object({
 		routes: z.array(DevRouteSchema),
-		name: z.string(),
-		status: StatusTypeSchema,
+		name: zod.name,
+		status: zod.status,
 	});
 
 	// useEffect(() => {
 	// 	reset(formState);
 	// }, [formState, reset]);
-	const { refetch } = useGetDevPermissionQuery();
 	const [addPost, { isLoading }] = useStoreDevPermissionMutation();
 
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
+		dispatch(clearErrors());
+		const result = FormSchema.safeParse(formState);
+		if (result.success) {
+			// Proceed with form submission
+			console.log('Form submitted', result.data);
+			console.log('success', formState);
+		} else {
+			// Handle validation errors
+			const errors = result.error.format();
+			dispatch(setErrors(errors));
+			console.log('errors', errors);
+			console.log('error state', formState);
+		}
+
+		return;
 		const dData = {
 			...formState,
 			routes: formState.routes.map((route) => {
@@ -100,7 +114,7 @@ export function DevPermissionStore() {
 		addPost(dData as any).then((e) => {
 			console.log(e);
 			dispatch(reset());
-			refetch();
+
 			router.push('/user-management/roles-permissions', { scroll: false });
 			toast({
 				title: 'You submitted the following values:',
@@ -115,6 +129,7 @@ export function DevPermissionStore() {
 
 	return (
 		<div className="max-w-5xl mx-auto w-full border border-red-200 dark:border-red-950 p-4 rounded">
+			{isLoading && <BarLoader />}
 			<form onSubmit={onSubmit} className="space-y-5">
 				<div className="border border-blue-200 dark:border-blue-950 p-3">
 					<div className="flex justify-between">
@@ -166,7 +181,7 @@ export function DevPermissionStore() {
 								<div className="col-span-8">
 									<FInput
 										id={`route-${route.id}-name`}
-										label="Name"
+										label={'Route Name-' + (routeIndex + 1)}
 										value={route.name}
 										onChange={(e: InputType) =>
 											handleRouteChange(route.id, { name: e.target.value })
@@ -228,7 +243,7 @@ export function DevPermissionStore() {
 										<div className="col-span-8">
 											<FInput
 												id={`route-${route.id}-action-${action.id}-name`}
-												label="Name"
+												label={'Action Name-' + (actionIndex + 1)}
 												value={action.name}
 												onChange={(e: InputType) =>
 													handleActionChange(route.id, action.id, {

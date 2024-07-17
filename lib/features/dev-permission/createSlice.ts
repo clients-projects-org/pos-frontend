@@ -2,6 +2,7 @@ import { StatusType } from '@/lib/type';
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 export type formType = {
 	name: string;
+	errors?: {};
 	status: StatusType;
 	routes: {
 		id: string;
@@ -10,6 +11,7 @@ export type formType = {
 		image_type: 'icon';
 		status: StatusType;
 		value: boolean;
+		errors?: {};
 		actions: {
 			id: string;
 			image: string;
@@ -17,6 +19,7 @@ export type formType = {
 			name: string;
 			status: StatusType;
 			value: boolean;
+			errors?: {};
 		}[];
 	}[];
 };
@@ -28,22 +31,25 @@ const initialState: formType = {
 		{
 			id: nanoid(),
 			name: '',
-			image: 'BadgeAlert',
+			image: 'BoxSelect',
 			image_type: 'icon',
 			status: 'active',
 			actions: [
 				{
 					id: nanoid(),
-					image: 'Atom',
+					image: 'CircleDashed',
 					image_type: 'icon',
 					name: '',
 					status: 'active',
 					value: false,
+					errors: {},
 				},
 			],
 			value: false,
+			errors: {},
 		},
 	],
+	errors: {},
 };
 
 const formSlice = createSlice({
@@ -54,13 +60,13 @@ const formSlice = createSlice({
 			state.routes.push({
 				id: nanoid(),
 				name: '',
-				image: 'BadgeAlert',
+				image: 'BoxSelect',
 				image_type: 'icon',
 				status: 'active',
 				actions: [
 					{
 						id: nanoid(),
-						image: 'Atom',
+						image: 'CircleDashed',
 						image_type: 'icon',
 						name: '',
 						status: 'active',
@@ -102,7 +108,7 @@ const formSlice = createSlice({
 			if (route) {
 				route.actions.push({
 					id: nanoid(),
-					image: 'Atom',
+					image: 'CircleDashed',
 					image_type: 'icon',
 					name: '',
 					status: 'active',
@@ -119,6 +125,12 @@ const formSlice = createSlice({
 				);
 			}
 		},
+		setErrors(state, action) {
+			state.errors = action.payload;
+		},
+		clearErrors(state) {
+			state.errors = {};
+		},
 
 		reset: () => initialState,
 	},
@@ -133,5 +145,7 @@ export const {
 	updateField,
 	updateRoute,
 	reset,
+	clearErrors,
+	setErrors,
 } = formSlice.actions;
 export default formSlice;

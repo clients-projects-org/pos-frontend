@@ -1,7 +1,10 @@
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
 import { UserStore } from '@/components/store';
-import { DevPermissionStore } from '@/lib/features/dev-permission';
+import {
+	DevPermissionDetails,
+	DevPermissionStore,
+} from '@/lib/features/dev-permission';
 import Link from 'next/link';
 
 const CreateRoleComponent = () => (
@@ -102,7 +105,8 @@ const PermissionDetailsComponent = ({ slug }: { slug: string }) => (
 				</span>
 			</Link>
 		</PageTitle>
-		<div>All permission Data page</div>
+
+		<DevPermissionDetails slug={slug.split('-')[1]} />
 	</>
 );
 
@@ -126,11 +130,11 @@ export default function Page({ params }: { params: { slug: string } }) {
 		case slug.startsWith('edit_permission'):
 			return <EditPermissionComponent />;
 
-		// if all role
+		// if view role
 		case slug.startsWith('role'):
 			return <RoleDetailsComponent slug={slug} />;
 
-		// if all permission
+		// if view permission
 		case slug.startsWith('permission'):
 			return <PermissionDetailsComponent slug={slug} />;
 

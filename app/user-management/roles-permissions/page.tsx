@@ -1,7 +1,7 @@
 'use client';
 import { DynamicIcon } from '@/components/actions';
 import { ListItem, TabList, TabListItem } from '@/components/custom/list-item';
-import { LineLoader } from '@/components/custom/loader';
+import { BarLoader, LineLoader } from '@/components/custom/loader';
 import { ApiError } from '@/components/custom/notifications';
 import PageTitle, { PageTitleNoBack } from '@/components/custom/PageTitle';
 import { CardContent } from '@/components/ui/card';
@@ -12,19 +12,27 @@ import {
 	useGetDevPermissionQuery,
 } from '@/lib/features/dev-permission';
 import { useGetRolesQuery } from '@/lib/features/role';
-import { DevPermissionType, DevRouteType, UserType } from '@/lib/type';
+import {
+	DevPermissionType,
+	DevRouteType,
+	StatusType,
+	UserType,
+} from '@/lib/type';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { NoItemFound } from '@/components/custom/not-found';
+import { Motion } from '@/components/motion';
 
 export default function RoleAndPermissions() {
-	const [value, setValue] = useState('active');
+	const [value, setValue] = useState<StatusType | 'all'>('active');
 
 	const { data } = useGetRolesQuery();
 	const devPermission = useGetDevPermissionQuery(value);
 
 	return (
 		<>
+			{(devPermission.isLoading || devPermission.isFetching) && <BarLoader />}
 			<div>
 				{/* roles  */}
 				<PageTitle title="Roles">
@@ -89,6 +97,7 @@ export default function RoleAndPermissions() {
 
 			{/* is loading  dev permission */}
 			{devPermission.isLoading && <LineLoader />}
+			{/* no item found dev permission */}
 
 			{/* permissions title*/}
 			{!devPermission.isLoading && devPermission.data?.success && (
@@ -111,30 +120,30 @@ export default function RoleAndPermissions() {
 					</div>
 
 					{/* permissions  lists*/}
-					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-						{devPermission.data?.data?.map((dev: DevPermissionType) => (
-							<div
-								key={dev.id}
-								className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white"
-							>
-								<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
-									<span>{dev.name}</span>
-									<DevPermission.Actions
-										data={dev}
-										refetch={devPermission.refetch}
-									/>
-								</div>
+					{!isEmptyArray(devPermission.data?.data) && (
+						<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+							{devPermission.data?.data?.map((dev: DevPermissionType) => (
+								<Motion key={dev._id}>
+									<div className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white">
+										<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
+											<span className="capitalize">{dev.name}</span>
+											<DevPermission.Actions data={dev} />
+										</div>
 
-								{isEmptyArray(dev.routes) && (
-									<p className="text-sm  text-stone-500">No Routes</p>
-								)}
+										{isEmptyArray(dev.routes) && (
+											<p className="text-sm  text-stone-500">No Routes</p>
+										)}
 
-								{dev.routes?.map((route: DevRouteType) => (
-									<ListItem key={route.slug} data={route} />
-								))}
-							</div>
-						))}
-					</div>
+										{dev.routes?.map((route: DevRouteType) => (
+											<ListItem key={route._id} data={route} />
+										))}
+									</div>
+								</Motion>
+							))}
+						</div>
+					)}
+					{!devPermission.isLoading &&
+						isEmptyArray(devPermission.data?.data) && <NoItemFound />}
 				</>
 			)}
 		</>

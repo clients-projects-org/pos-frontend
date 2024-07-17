@@ -12,10 +12,8 @@ export function FInput({
 }) {
 	return (
 		<div className="grid w-full items-center gap-2">
-			<Label className="capitalize" htmlFor={id}>
-				{label}
-			</Label>
-			<Input id={id} {...props} />
+			<Label className="capitalize">{label}</Label>
+			<Input {...props} />
 		</div>
 	);
 }

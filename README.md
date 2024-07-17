@@ -110,3 +110,13 @@ https://react-hook-form.com/get-started
 				))}
 				<button type="submit">Submit</button>
 			</form>
+
+    result
+    				? [
+    						...result.map(({ _id }) => ({
+    							type: 'DevPermission' as const,
+    							_id,
+    						})),
+    						'DevPermission',
+    					]
+    				: ['DevPermission'],
