@@ -2,7 +2,21 @@ import { StatusType } from '@/lib/type';
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 export type formType = {
 	name: string;
-	errors?: {};
+	errors?: {
+		name?: {
+			_errors?: string[] | undefined;
+		};
+		routes?: {
+			name?: {
+				_errors?: string[] | undefined;
+			};
+			actions?: {
+				name?: {
+					_errors?: string[] | undefined;
+				};
+			}[];
+		}[];
+	};
 	status: StatusType;
 	routes: {
 		id: string;
@@ -11,7 +25,7 @@ export type formType = {
 		image_type: 'icon';
 		status: StatusType;
 		value: boolean;
-		errors?: {};
+
 		actions: {
 			id: string;
 			image: string;
@@ -19,7 +33,6 @@ export type formType = {
 			name: string;
 			status: StatusType;
 			value: boolean;
-			errors?: {};
 		}[];
 	}[];
 };
@@ -79,11 +92,27 @@ const formSlice = createSlice({
 		updateField: (state, action) => {
 			const { key, value } = action.payload;
 			state[key as 'name' | 'status'] = value;
+			if (state.errors && state.errors.name) {
+				state.errors.name._errors = [];
+			}
 		},
 
 		updateRoute: (state, action) => {
+			console.log(action, 'action');
 			const { routeId, updates } = action.payload;
 			const route = state.routes.find((route) => route.id === routeId);
+			if (action.payload?.index !== undefined) {
+				const index = action.payload.index;
+				if (
+					state.errors &&
+					state.errors.routes &&
+					state.errors.routes[index] &&
+					state.errors.routes[index].name
+				) {
+					state.errors.routes[index].name._errors = [];
+				}
+			}
+
 			if (route) {
 				Object.assign(route, updates);
 			}
@@ -91,6 +120,23 @@ const formSlice = createSlice({
 		updateAction: (state, action) => {
 			const { routeId, actionId, updates } = action.payload;
 			const route = state.routes.find((route) => route.id === routeId);
+
+			if (
+				action.payload.routeIndex !== undefined &&
+				action.payload.actionIndex !== undefined
+			) {
+				const routeIndex = action.payload.routeIndex;
+				const actionIndex = action.payload.actionIndex;
+
+				const routes = state.errors?.routes;
+				if (routes && routes[routeIndex] && routes[routeIndex].actions) {
+					const action = routes[routeIndex].actions[actionIndex];
+					if (action && action.name) {
+						action.name._errors = [];
+					}
+				}
+			}
+
 			if (route) {
 				const action = route.actions.find((action) => action.id === actionId);
 				if (action) {

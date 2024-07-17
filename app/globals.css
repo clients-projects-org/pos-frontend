@@ -120,14 +120,11 @@
 }
 
 /* loader animation */
-
 .abx-progress-bar {
 	position: fixed;
-	height: 4px;
+	height: 2px;
 	width: 100%;
-	background: #1e75b7;
-	/* background: linear-gradient(0deg, rgb(51, 141, 122) 0%, #1142b4); */
-	/* bottom: -5px; */
+	background: linear-gradient(to right, #1e75b7, #1142b4);
 	top: 0px;
 	overflow: hidden;
 	left: 0;
@@ -135,26 +132,25 @@
 
 .abx-progress-fill {
 	position: absolute;
-	height: 4px;
+	height: 2px;
 	width: 30%;
 	animation: progress-forward 0.9s infinite;
-	background: #afcbd6;
+	background: linear-gradient(to right, #afcbd6, #51c6dd);
 	border-radius: 15px;
 	z-index: 1111111111;
 	animation-delay: 0.3s;
 	animation-timing-function: ease-out;
 }
+
 .abx-progress-fill2 {
 	position: absolute;
-	height: 4px;
+	height: 2px;
 	width: 110px;
 	animation: progress-forward 0.9s infinite;
-	/* background: #a3a3a3; */
+	background: linear-gradient(to right, #a3a3a3, #c4c4c4);
 	border-radius: 15px;
 	z-index: 1111111111;
-
 	animation-timing-function: ease-in;
-	/* animation-delay: 0.1s; */
 }
 
 @keyframes progress-forward {

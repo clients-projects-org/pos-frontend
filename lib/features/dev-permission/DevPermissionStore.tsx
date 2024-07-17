@@ -35,16 +35,20 @@ export function DevPermissionStore() {
 		dispatch(updateField({ key, value }));
 	};
 
-	const handleRouteChange = (routeId: string, updates: any) => {
-		dispatch(updateRoute({ routeId, updates }));
+	const handleRouteChange = (routeId: string, updates: any, index?: number) => {
+		dispatch(updateRoute({ routeId, updates, index }));
 	};
 
 	const handleActionChange = (
 		routeId: string,
 		actionId: string,
-		updates: any
+		updates: any,
+		actionIndex?: number,
+		routeIndex?: number
 	) => {
-		dispatch(updateAction({ routeId, actionId, updates }));
+		dispatch(
+			updateAction({ routeId, actionId, updates, actionIndex, routeIndex })
+		);
 	};
 	// Define Zod schemas
 
@@ -83,9 +87,37 @@ export function DevPermissionStore() {
 		dispatch(clearErrors());
 		const result = FormSchema.safeParse(formState);
 		if (result.success) {
-			// Proceed with form submission
-			console.log('Form submitted', result.data);
-			console.log('success', formState);
+			const dData = {
+				...formState,
+				name: formState.name,
+				status: formState.status,
+				routes: formState.routes.map((route) => {
+					const { id, ...rest } = route;
+					return {
+						...rest,
+						actions: route.actions.map((action) => {
+							const { id, ...rest } = action;
+							return {
+								...rest,
+							};
+						}),
+					};
+				}),
+			};
+			addPost(dData as any).then((e) => {
+				console.log(e);
+				dispatch(reset());
+
+				router.push('/user-management/roles-permissions', { scroll: false });
+				toast({
+					title: 'You submitted the following values:',
+					description: (
+						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+							<code className="text-white">{JSON.stringify(e, null, 2)}</code>
+						</pre>
+					),
+				});
+			});
 		} else {
 			// Handle validation errors
 			const errors = result.error.format();
@@ -93,38 +125,6 @@ export function DevPermissionStore() {
 			console.log('errors', errors);
 			console.log('error state', formState);
 		}
-
-		return;
-		const dData = {
-			...formState,
-			routes: formState.routes.map((route) => {
-				const { id, ...rest } = route;
-				return {
-					...rest,
-					actions: route.actions.map((action) => {
-						const { id, ...rest } = action;
-						return {
-							...rest,
-						};
-					}),
-				};
-			}),
-		};
-		console.log({ dData });
-		addPost(dData as any).then((e) => {
-			console.log(e);
-			dispatch(reset());
-
-			router.push('/user-management/roles-permissions', { scroll: false });
-			toast({
-				title: 'You submitted the following values:',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-					</pre>
-				),
-			});
-		});
 	}
 
 	return (
@@ -145,6 +145,7 @@ export function DevPermissionStore() {
 									handleFieldChange('name', e.target.value)
 								}
 								placeholder="Enter Main Title"
+								error={formState.errors?.name?._errors}
 							/>
 						</div>
 						<div className="col-span-4 space-y-2 flex flex-col">
@@ -184,9 +185,16 @@ export function DevPermissionStore() {
 										label={'Route Name-' + (routeIndex + 1)}
 										value={route.name}
 										onChange={(e: InputType) =>
-											handleRouteChange(route.id, { name: e.target.value })
+											handleRouteChange(
+												route.id,
+												{ name: e.target.value },
+												routeIndex
+											)
 										}
 										placeholder="Enter Route Name"
+										error={
+											formState.errors?.routes?.[routeIndex]?.name?._errors
+										}
 									/>
 								</div>
 
@@ -246,11 +254,22 @@ export function DevPermissionStore() {
 												label={'Action Name-' + (actionIndex + 1)}
 												value={action.name}
 												onChange={(e: InputType) =>
-													handleActionChange(route.id, action.id, {
-														name: e.target.value,
-													})
+													handleActionChange(
+														route.id,
+														action.id,
+														{
+															name: e.target.value,
+														},
+														actionIndex,
+														routeIndex
+													)
 												}
 												placeholder="Enter Action Name"
+												error={
+													formState.errors?.routes?.[routeIndex]?.actions?.[
+														actionIndex
+													].name?._errors
+												}
 											/>
 										</div>
 										<div className="col-span-2">
