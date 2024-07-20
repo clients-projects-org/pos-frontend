@@ -17,7 +17,10 @@ import {
 	updateRoute,
 } from './createSlice';
 import { DynamicIcon } from '@/components/actions';
-import { useStoreDevPermissionMutation } from './devPermissionSlice';
+import {
+	useGetByIdQuery,
+	useStoreDevPermissionMutation,
+} from './devPermissionSlice';
 import { Label } from '@/components/ui/label';
 import React from 'react';
 import { toast } from '@/components/ui/use-toast';
@@ -25,9 +28,15 @@ import { BarLoader } from '@/components/custom/loader';
 import { zod } from '@/lib/zod';
 
 type InputType = React.ChangeEvent<HTMLInputElement>;
-export function DevPermissionStore() {
+export function DevPermissionStore({ slug }: { slug?: string }) {
 	const router = useRouter();
-
+	const id = slug && slug.split('-')[1];
+	const {
+		data,
+		isLoading: isLoadingView,
+		error,
+		isFetching,
+	} = useGetByIdQuery(id);
 	const dispatch = useAppDispatch();
 	const formState = useAppSelector((state) => state.form);
 

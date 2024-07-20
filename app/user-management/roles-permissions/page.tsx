@@ -11,7 +11,7 @@ import {
 	DevPermission,
 	useGetDevPermissionQuery,
 } from '@/lib/features/dev-permission';
-import { useGetRolesQuery } from '@/lib/features/role';
+import { RoleComponents, useGetRolesQuery } from '@/lib/features/role';
 import {
 	DevPermissionType,
 	DevRouteType,
@@ -19,78 +19,82 @@ import {
 	UserType,
 } from '@/lib/type';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useState } from 'react';
 import { NoItemFound } from '@/components/custom/not-found';
 import { Motion } from '@/components/motion';
 
 export default function RoleAndPermissions() {
-	const [value, setValue] = useState<StatusType | 'all'>('active');
-
-	const { data } = useGetRolesQuery();
+	const [value, setValue] = useState<StatusType | 'all'>('all');
+	const [valueRole, setValueRole] = useState<StatusType | 'all'>('all');
+	const role = useGetRolesQuery(valueRole);
 	const devPermission = useGetDevPermissionQuery(value);
 
 	return (
 		<>
-			{(devPermission.isLoading || devPermission.isFetching) && <BarLoader />}
-			<div>
-				{/* roles  */}
-				<PageTitle title="Roles">
-					<Link
-						href={'/user-management/roles-permissions/create-role'}
-						className="gap-1 flex items-center"
-					>
-						<DynamicIcon icon="PlusCircle" className="h-4 w-4 ml-0" />
-						<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-							Add Role
-						</span>
-					</Link>
-				</PageTitle>
+			{/* loader  */}
+			{(devPermission.isLoading ||
+				devPermission.isFetching ||
+				role.isLoading ||
+				role.isFetching) && <BarLoader />}
 
-				{/* filter  */}
-				<div className="mt-2">
-					<TabList>
-						<TabListItem name="All" onClick={() => {}} active count={10} />
-						<TabListItem name="Active" onClick={() => {}} />
-						<TabListItem name="Deactivated" onClick={() => {}} />
-						<TabListItem name="Draft" onClick={() => {}} />
-					</TabList>
-				</div>
-			</div>
+			{/* -----------------------Roles--------------------------------- */}
 
-			{/* roles lists  */}
-			<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-				{users?.map((user: UserType) => (
-					<Link
-						key={user.id}
-						href={`/user-management/roles-permissions/role-${user?.slug}`}
-					>
-						<CardContent className="p-0 ">
-							<div className="flex items-center space-x-4 rounded-md border p-4">
-								{user?.image === 'icon' ? (
-									<DynamicIcon icon={user?.image as string} />
-								) : (
-									<Image
-										alt="Product image"
-										className="aspect-square rounded-md object-cover"
-										height="40"
-										src={user?.image as string}
-										width="40"
-									/>
-								)}
+			{/* check api for error roles  */}
+			{!role.isLoading && <ApiError data={role.data} />}
 
-								<div className="flex-1 space-y-1">
-									<p className="text-sm font-medium leading-none">
-										{user?.name}
-									</p>
-									<p className="text-sm text-muted-foreground">{user?.role}</p>
-								</div>
-								<Switch checked={true} />
-							</div>
-						</CardContent>
-					</Link>
-				))}
-			</div>
+			{/* is loading  roles */}
+			{role.isLoading && <LineLoader />}
+			{/* no item found roles */}
+
+			{/* roles title*/}
+			{!role.isLoading && role.data?.success && (
+				<>
+					<PageTitle title="Roles">
+						<Link
+							href={'/user-management/roles-permissions/create-role'}
+							className="gap-1 flex items-center"
+						>
+							<DynamicIcon icon="PlusCircle" className="h-4 w-4 ml-0" />
+							<span className="sr-only sm:not-sr-only !whitespace-nowrap">
+								Add Role
+							</span>
+						</Link>
+					</PageTitle>
+
+					<RoleComponents.Filter value={valueRole} setValue={setValueRole} />
+
+					{!isEmptyArray(role.data?.data) && (
+						<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+							{role.data?.data?.map((data: DevPermissionType) => (
+								<Motion key={data._id}>
+									<CardContent className="p-0 ">
+										<div className="flex items-center space-x-4 rounded-md border p-4">
+											<Link href={`/user-management/users/${data?.slug}`}>
+												<DynamicIcon icon={data?.image as string} />
+											</Link>
+											<div className="flex-1 space-y-1">
+												<Link href={`/user-management/users/${data?.slug}`}>
+													<p className="text-sm font-medium leading-none">
+														{data?.name}
+													</p>
+													<p className="text-sm text-muted-foreground">
+														by {data?.role}
+													</p>
+												</Link>
+											</div>
+											{/* switch */}
+											<RoleComponents.Actions data={data} />
+										</div>
+									</CardContent>
+								</Motion>
+							))}
+						</div>
+					)}
+					{!role.isLoading && isEmptyArray(role.data?.data) && <NoItemFound />}
+				</>
+			)}
+
+			{/* -----------------------dev permission--------------------------------- */}
 
 			{/* check api for error dev permission  */}
 			{!devPermission.isLoading && <ApiError data={devPermission.data} />}
@@ -126,7 +130,12 @@ export default function RoleAndPermissions() {
 								<Motion key={dev._id}>
 									<div className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white">
 										<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
-											<span className="capitalize">{dev.name}</span>
+											<Link
+												href={`/user-management/roles-permissions/permission-${dev._id}`}
+												className="capitalize"
+											>
+												{dev.name}
+											</Link>
 											<DevPermission.Actions data={dev} />
 										</div>
 

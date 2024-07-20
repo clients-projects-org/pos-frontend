@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -184,7 +183,13 @@ export function UserStore() {
 							)}
 						/>
 						<div className="flex justify-end">
-							<Button type="submit">Create User</Button>
+							<Button
+								variant="outline"
+								className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600"
+								type="submit"
+							>
+								Create User
+							</Button>
 						</div>
 					</form>
 				</Form>

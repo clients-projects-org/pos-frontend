@@ -1,7 +1,26 @@
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
-import { UserStore } from '@/components/store';
+import { UserStore } from '@/lib/features/user';
+// import { UserStore } from '@/components/store';
 import Link from 'next/link';
+
+export default function Page({ params }: { params: { slug: string } }) {
+	const { slug } = params;
+
+	switch (true) {
+		// if crete
+		case slug === 'create':
+			return <CreateComponent />;
+
+		// if edit
+		case slug.startsWith('edit-'):
+			return <EditComponent />;
+
+		// default all
+		default:
+			return <DefaultComponent slug={slug} />;
+	}
+}
 
 const CreateComponent = () => (
 	<>
@@ -47,21 +66,3 @@ const DefaultComponent = ({ slug }: { slug: string }) => (
 		<div>All Data page</div>
 	</>
 );
-
-export default function Page({ params }: { params: { slug: string } }) {
-	const { slug } = params;
-
-	switch (true) {
-		// if crete
-		case slug === 'create':
-			return <CreateComponent />;
-
-		// if edit
-		case slug.startsWith('edit-'):
-			return <EditComponent />;
-
-		// default all
-		default:
-			return <DefaultComponent slug={slug} />;
-	}
-}

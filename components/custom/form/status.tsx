@@ -21,7 +21,7 @@ const SelectStatus = ({
 	items: 'actDeDraft';
 }) => {
 	const [value, setValue] = React.useState(defaultValue);
-
+	console.log(value);
 	useEffect(() => {
 		setValue(defaultValue);
 	}, [defaultValue]);

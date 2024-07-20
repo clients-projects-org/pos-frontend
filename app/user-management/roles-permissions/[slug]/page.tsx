@@ -4,8 +4,58 @@ import { UserStore } from '@/components/store';
 import {
 	DevPermissionDetails,
 	DevPermissionStore,
+	RoleStore,
 } from '@/lib/features/dev-permission';
 import Link from 'next/link';
+
+export default function Page({ params }: { params: { slug: string } }) {
+	const { slug } = params;
+
+	switch (true) {
+		// if crete role
+		case slug === 'create-role':
+			return <CreateRoleComponent />;
+
+		// if crete permission
+		case slug === 'create-permission':
+			return <CreatePermissionComponent />;
+
+		// if edit role
+		case slug.startsWith('edit_role'):
+			return <EditRoleComponent />;
+
+		// if edit permission
+		case slug.startsWith('edit_permission'):
+			return <EditPermissionComponent slug={slug} />;
+
+		// if view role
+		case slug.startsWith('role'):
+			return <RoleDetailsComponent slug={slug} />;
+
+		// if view permission
+		case slug.startsWith('permission'):
+			return <PermissionDetailsComponent slug={slug} />;
+
+		// default all
+		default:
+			return (
+				<>
+					<PageTitle title="Role & Permission">
+						<Link
+							href={`/user-management/roles-permissions`}
+							className="gap-1 flex items-center"
+						>
+							<DynamicIcon icon="Users" className="h-4 w-4 ml-0" />
+							<span className="sr-only sm:not-sr-only !whitespace-nowrap">
+								All
+							</span>
+						</Link>
+					</PageTitle>
+					<div>Not Found</div>
+				</>
+			);
+	}
+}
 
 const CreateRoleComponent = () => (
 	<>
@@ -20,7 +70,7 @@ const CreateRoleComponent = () => (
 				</span>
 			</Link>
 		</PageTitle>
-		<UserStore />
+		<RoleStore />
 	</>
 );
 
@@ -58,7 +108,7 @@ const EditRoleComponent = () => (
 	</>
 );
 
-const EditPermissionComponent = () => (
+const EditPermissionComponent = ({ slug }: { slug: string }) => (
 	<>
 		<PageTitle title="Edit Permission">
 			<Link
@@ -71,7 +121,7 @@ const EditPermissionComponent = () => (
 				</span>
 			</Link>
 		</PageTitle>
-		<UserStore />
+		<DevPermissionStore slug={slug} />
 	</>
 );
 
@@ -109,52 +159,3 @@ const PermissionDetailsComponent = ({ slug }: { slug: string }) => (
 		<DevPermissionDetails slug={slug.split('-')[1]} />
 	</>
 );
-
-export default function Page({ params }: { params: { slug: string } }) {
-	const { slug } = params;
-
-	switch (true) {
-		// if crete role
-		case slug === 'create-role':
-			return <CreateRoleComponent />;
-
-		// if crete permission
-		case slug === 'create-permission':
-			return <CreatePermissionComponent />;
-
-		// if edit role
-		case slug.startsWith('edit_role'):
-			return <EditRoleComponent />;
-
-		// if edit permission
-		case slug.startsWith('edit_permission'):
-			return <EditPermissionComponent />;
-
-		// if view role
-		case slug.startsWith('role'):
-			return <RoleDetailsComponent slug={slug} />;
-
-		// if view permission
-		case slug.startsWith('permission'):
-			return <PermissionDetailsComponent slug={slug} />;
-
-		// default all
-		default:
-			return (
-				<>
-					<PageTitle title="Role & Permission">
-						<Link
-							href={`/user-management/roles-permissions`}
-							className="gap-1 flex items-center"
-						>
-							<DynamicIcon icon="Users" className="h-4 w-4 ml-0" />
-							<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-								All
-							</span>
-						</Link>
-					</PageTitle>
-					<div>Not Found</div>
-				</>
-			);
-	}
-}

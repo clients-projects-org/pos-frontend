@@ -4,11 +4,14 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getDevPermission: builder.query<any, void>({
 			query: (payload) => `dev-permission?status=${payload}`,
-			providesTags: () => ['DevPermission'],
+			providesTags: (result, error, arg) => {
+				console.log({ result, error, arg });
+				return ['DevPermission'];
+			},
 		}),
 
 		deleteDevPermission: builder.mutation<any, string>({
-			query: ({ id, type }) => ({
+			query: ({ id, type }: any) => ({
 				url: `dev-permission/${id}`,
 				method: 'DELETE',
 				body: { type },
@@ -22,7 +25,11 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				method: 'POST',
 				body: payload,
 			}),
-			invalidatesTags: ['DevPermission'],
+			invalidatesTags: (result, error, arg) => {
+				console.log({ result, error, status: arg.status });
+				return ['DevPermission'];
+			},
+			// invalidatesTags: ['DevPermission'],
 		}),
 
 		updateStatus: builder.mutation<any, any>({

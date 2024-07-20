@@ -98,7 +98,6 @@ const formSlice = createSlice({
 		},
 
 		updateRoute: (state, action) => {
-			console.log(action, 'action');
 			const { routeId, updates } = action.payload;
 			const route = state.routes.find((route) => route.id === routeId);
 			if (action.payload?.index !== undefined) {

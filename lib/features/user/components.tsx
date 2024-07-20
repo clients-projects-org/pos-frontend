@@ -8,15 +8,15 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { DevPermissionType, StatusType } from '@/lib/type';
-import {
-	useDeleteDevPermissionMutation,
-	useUpdateStatusMutation,
-} from './devPermissionSlice';
+
 import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
-import { ToastAction } from '@/components/ui/toast';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import {
+	useDeleteUserMutation,
+	useUpdateUserStatusMutation,
+} from './UserApiSlice';
 
 type typeProps = {
 	type: 'routes' | 'main' | 'actions';
@@ -38,10 +38,10 @@ const Actions = ({
 	const router = useRouter();
 	const params = useParams<{ slug: string; item: string }>();
 
-	const [deleteDevPermission, { isLoading }] = useDeleteDevPermissionMutation();
+	const [deleting, { isLoading }] = useDeleteUserMutation();
 
 	const [updateStatus, { isLoading: updateStatusLoading }] =
-		useUpdateStatusMutation();
+		useUpdateUserStatusMutation();
 
 	const loading = isLoading || updateStatusLoading;
 
@@ -55,13 +55,10 @@ const Actions = ({
 
 			if (confirmed) {
 				// Perform the delete action here
-				await deleteDevPermission({ id, type }).unwrap();
+				await deleting({ id, type }).unwrap();
 				const options: ToastOptions = {
-					title: 'Scheduled: Catch up',
-					description: 'Friday, February 10, 2023 at 5:57 PM',
-					action: (
-						<ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-					),
+					title: 'Successfully Deleted',
+					description: 'Item delete is done, You can not find it, Thanks',
 					autoClose: true,
 					autoCloseDelay: 5000,
 				};
@@ -203,4 +200,4 @@ const Filter = ({
 	);
 };
 
-export const DevPermission = { Actions, Filter };
+export const UserComponents = { Actions, Filter };

@@ -68,10 +68,11 @@ export type UserType = {
 	email?: string;
 	phone?: string;
 	created_at?: string;
-	role?: UseRole;
+	role_id?: string;
 	image?: string;
 	image_type: ImageType;
 	status?: StatusType;
+	created_by?: string;
 };
 export type RoleType = {
 	_id?: string;
