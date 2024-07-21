@@ -1,35 +1,23 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from '@/components/ui/use-toast';
 
+import { Form } from '@/components/ui/form';
+import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
-import { IconModal, SelectStatus } from '@/components/custom/form';
+	RFIcon,
+	RFImage,
+	RFInput,
+	RFSelect,
+	RFStatus,
+	RFSubmit,
+	RFTextarea,
+} from '@/components/custom/form';
 import { zod } from '@/lib/zod';
-import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import { DevPermissionType } from '@/lib/type';
-import { isEmptyArray } from '@/lib/actions';
 import { useStoreUserMutation } from './UserApiSlice';
 import { useGetRolesQuery } from '../role';
 export function UserStore() {
@@ -51,18 +39,15 @@ export function UserStore() {
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			name: undefined,
+			name: '',
 			status: 'active',
-
-			email: undefined,
-			phone: undefined,
-
-			password: undefined,
-			role_id: undefined,
+			email: '',
+			phone: '',
+			password: '',
+			role_id: '',
 			image: 'Aperture',
 			image_type: 'icon',
-
-			description: undefined,
+			description: '',
 		},
 	});
 	const [store, { isLoading }] = useStoreUserMutation();
@@ -82,16 +67,9 @@ export function UserStore() {
 				),
 			});
 		});
-		// toast({
-		// 	title: 'You submitted the following values:',
-		// 	description: (
-		// 		<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-		// 			<code className="text-white">{JSON.stringify(data, null, 2)}</code>
-		// 		</pre>
-		// 	),
-		// });
 	}
-	console.log(methods.watch());
+	const watching = methods.watch();
+	console.log(watching);
 	// const methods = useForm();
 	// const onSubmit = (data) => console.log(data);
 	return (
@@ -99,183 +77,94 @@ export function UserStore() {
 			<FormProvider {...methods}>
 				<Form {...methods}>
 					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
+						{/* <FormField
+							control={methods.control}
+							name="image_type"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Image or Icon</FormLabel>
+									<FormControl>
+										<ImageIcoRadio {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/> */}
+						{watching.image_type === 'image' ? (
+							<RFImage methods={methods} />
+						) : (
+							<div className="space-y-2   ">
+								<RFIcon methods={methods} label={false} />
+							</div>
+						)}
 						<div className="grid grid-cols-12 gap-3">
 							{/* Name */}
 							<div className="col-span-8">
-								<FormField
-									control={methods.control}
+								<RFInput
+									label="User Name"
+									methods={methods}
 									name="name"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>User Name</FormLabel>
-											<FormControl>
-												<Input placeholder="User Name" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
+									placeholder="User Name"
 								/>
 							</div>
 
 							{/* Status */}
 							<div className="col-span-4">
-								<FormField
-									control={methods.control}
-									name="status"
-									render={({ field }) => {
-										console.log(field);
-										return (
-											<div className="space-y-2">
-												<Label className="capitalize">Status</Label>
-												<SelectStatus
-													placeholder="Select a Status"
-													items="actDeDraft"
-													defaultValue={field.value}
-													onChange={(e) => field.onChange(e)}
-												/>
-											</div>
-										);
-									}}
-								/>
+								<RFStatus methods={methods} name="status" />
 							</div>
 						</div>
 						{/* Email */}
 						<div className="grid grid-cols-2 gap-3">
-							<div className=" ">
-								<FormField
-									control={methods.control}
-									name="email"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Email </FormLabel>
-											<FormControl>
-												<Input placeholder="Email" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-							{/* Phone */}
-							<div className=" ">
-								<FormField
-									control={methods.control}
-									name="phone"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Phone </FormLabel>
-											<FormControl>
-												<Input placeholder="Phone" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
+							<RFInput
+								label="Email"
+								methods={methods}
+								name="email"
+								placeholder="Email"
+							/>
+							<RFInput
+								label="Phone"
+								methods={methods}
+								name="phone"
+								placeholder="Phone"
+							/>
 						</div>
 						<div className="grid grid-cols-12 gap-3">
 							{/* password  */}
 							<div className="col-span-6">
-								<FormField
-									control={methods.control}
+								<RFInput
+									label="Password"
+									methods={methods}
 									name="password"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Password </FormLabel>
-											<FormControl>
-												<Input placeholder="Password" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
+									placeholder="Password"
 								/>
 							</div>
-							{/* Role  */}
-							<div className="col-span-4">
-								<FormField
-									control={methods.control}
+
+							{/* Permission  */}
+							<div className="col-span-6">
+								<RFSelect
+									methods={methods}
+									data={roles.data?.data}
+									label="Role"
 									name="role_id"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Role</FormLabel>
-											{isEmptyArray(roles.data?.data) && (
-												<p className="text-sm  text-stone-500">No Item Found</p>
-											)}
-											{!isEmptyArray(roles.data?.data) && (
-												<FormControl>
-													<Select onValueChange={field.onChange}>
-														<SelectTrigger className="capitalize">
-															<SelectValue placeholder="Select a Permission" />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectGroup>
-																<SelectLabel>Permission All List</SelectLabel>
-																{roles.data?.data?.map(
-																	(dev: DevPermissionType) => (
-																		<SelectItem
-																			className="capitalize"
-																			value={dev._id && dev._id}
-																		>
-																			{dev.name}
-																		</SelectItem>
-																	)
-																)}
-															</SelectGroup>
-														</SelectContent>
-													</Select>
-												</FormControl>
-											)}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							{/* icon  */}
-							<div className="space-y-2 col-span-2  ">
-								<FormField
-									control={methods.control}
-									name="image"
-									render={({ field }) => (
-										<FormItem>
-											<Label className="capitalize block mt-2">Icon</Label>
-											<FormControl>
-												<IconModal
-													onSave={(value) => {
-														field.onChange(value);
-													}}
-													defaultValue={field.value}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+								>
+									<SelectGroup>
+										<SelectLabel>Role All List</SelectLabel>
+										{roles.data?.data?.map((dev: DevPermissionType) => (
+											<SelectItem
+												className="capitalize"
+												value={dev._id ? dev._id : ''}
+											>
+												{dev.name}
+											</SelectItem>
+										))}
+									</SelectGroup>
+								</RFSelect>
 							</div>
 						</div>
 
-						<FormField
-							control={methods.control}
-							name="description"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Description</FormLabel>
-									<FormControl>
-										<Textarea placeholder="Type description" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="flex justify-end">
-							<Button
-								variant="outline"
-								className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600"
-								type="submit"
-							>
-								Create User
-							</Button>
-						</div>
+						<RFTextarea methods={methods} />
+
+						<RFSubmit />
 					</form>
 				</Form>
 			</FormProvider>

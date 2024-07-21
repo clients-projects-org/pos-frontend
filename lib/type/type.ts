@@ -60,7 +60,7 @@ export type DiscountType = {
 export type UseRole = 'admin' | 'supper admin' | 'staff' | 'user';
 
 export type UserType = {
-	id: string;
+	_id?: string;
 	code?: string;
 	description?: string;
 	name?: string;

@@ -7,7 +7,7 @@ import {
 } from '@/components/custom/list-item';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { DevPermissionType, StatusType } from '@/lib/type';
+import { DevPermissionType, StatusType, UserType } from '@/lib/type';
 
 import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
@@ -31,7 +31,7 @@ const Actions = ({
 		type: 'main',
 	},
 }: {
-	data: DevPermissionType;
+	data: UserType;
 	isFor?: 'child';
 	type?: typeProps;
 }) => {
@@ -92,7 +92,7 @@ const Actions = ({
 	return (
 		<div className="ml-auto flex items-center gap-2">
 			<Badge
-				variant={badge(data.status)}
+				variant={data.status && badge(data.status)}
 				style={{ fontSize: isFor === 'child' ? '10px' : '12px' }}
 				className={`text-xs capitalize ${isFor === 'child' ? 'py-0' : 'py-1'}`}
 			>
@@ -105,9 +105,7 @@ const Actions = ({
 					icon="SquarePen"
 					name="Edit"
 					onChange={() => {
-						router.push(
-							`/user-management/roles-permissions/edit_permission-${data._id}`
-						);
+						router.push(`/user-management/users/edit-${data._id}`);
 					}}
 					disabled={loading}
 				/>
@@ -115,9 +113,7 @@ const Actions = ({
 					icon="ScanEye"
 					name="View"
 					onChange={() => {
-						router.push(
-							`/user-management/roles-permissions/permission-${data._id}`
-						);
+						router.push(`/user-management/users/${data._id}`);
 					}}
 					disabled={loading}
 				/>

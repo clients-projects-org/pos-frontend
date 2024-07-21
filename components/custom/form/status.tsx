@@ -9,6 +9,14 @@ import {
 } from '@/components/ui/select';
 import React, { useEffect } from 'react';
 
+const StatusOptions = {
+	actDeDraft: [
+		{ value: 'active', label: 'Active' },
+		{ value: 'deactivated', label: 'Deactivated' },
+		{ value: 'draft', label: 'Draft' },
+	],
+};
+
 const SelectStatus = ({
 	onChange,
 	placeholder,
@@ -18,21 +26,13 @@ const SelectStatus = ({
 	defaultValue: string;
 	placeholder: string;
 	onChange: (value: string) => void;
-	items: 'actDeDraft';
+	items: string;
 }) => {
 	const [value, setValue] = React.useState(defaultValue);
 	console.log(value);
 	useEffect(() => {
 		setValue(defaultValue);
 	}, [defaultValue]);
-
-	const options = {
-		actDeDraft: [
-			{ value: 'active', label: 'Active' },
-			{ value: 'deactivated', label: 'Deactivated' },
-			{ value: 'draft', label: 'Draft' },
-		],
-	};
 
 	const handleChange = (value: string) => {
 		setValue(value);
@@ -46,7 +46,7 @@ const SelectStatus = ({
 			</SelectTrigger>
 			<SelectContent>
 				<SelectGroup>
-					{options[items].map((item) => (
+					{StatusOptions[items].map((item) => (
 						<SelectItem key={item.value} value={item.value}>
 							{item.label}
 						</SelectItem>

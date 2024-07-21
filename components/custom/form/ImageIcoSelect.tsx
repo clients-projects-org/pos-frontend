@@ -19,6 +19,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { image } from '@/assets/image';
 import { Button } from '@/components/ui/button';
 export function ImageIcoRadio({ ...field }) {
+	const onChange = () => {
+		field.onChange;
+	};
 	return (
 		<RadioGroup
 			onValueChange={field.onChange}
@@ -38,7 +41,7 @@ export function ImageIcoRadio({ ...field }) {
 	);
 }
 
-export function ImageSelect() {
+export function ImageSelect({ defaultValue, onChange }) {
 	const [imageSrc, setImageSrc] = React.useState<string>(image.placeholder);
 	const [warning, setWarning] = React.useState<string>('');
 	const [loading, setLoading] = React.useState<boolean>(false);
@@ -70,6 +73,7 @@ export function ImageSelect() {
 
 				setWarning('');
 				setImageSrc(objectUrl);
+				onChange(file);
 			};
 
 			img.onerror = () => {

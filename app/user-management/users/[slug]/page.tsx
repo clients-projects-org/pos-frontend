@@ -1,6 +1,6 @@
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
-import { UserStore } from '@/lib/features/user';
+import { UserDetails, UserStore } from '@/lib/features/user';
 // import { UserStore } from '@/components/store';
 import Link from 'next/link';
 
@@ -52,7 +52,7 @@ const EditComponent = () => (
 
 const DefaultComponent = ({ slug }: { slug: string }) => (
 	<>
-		<PageTitle title={slug}>
+		<PageTitle title="User Details">
 			<Link
 				href={`/user-management/users/edit-${slug}`}
 				className="gap-1 flex items-center"
@@ -63,6 +63,6 @@ const DefaultComponent = ({ slug }: { slug: string }) => (
 				</span>
 			</Link>
 		</PageTitle>
-		<div>All Data page</div>
+		<UserDetails slug={slug} />
 	</>
 );

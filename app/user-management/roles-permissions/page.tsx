@@ -1,12 +1,13 @@
 'use client';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Motion } from '@/components/motion';
+import { ApiUseHOC } from '@/components/hoc';
 import { DynamicIcon } from '@/components/actions';
-import { ListItem, TabList, TabListItem } from '@/components/custom/list-item';
-import { BarLoader, LineLoader } from '@/components/custom/loader';
-import { ApiError } from '@/components/custom/notifications';
+import { ListItem } from '@/components/custom/list-item';
 import PageTitle, { PageTitleNoBack } from '@/components/custom/PageTitle';
 import { CardContent } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { confirm, isEmptyArray } from '@/lib/actions';
+import { isEmptyArray } from '@/lib/actions';
 import {
 	DevPermission,
 	useGetDevPermissionQuery,
@@ -15,13 +16,9 @@ import { RoleComponents, useGetRolesQuery } from '@/lib/features/role';
 import {
 	DevPermissionType,
 	DevRouteType,
+	RoleType,
 	StatusType,
-	UserType,
 } from '@/lib/type';
-import Link from 'next/link';
-import { useState } from 'react';
-import { NoItemFound } from '@/components/custom/not-found';
-import { Motion } from '@/components/motion';
 
 export default function RoleAndPermissions() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
@@ -31,20 +28,7 @@ export default function RoleAndPermissions() {
 
 	return (
 		<>
-			{/* loader  */}
-			{(devPermission.isLoading ||
-				devPermission.isFetching ||
-				role.isLoading ||
-				role.isFetching) && <BarLoader />}
-
 			{/* -----------------------Roles--------------------------------- */}
-
-			{/* check api for error roles  */}
-			{!role.isLoading && <ApiError data={role.data} />}
-
-			{/* is loading  roles */}
-			{role.isLoading && <LineLoader />}
-			{/* no item found roles */}
 
 			{/* roles title*/}
 			{!role.isLoading && role.data?.success && (
@@ -61,151 +45,103 @@ export default function RoleAndPermissions() {
 						</Link>
 					</PageTitle>
 
+					{/* role filter  */}
 					<RoleComponents.Filter value={valueRole} setValue={setValueRole} />
-
-					{!isEmptyArray(role.data?.data) && (
-						<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-							{role.data?.data?.map((data: DevPermissionType) => (
-								<Motion key={data._id}>
-									<CardContent className="p-0 ">
-										<div className="flex items-center space-x-4 rounded-md border p-4">
-											<Link href={`/user-management/users/${data?.slug}`}>
-												<DynamicIcon icon={data?.image as string} />
-											</Link>
-											<div className="flex-1 space-y-1">
-												<Link href={`/user-management/users/${data?.slug}`}>
-													<p className="text-sm font-medium leading-none">
-														{data?.name}
-													</p>
-													<p className="text-sm text-muted-foreground">
-														by {data?.role}
-													</p>
-												</Link>
-											</div>
-											{/* switch */}
-											<RoleComponents.Actions data={data} />
-										</div>
-									</CardContent>
-								</Motion>
-							))}
-						</div>
-					)}
-					{!role.isLoading && isEmptyArray(role.data?.data) && <NoItemFound />}
 				</>
 			)}
 
+			{/* api management  */}
+			<ApiUseHOC
+				data={role.data}
+				isFetching={role.isFetching}
+				isLoading={role.isLoading}
+			>
+				{!isEmptyArray(role.data?.data) && (
+					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+						{role.data?.data?.map((data: RoleType) => (
+							<Motion key={data._id}>
+								<CardContent className="p-0 ">
+									<div className="flex items-center space-x-4 rounded-md border p-4">
+										<Link href={`/user-management/users/${data?.slug}`}>
+											<DynamicIcon icon={data?.image as string} />
+										</Link>
+										<div className="flex-1 space-y-1">
+											<Link href={`/user-management/users/${data?.slug}`}>
+												<p className="text-sm font-medium leading-none">
+													{data?.name}
+												</p>
+												<p className="text-sm text-muted-foreground">
+													by {data?.role}
+												</p>
+											</Link>
+										</div>
+
+										{/* action  */}
+										<RoleComponents.Actions data={data} />
+									</div>
+								</CardContent>
+							</Motion>
+						))}
+					</div>
+				)}
+			</ApiUseHOC>
+
 			{/* -----------------------dev permission--------------------------------- */}
-
-			{/* check api for error dev permission  */}
-			{!devPermission.isLoading && <ApiError data={devPermission.data} />}
-
-			{/* is loading  dev permission */}
-			{devPermission.isLoading && <LineLoader />}
-			{/* no item found dev permission */}
 
 			{/* permissions title*/}
 			{!devPermission.isLoading && devPermission.data?.success && (
 				<>
-					<div>
-						<PageTitleNoBack title="Permissions">
-							<Link
-								href={'/user-management/roles-permissions/create-permission'}
-								className="gap-1 flex items-center"
-							>
-								<DynamicIcon icon="PlusCircle" className="h-4 w-4 ml-0" />
-								<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-									Add Permissions
-								</span>
-							</Link>
-						</PageTitleNoBack>
+					<PageTitleNoBack title="Permissions">
+						<Link
+							href={'/user-management/roles-permissions/create-permission'}
+							className="gap-1 flex items-center"
+						>
+							<DynamicIcon icon="PlusCircle" className="h-4 w-4 ml-0" />
+							<span className="sr-only sm:not-sr-only !whitespace-nowrap">
+								Add Permissions
+							</span>
+						</Link>
+					</PageTitleNoBack>
 
-						{/* filter  */}
-						<DevPermission.Filter value={value} setValue={setValue} />
-					</div>
-
-					{/* permissions  lists*/}
-					{!isEmptyArray(devPermission.data?.data) && (
-						<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-							{devPermission.data?.data?.map((dev: DevPermissionType) => (
-								<Motion key={dev._id}>
-									<div className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white">
-										<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
-											<Link
-												href={`/user-management/roles-permissions/permission-${dev._id}`}
-												className="capitalize"
-											>
-												{dev.name}
-											</Link>
-											<DevPermission.Actions data={dev} />
-										</div>
-
-										{isEmptyArray(dev.routes) && (
-											<p className="text-sm  text-stone-500">No Routes</p>
-										)}
-
-										{dev.routes?.map((route: DevRouteType) => (
-											<ListItem key={route._id} data={route} />
-										))}
-									</div>
-								</Motion>
-							))}
-						</div>
-					)}
-					{!devPermission.isLoading &&
-						isEmptyArray(devPermission.data?.data) && <NoItemFound />}
+					{/* filter  */}
+					<DevPermission.Filter value={value} setValue={setValue} />
 				</>
 			)}
+
+			<ApiUseHOC
+				data={devPermission.data}
+				isFetching={devPermission.isFetching}
+				isLoading={devPermission.isLoading}
+			>
+				{!isEmptyArray(devPermission.data?.data) && (
+					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+						{devPermission.data?.data?.map((dev: DevPermissionType) => (
+							<Motion key={dev._id}>
+								<div className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white">
+									<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
+										<Link
+											href={`/user-management/roles-permissions/permission-${dev._id}`}
+											className="capitalize"
+										>
+											{dev.name}
+										</Link>
+										<DevPermission.Actions data={dev} />
+									</div>
+
+									{isEmptyArray(dev.routes) && (
+										<p className="text-sm  text-stone-500">No Routes</p>
+									)}
+
+									{/* routes list items  */}
+									{dev.routes?.map((route: DevRouteType) => (
+										<ListItem key={route._id} data={route} />
+									))}
+								</div>
+							</Motion>
+						))}
+					</div>
+				)}
+			</ApiUseHOC>
 		</>
 	);
 }
-
-const users: UserType[] = [
-	{
-		id: '66482b8dbc443d6b1ec88693s',
-		code: 'adminsasd423da4',
-		created_at: '2024-05-18T04:16:13.111Z',
-		description: 'admin',
-		email: 'abdurshobur.developer@gmail.com',
-		image_type: 'image',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Abdur Shobur',
-		role: 'admin',
-		slug: 'adminsasd423da4',
-	},
-	{
-		id: '66482b8dbc443d6b1eca88693',
-		code: 'adminsasd423da4',
-		created_at: '2024-05-18T04:16:13.111Z',
-		description: 'admin',
-		email: 'abdurshobur.developer@gmail.com',
-		image_type: 'image',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Abdur Shobur',
-		role: 'admin',
-		slug: 'adminsasd423da4',
-	},
-	{
-		id: '66482b8dbsc443d6b1ec88693',
-		code: 'adminsasd423da4',
-		created_at: '2024-05-18T04:16:13.111Z',
-		description: 'admin',
-		email: 'abdurshobur.developer@gmail.com',
-		image_type: 'image',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Abdur Shobur',
-		role: 'admin',
-		slug: 'adminsasd423da4',
-	},
-	{
-		id: '66482b8dbc443ds6b1ec88693',
-		code: 'adminsasd423da4',
-		created_at: '2024-05-18T04:16:13.111Z',
-		description: 'admin',
-		email: 'abdurshobur.developer@gmail.com',
-		image_type: 'image',
-		image: 'https://ui.shadcn.com/placeholder.svg',
-		name: 'Abdur Shobur',
-		role: 'admin',
-		slug: 'adminsasd423da4',
-	},
-];

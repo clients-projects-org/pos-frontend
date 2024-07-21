@@ -24,7 +24,16 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { IconModal, SelectStatus } from '@/components/custom/form';
+import {
+	IconModal,
+	RFIcon,
+	RFInput,
+	RFSelect,
+	RFStatus,
+	RFSubmit,
+	RFTextarea,
+	SelectStatus,
+} from '@/components/custom/form';
 import { zod } from '@/lib/zod';
 import { Label } from '@/components/ui/label';
 import { useStoreRoleMutation } from '.';
@@ -48,12 +57,12 @@ export function RoleStore() {
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			name: undefined,
+			name: '',
 			status: 'active',
-			description: undefined,
+			description: '',
 			image: 'Aperture',
 			image_type: 'icon',
-			dev_permission_id: undefined,
+			dev_permission_id: '',
 		},
 	});
 	const [store, { isLoading }] = useStoreRoleMutation();
@@ -92,128 +101,47 @@ export function RoleStore() {
 					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
 						<div className="grid grid-cols-12 gap-3">
 							<div className="col-span-8">
-								<FormField
-									control={methods.control}
+								<RFInput
+									label="Role Name"
+									methods={methods}
 									name="name"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Role Name</FormLabel>
-											<FormControl>
-												<Input placeholder="Role Name" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
+									placeholder="Role Name"
 								/>
 							</div>
 							<div className="col-span-4">
-								<FormField
-									control={methods.control}
-									name="status"
-									render={({ field }) => {
-										console.log(field);
-										return (
-											<div className="space-y-2">
-												<Label className="capitalize  ">Status</Label>
-												<SelectStatus
-													placeholder="Select a Status"
-													items="actDeDraft"
-													defaultValue={field.value}
-													onChange={(e) => field.onChange(e)}
-												/>
-											</div>
-										);
-									}}
-								/>
+								<RFStatus methods={methods} name="status" />
 							</div>
 						</div>
 						<div className="grid grid-cols-12 gap-3">
-							{/* Role  */}
 							<div className="col-span-8">
-								<FormField
-									control={methods.control}
+								<RFSelect
+									methods={methods}
+									data={devPermission.data?.data}
+									label="Permission"
 									name="dev_permission_id"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Role</FormLabel>
-											{isEmptyArray(devPermission.data?.data) && (
-												<p className="text-sm  text-stone-500">No Item Found</p>
-											)}
-											{!isEmptyArray(devPermission.data?.data) && (
-												<FormControl>
-													<Select onValueChange={field.onChange}>
-														<SelectTrigger className="capitalize">
-															<SelectValue placeholder="Select a Permission" />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectGroup>
-																<SelectLabel>Permission All List</SelectLabel>
-																{devPermission.data?.data?.map(
-																	(dev: DevPermissionType) => (
-																		<SelectItem
-																			className="capitalize"
-																			value={dev._id && dev._id}
-																		>
-																			{dev.name}
-																		</SelectItem>
-																	)
-																)}
-															</SelectGroup>
-														</SelectContent>
-													</Select>
-												</FormControl>
-											)}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+								>
+									<SelectGroup>
+										<SelectLabel>Permission All List</SelectLabel>
+										{devPermission.data?.data?.map((dev: DevPermissionType) => (
+											<SelectItem
+												key={dev._id}
+												className="capitalize"
+												value={dev._id ? dev._id : ''}
+											>
+												{dev.name}
+											</SelectItem>
+										))}
+									</SelectGroup>
+								</RFSelect>
 							</div>
 
 							{/* icon  */}
 							<div className="space-y-2 col-span-4  ">
-								<FormField
-									control={methods.control}
-									name="image"
-									render={({ field }) => (
-										<FormItem>
-											<Label className="capitalize block mt-2">Icon</Label>
-											<FormControl>
-												<IconModal
-													onSave={(value) => {
-														field.onChange(value);
-													}}
-													defaultValue={field.value}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+								<RFIcon methods={methods} />
 							</div>
 						</div>
-
-						<FormField
-							control={methods.control}
-							name="description"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Description</FormLabel>
-									<FormControl>
-										<Textarea placeholder="Type description" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="flex justify-end">
-							<Button
-								variant="outline"
-								className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600"
-								type="submit"
-							>
-								Create Role
-							</Button>
-						</div>
+						<RFTextarea methods={methods} />
+						<RFSubmit />
 					</form>
 				</Form>
 			</FormProvider>
