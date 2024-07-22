@@ -55,6 +55,7 @@ export default function RoleAndPermissions() {
 				data={role.data}
 				isFetching={role.isFetching}
 				isLoading={role.isLoading}
+				notFound
 			>
 				{!isEmptyArray(role.data?.data) && (
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
@@ -112,6 +113,7 @@ export default function RoleAndPermissions() {
 				data={devPermission.data}
 				isFetching={devPermission.isFetching}
 				isLoading={devPermission.isLoading}
+				notFound
 			>
 				{!isEmptyArray(devPermission.data?.data) && (
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">

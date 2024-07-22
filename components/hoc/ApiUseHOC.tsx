@@ -7,15 +7,26 @@ import React from 'react';
 export function ApiUseHOC({
 	isLoading,
 	isFetching,
-	isError,
 	data,
+	isError,
 	children,
+	notFound = false,
 }: {
 	isLoading: boolean;
 	isFetching: boolean;
+	notFound?: boolean;
 	data: any;
+	isError?: any;
 	children: React.ReactNode;
 }) {
+	if (isLoading) {
+		return (
+			<>
+				<LineLoader />
+				<BarLoader />
+			</>
+		);
+	}
 	return (
 		<>
 			{/* loader  */}
@@ -31,7 +42,7 @@ export function ApiUseHOC({
 			{children}
 
 			{/* not found  */}
-			{!isLoading && isEmptyArray(data?.data) && <NoItemFound />}
+			{!isLoading && notFound && isEmptyArray(data?.data) && <NoItemFound />}
 		</>
 	);
 }

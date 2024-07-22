@@ -36,7 +36,7 @@ export type ProductType = {
 	qty?: number;
 	alert_qty?: number;
 	total_sells?: number;
-	created_at?: string;
+	createdAt?: string;
 	sku?: string;
 	created_by?: UserType;
 	brand?: BrandType;
@@ -67,7 +67,7 @@ export type UserType = {
 	slug?: string;
 	email?: string;
 	phone?: string;
-	created_at?: string;
+	createdAt?: string;
 	role_id?: string;
 	image?: string;
 	image_type: ImageType;
@@ -100,7 +100,7 @@ export type SupplierType = {
 	image_type: ImageType;
 	description: string;
 	status: StatusType;
-	created_at?: string;
+	createdAt?: string;
 	created_by?: UserType;
 };
 
@@ -111,7 +111,7 @@ export type WarehouseType = {
 	slug?: string;
 	status: StatusType;
 	description: string;
-	created_at?: string;
+	createdAt?: string;
 	created_by?: UserType;
 };
 
@@ -120,15 +120,15 @@ export type ImageType = 'image' | 'icon';
 
 // category type
 export type CategoryType = {
-	id: string;
+	_id: string;
 	code?: string;
 	description?: string;
 	name?: string;
 	slug?: string;
 	image?: string;
 	image_type: ImageType;
-	created_at?: string;
-	crated_by?: UserType;
+	createdAt?: string;
+	created_by?: UserType;
 	status?: StatusType;
 };
 
@@ -140,8 +140,8 @@ export type SubCategoryType = {
 	slug?: string;
 	image?: string;
 	image_type: ImageType;
-	created_at?: string;
-	crated_by?: UserType;
+	createdAt?: string;
+	created_by?: UserType;
 	status?: StatusType;
 	category_id?: string;
 };
@@ -154,8 +154,8 @@ export type BrandType = {
 	slug?: string;
 	image?: string;
 	image_type: ImageType;
-	created_at?: string;
-	crated_by?: UserType;
+	createdAt?: string;
+	created_by?: UserType;
 	status?: StatusType;
 };
 
@@ -168,8 +168,8 @@ export type UnitType = {
 	slug?: string;
 	image?: string;
 	image_type: ImageType;
-	created_at?: string;
-	crated_by?: UserType;
+	createdAt?: string;
+	created_by?: UserType;
 	status?: StatusType;
 };
 export type VariantType = {
@@ -181,8 +181,8 @@ export type VariantType = {
 	slug?: string;
 	image?: string;
 	image_type: ImageType;
-	created_at?: string;
-	crated_by?: UserType;
+	createdAt?: string;
+	created_by?: UserType;
 	status?: StatusType;
 };
 export type PeriodsType = 'day' | 'week' | 'month' | 'year';
@@ -191,7 +191,7 @@ export type WarrantyType = {
 	code?: string;
 	name?: string;
 	slug?: string;
-	created_at?: string;
+	createdAt?: string;
 	created_by?: UserType;
 	status?: StatusType;
 	description?: string;
@@ -205,7 +205,7 @@ const data = {
 	description: 't',
 	status: 'active',
 	deleted_at: null,
-	created_at: '2024-04-22T04:30:51.000000Z',
+	createdAt: '2024-04-22T04:30:51.000000Z',
 	updated_at: '2024-04-22T04:30:51.000000Z',
 	vendor_id: 2,
 };

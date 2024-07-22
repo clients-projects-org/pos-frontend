@@ -20,9 +20,6 @@ import {
 	ChevronLeft,
 	ChevronsLeft,
 	ChevronsRight,
-	File,
-	ListFilter,
-	PlusCircle,
 } from 'lucide-react';
 import {
 	Select,
@@ -37,8 +34,6 @@ import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -53,9 +48,16 @@ import {
 interface TableBoxProps<DataType> {
 	columns: ColumnDef<DataType>[];
 	data: DataType[];
+	TFilters: React.JSX.Element;
+	TEndChild: React.JSX.Element;
 }
 
-export function TableBox<DataType>({ columns, data }: TableBoxProps<DataType>) {
+export function TableBox<DataType>({
+	columns,
+	data,
+	TFilters,
+	TEndChild,
+}: TableBoxProps<DataType>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
@@ -85,7 +87,7 @@ export function TableBox<DataType>({ columns, data }: TableBoxProps<DataType>) {
 
 	return (
 		<div className="w-full">
-			<SearchFilter table={table} />
+			<SearchFilter table={table} TEndChild={TEndChild} TFilters={TFilters} />
 			<TB table={table} columns={columns} />
 			<Footer table={table} />
 		</div>
@@ -113,7 +115,7 @@ function TB<ProductType>({
 											: flexRender(
 													header.column.columnDef.header,
 													header.getContext()
-											  )}
+												)}
 										{header.column.getCanFilter() ? (
 											<div>
 												{/* <Filter column={header.column} table={table} /> */}
@@ -188,7 +190,7 @@ function Footer<ProductType>({ table }: { table: TanTable<ProductType> }) {
 	);
 }
 
-// header filter
+// header filter max min
 function Filter({
 	column,
 	table,
@@ -244,67 +246,39 @@ function Filter({
 
 function SearchFilter<ProductType>({
 	table,
+	TFilters,
+	TEndChild,
 }: {
 	table: TanTable<ProductType>;
+	TFilters: React.JSX.Element;
+	TEndChild: React.JSX.Element;
 }) {
 	return (
 		<div className="flex items-center py-4 gap-2 flex-col lg:flex-row">
 			<Input
-				placeholder="Filter emails..."
+				placeholder="Search..."
 				value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
 				onChange={(event) =>
 					table.getColumn('name')?.setFilterValue(event.target.value)
 				}
-				className="  w-full"
+				className="w-full"
 				autoComplete="off"
 			/>
 			<div className="lg:ml-auto flex w-full lg:w-auto items-center gap-3 ">
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className=" ">
-							<ListFilter className="h-4 w-4 sm:mr-2" />
-							<span className="sr-only sm:not-sr-only">Filter</span>
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Filter by</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
-						<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-						<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className=" ">
-							<File className="h-4 w-4 sm:mr-2" />
-							<span className="sr-only sm:not-sr-only">Export</span>
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Filter by</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
-						<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-						<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-
+				{TFilters}
 				{/* column filter  */}
 				<ColumnFIlter<ProductType> table={table} />
-
-				<Button size="sm" className="gap-1">
-					<PlusCircle className="h-4 w-4 ml-0" />
-					<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-						Add Product
-					</span>
-				</Button>
+				{TEndChild}
 			</div>
 		</div>
 	);
 }
 
-function Pagination<ProductType>({ table }: { table: TanTable<ProductType> }) {
+export function Pagination<ProductType>({
+	table,
+}: {
+	table: TanTable<ProductType>;
+}) {
 	return (
 		<div>
 			<div className="flex items-center gap-2 mb-2">

@@ -196,7 +196,7 @@ export function RFSelect({ methods, label, data, children, name }) {
 	);
 }
 
-export function RFSubmit() {
+export function RFSubmit({ text }: { text: string }) {
 	return (
 		<div className="flex justify-end">
 			<Button
@@ -204,7 +204,7 @@ export function RFSubmit() {
 				className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600"
 				type="submit"
 			>
-				Create Role
+				{text}
 			</Button>
 		</div>
 	);

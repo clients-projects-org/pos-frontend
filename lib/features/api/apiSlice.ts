@@ -11,6 +11,6 @@ export const apiSlice = createApi({
 	endpoints: () => ({}),
 	refetchOnReconnect: true,
 	refetchOnFocus: true,
-	tagTypes: ['DevPermission', 'Role', 'User'],
+	tagTypes: ['DevPermission', 'Role', 'User', 'Category'],
 	keepUnusedDataFor: 50000,
 });

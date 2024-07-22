@@ -1,7 +1,12 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
-import { FInput, IconModal, SelectStatus } from '@/components/custom/form';
+import {
+	FInput,
+	IconModal,
+	RFSubmit,
+	SelectStatus,
+} from '@/components/custom/form';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
 import {
@@ -331,15 +336,7 @@ export function DevPermissionStore({ slug }: { slug?: string }) {
 					))}
 				</div>
 
-				<div className="flex justify-end">
-					<Button
-						variant="outline"
-						className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600"
-						type="submit"
-					>
-						Create New Permission
-					</Button>
-				</div>
+				<RFSubmit text="Create Dev Permission" />
 			</form>
 		</div>
 	);

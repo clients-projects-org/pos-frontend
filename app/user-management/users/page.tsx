@@ -35,7 +35,12 @@ export default function userManagementUser() {
 				</>
 			)}
 
-			<ApiUseHOC data={data} isFetching={isFetching} isLoading={isLoading}>
+			<ApiUseHOC
+				data={data}
+				isFetching={isFetching}
+				isLoading={isLoading}
+				notFound
+			>
 				{!isEmptyArray(data?.data) && (
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 						{data?.data?.map((data: UserType) => (

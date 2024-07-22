@@ -9,17 +9,17 @@ import {
 export const DropDownThreeDot = ({
 	children,
 	isLoading,
+	icon = 'MoreVertical',
 }: {
 	children: React.ReactNode;
 	isLoading?: boolean;
+	icon?: 'MoreVertical' | 'MoreHorizontal';
 }) => {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button size="icon" variant="outline" className="h-8 w-8">
-					{!isLoading && (
-						<DynamicIcon icon="MoreVertical" className="h-3.5 w-3.5" />
-					)}
+					{!isLoading && <DynamicIcon icon={icon} className="h-3.5 w-3.5" />}
 					{isLoading && (
 						<DynamicIcon
 							icon="LoaderCircle"

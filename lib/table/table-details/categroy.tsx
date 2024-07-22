@@ -75,12 +75,12 @@ export const categoryColumn: ColumnDef<CategoryType>[] = [
 		header: () => 'Image',
 		cell: ({ row }) => (
 			<div>
-				{row.original.image && row.original.image.image_type === 'image' ? (
+				{row.original.image && row.original.image_type === 'image' ? (
 					<Image
 						alt="Product image"
 						className="aspect-square rounded-md object-cover"
 						height="40"
-						src={row.original.image.image as string}
+						src={row.original.image as string}
 						width="40"
 					/>
 				) : (
@@ -88,7 +88,7 @@ export const categoryColumn: ColumnDef<CategoryType>[] = [
 						{row.original.image && (
 							<DynamicIcon
 								className="w-10 h-10"
-								icon={row.original.image.image as string}
+								icon={row.original.image as string}
 							/>
 						)}
 					</div>

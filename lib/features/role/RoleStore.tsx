@@ -141,7 +141,7 @@ export function RoleStore() {
 							</div>
 						</div>
 						<RFTextarea methods={methods} />
-						<RFSubmit />
+						<RFSubmit text="Create Role" />
 					</form>
 				</Form>
 			</FormProvider>
