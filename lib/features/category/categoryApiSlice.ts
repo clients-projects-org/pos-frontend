@@ -5,8 +5,14 @@ export const categoryApi = apiSlice.injectEndpoints({
 		getCategory: builder.query<any, void>({
 			query: (payload): string => `category?status=${payload}`,
 			providesTags: (result, error, arg) => {
-				console.log({ result, error, arg });
 				return ['Category'];
+			},
+		}),
+
+		getCategoryById: builder.query<any, string>({
+			query: (id) => `category/${id}`,
+			providesTags: (result, error, id) => {
+				return [{ type: 'Category', id: id }];
 			},
 		}),
 
@@ -49,4 +55,5 @@ export const {
 	useGetCategoryQuery,
 	useStoreCategoryMutation,
 	useUpdateCategoryStatusMutation,
+	useGetCategoryByIdQuery,
 } = categoryApi;

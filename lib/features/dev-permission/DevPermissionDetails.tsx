@@ -7,7 +7,7 @@ import { DevPermission } from './components';
 import { PageDetailsApiHOC } from '@/components/hoc';
 
 export function DevPermissionDetails({ slug }: { slug: string }) {
-	const { data, isLoading, error, isFetching, isError } = useGetByIdQuery(slug);
+	const { data, isLoading, isFetching, isError } = useGetByIdQuery(slug);
 
 	return (
 		<PageDetailsApiHOC
@@ -15,7 +15,6 @@ export function DevPermissionDetails({ slug }: { slug: string }) {
 			isError={isError}
 			isLoading={isLoading}
 			isFetching={isFetching}
-			error={error}
 		>
 			<div className="mx-auto max-w-5xl w-full border p-4">
 				<div>

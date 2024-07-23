@@ -4,8 +4,11 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import React from 'react';
 export const DropDownThreeDot = ({
 	children,
 	isLoading,
@@ -51,5 +54,33 @@ export const DropDownDotItem = ({
 			<DynamicIcon icon={icon} className="h-4 w-4 mr-2" />
 			{name}
 		</DropdownMenuItem>
+	);
+};
+
+export const DropDownSelect = ({
+	icon,
+	label,
+	children,
+	menuLabel,
+}: {
+	icon: string;
+	menuLabel: string;
+	label: string;
+	children: React.ReactNode;
+}) => {
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline" className="w-full justify-start">
+					<DynamicIcon icon={icon} className="h-4 w-4 sm:mr-2" />
+					<span className="sr-only sm:not-sr-only capitalize">{label}</span>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="start">
+				<DropdownMenuLabel>{menuLabel}</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				{children}
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 };

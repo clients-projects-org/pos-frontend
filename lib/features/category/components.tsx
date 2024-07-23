@@ -38,7 +38,6 @@ const categoryColumn: ColumnDef<CategoryType>[] = [
 		id: 'actions',
 		header: () => 'Actions',
 		cell: ({ row }) => {
-			console.log({ row });
 			return <Actions data={row.original} />;
 		},
 	},

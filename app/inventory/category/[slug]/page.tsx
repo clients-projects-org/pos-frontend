@@ -1,9 +1,5 @@
-import { DynamicIcon } from '@/components/actions';
-import PageTitle from '@/components/custom/PageTitle';
-import { CategoryStore } from '@/lib/features/category';
-import { UserDetails, UserStore } from '@/lib/features/user';
-// import { UserStore } from '@/components/store';
-import Link from 'next/link';
+import PageTitle, { PageLink } from '@/components/custom/PageTitle';
+import { CategoryStore, CategoryDetails } from '@/lib/features/category';
 
 export default function Page({ params }: { params: { slug: string } }) {
 	const { slug } = params;
@@ -15,7 +11,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 		// if edit
 		case slug.startsWith('edit-'):
-			return <EditComponent />;
+			return <EditComponent slug={slug} />;
 
 		// default all
 		default:
@@ -26,44 +22,30 @@ export default function Page({ params }: { params: { slug: string } }) {
 const CreateComponent = () => (
 	<>
 		<PageTitle title="Create">
-			<Link href="/user-management/users" className="gap-1 flex items-center">
-				<DynamicIcon icon="Users" className="h-4 w-4 ml-0" />
-				<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-					All Users
-				</span>
-			</Link>
+			<PageLink href="/inventory/category" text="All Category" icon="Grid" />
 		</PageTitle>
 		<CategoryStore />
 	</>
 );
 
-const EditComponent = () => (
+const EditComponent = ({ slug }: { slug: string }) => (
 	<>
 		<PageTitle title="Edit User">
-			<Link href="/user-management/users" className="gap-1 flex items-center">
-				<DynamicIcon icon="Users" className="h-4 w-4 ml-0" />
-				<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-					All Users
-				</span>
-			</Link>
+			<PageLink href="/inventory/category" text="All Category" icon="Grid" />
 		</PageTitle>
-		<UserStore />
+		<CategoryStore slug={slug} />
 	</>
 );
 
 const DefaultComponent = ({ slug }: { slug: string }) => (
 	<>
 		<PageTitle title="User Details">
-			<Link
-				href={`/user-management/users/edit-${slug}`}
-				className="gap-1 flex items-center"
-			>
-				<DynamicIcon icon="SquarePen" className="h-4 w-4 ml-0" />
-				<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-					Edit User
-				</span>
-			</Link>
+			<PageLink
+				href={`/inventory/category/edit-${slug}`}
+				text="Edit Category"
+				icon="SquarePen"
+			/>
 		</PageTitle>
-		<UserDetails slug={slug} />
+		<CategoryDetails slug={slug} />
 	</>
 );

@@ -16,7 +16,8 @@ import {
 import { zod } from '@/lib/zod';
 import { useRouter } from 'next/navigation';
 import { useStoreCategoryMutation } from './categoryApiSlice';
-export function CategoryStore() {
+import { useEffect } from 'react';
+export function CategoryStore({ slug }: { slug?: string }) {
 	const router = useRouter();
 	const FormSchema = z.object({
 		name: zod.name,
@@ -38,6 +39,11 @@ export function CategoryStore() {
 			description: '',
 		},
 	});
+	useEffect(() => {
+		if (slug) {
+			// methods.setValue(,true, true);
+		}
+	}, [slug]);
 	const [store, { isLoading }] = useStoreCategoryMutation();
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {

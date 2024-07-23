@@ -54,8 +54,7 @@ export function UserStore() {
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
 		store({ ...data, created_by: 'admin' } as any).then((e) => {
-			console.log(e);
-			router.push('/user-management/users', { scroll: false });
+ 			router.push('/user-management/users', { scroll: false });
 
 			// router.push('/user-management/roles-permissions', { scroll: false });
 			toast({
@@ -69,8 +68,7 @@ export function UserStore() {
 		});
 	}
 	const watching = methods.watch();
-	console.log(watching);
-	// const methods = useForm();
+ 	// const methods = useForm();
 	// const onSubmit = (data) => console.log(data);
 	return (
 		<div className="max-w-5xl mx-auto w-full border p-4 rounded">

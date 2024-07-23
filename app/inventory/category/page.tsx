@@ -9,10 +9,14 @@ import {
 } from '@/lib/features/category';
 import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
+import { Row } from '@tanstack/react-table';
 export default function Category() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
 	const { data, isLoading, isFetching, isError } = useGetCategoryQuery(value);
-
+	const getSelectedRow = (e: Row<CategoryType>[]): void => {
+		const ids = e.map((e) => e.original).map((i) => i._id);
+		console.log(ids);
+	};
 	return (
 		<>
 			<PageTitle title="Category" />
@@ -30,6 +34,7 @@ export default function Category() {
 							<CategoryComponents.Filter value={value} setValue={setValue} />
 						}
 						TEndChild={<CategoryComponents.AddCategory />}
+						getSelectedRow={getSelectedRow}
 					/>
 				</Motion>
 			</ApiUseHOC>

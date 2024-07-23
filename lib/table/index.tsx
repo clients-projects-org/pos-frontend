@@ -18,6 +18,7 @@ import {
 import {
 	ChevronDown,
 	ChevronLeft,
+	ChevronRight,
 	ChevronsLeft,
 	ChevronsRight,
 } from 'lucide-react';
@@ -45,11 +46,13 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { DropDownSelect } from '@/components/custom/list-item';
 interface TableBoxProps<DataType> {
 	columns: ColumnDef<DataType>[];
 	data: DataType[];
 	TFilters: React.JSX.Element;
 	TEndChild: React.JSX.Element;
+	getSelectedRow: Function;
 }
 
 export function TableBox<DataType>({
@@ -57,6 +60,7 @@ export function TableBox<DataType>({
 	data,
 	TFilters,
 	TEndChild,
+	getSelectedRow,
 }: TableBoxProps<DataType>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -84,6 +88,7 @@ export function TableBox<DataType>({
 			rowSelection,
 		},
 	});
+	getSelectedRow(table.getFilteredSelectedRowModel().rows);
 
 	return (
 		<div className="w-full">
@@ -154,15 +159,58 @@ function TB<ProductType>({
 	);
 }
 
-function Footer<ProductType>({ table }: { table: TanTable<ProductType> }) {
+function Footer<T>({ table }: { table: TanTable<T> }) {
+	const [selectAction, setSelectAction] = React.useState('Actions');
+
+	React.useEffect(() => {
+		if (table.getFilteredSelectedRowModel().rows.length <= 0) {
+			setSelectAction('Actions');
+		}
+	}, [table.getFilteredSelectedRowModel().rows.length]);
+
 	return (
 		<div className="flex items-center justify-end space-x-2 py-4">
 			<div className="flex-1 text-sm text-muted-foreground">
-				{table.getFilteredSelectedRowModel().rows.length > 0 ? (
-					`${table.getFilteredSelectedRowModel().rows.length} of ${
-						table.getFilteredRowModel().rows.length
-					} row(s) selected.`
-				) : (
+				{table.getFilteredSelectedRowModel().rows.length > 0 && (
+					<>
+						{`${table.getFilteredSelectedRowModel().rows.length} of ${
+							table.getFilteredRowModel().rows.length
+						} row(s) selected.`}
+						<div className="mt-3 max-w-40">
+							<DropDownSelect
+								icon="ChevronDown"
+								label={selectAction}
+								menuLabel="Click to Action"
+							>
+								<DropdownMenuCheckboxItem
+									onCheckedChange={() => setSelectAction('active')}
+									checked={selectAction === 'active'}
+								>
+									Active
+								</DropdownMenuCheckboxItem>
+								<DropdownMenuCheckboxItem
+									onCheckedChange={() => setSelectAction('deactivated')}
+									checked={selectAction === 'deactivated'}
+								>
+									Deactivated
+								</DropdownMenuCheckboxItem>
+								<DropdownMenuCheckboxItem
+									onCheckedChange={() => setSelectAction('draft')}
+									checked={selectAction === 'draft'}
+								>
+									Draft
+								</DropdownMenuCheckboxItem>
+								<DropdownMenuCheckboxItem
+									onCheckedChange={() => setSelectAction('all')}
+									checked={selectAction === 'Delete'}
+								>
+									Delete
+								</DropdownMenuCheckboxItem>
+							</DropDownSelect>
+						</div>
+					</>
+				)}
+				{table.getFilteredSelectedRowModel().rows.length <= 0 && (
 					<div className="flex items-center justify-between space-x-2 py-4">
 						<Pagination table={table} />
 						<div className="space-x-2">
@@ -322,7 +370,7 @@ export function Pagination<ProductType>({
 					onClick={() => table.nextPage()}
 					disabled={!table.getCanNextPage()}
 				>
-					<ChevronLeft />
+					<ChevronRight />
 				</button>
 				<button
 					className="border rounded p-1"

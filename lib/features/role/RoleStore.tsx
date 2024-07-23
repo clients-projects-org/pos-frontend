@@ -1,19 +1,10 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from '@/components/ui/use-toast';
 
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import {
 	Select,
@@ -21,26 +12,20 @@ import {
 	SelectGroup,
 	SelectItem,
 	SelectLabel,
-	SelectTrigger,
-	SelectValue,
 } from '@/components/ui/select';
 import {
-	IconModal,
 	RFIcon,
 	RFInput,
 	RFSelect,
 	RFStatus,
 	RFSubmit,
 	RFTextarea,
-	SelectStatus,
 } from '@/components/custom/form';
 import { zod } from '@/lib/zod';
-import { Label } from '@/components/ui/label';
 import { useStoreRoleMutation } from '.';
 import { useRouter } from 'next/navigation';
 import { useGetDevPermissionQuery } from '../dev-permission/devPermissionSlice';
 import { DevPermissionType } from '@/lib/type';
-import { isEmptyArray } from '@/lib/actions';
 export function RoleStore() {
 	const router = useRouter();
 	const devPermission = useGetDevPermissionQuery('active');
@@ -69,7 +54,6 @@ export function RoleStore() {
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
 		store({ ...data, created_by: 'admin' } as any).then((e) => {
-			console.log(e);
 			router.push('/user-management/roles-permissions', { scroll: false });
 
 			// router.push('/user-management/roles-permissions', { scroll: false });
@@ -91,7 +75,6 @@ export function RoleStore() {
 		// 	),
 		// });
 	}
-	console.log(methods.watch());
 	// const methods = useForm();
 	// const onSubmit = (data) => console.log(data);
 	return (

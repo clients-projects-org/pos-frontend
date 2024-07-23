@@ -52,7 +52,7 @@ export function FInput({
 	);
 }
 
-export function RFInput({ methods, name, label, placeholder }) {
+export function RFInput({ methods, name, label, placeholder = 'type...' }) {
 	return (
 		<FormField
 			control={methods.control}
@@ -107,7 +107,7 @@ export function RFTextarea({
 	methods,
 	name = 'description',
 	label = 'Description',
-	placeholder = 'Type Description',
+	placeholder = 'type...',
 }) {
 	return (
 		<FormField
@@ -183,7 +183,7 @@ export function RFSelect({ methods, label, data, children, name }) {
 						<FormControl>
 							<Select onValueChange={field.onChange}>
 								<SelectTrigger className="capitalize">
-									<SelectValue placeholder="Select a Permission" />
+									<SelectValue placeholder={`Select a ${label}`} />
 								</SelectTrigger>
 								<SelectContent>{children}</SelectContent>
 							</Select>

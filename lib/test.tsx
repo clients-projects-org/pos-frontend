@@ -201,7 +201,7 @@ export const categoryColumn: ColumnDef<CategoryType>[] = [
 		cell: ({ row }) => <div className="lowercase">{row.getValue('code')}</div>,
 	},
 	{
-		accessorKey: 'crated_by',
+		accessorKey: 'created_by',
 		header: ({ column }) => {
 			return (
 				<Button
@@ -215,16 +215,16 @@ export const categoryColumn: ColumnDef<CategoryType>[] = [
 		},
 		cell: ({ row }) => (
 			<div className="capitalize whitespace-nowrap">
-				{row.original.crated_by ? (
+				{row.original.created_by ? (
 					<>
-						{row.original.crated_by.role && (
+						{row.original.created_by.role && (
 							<>
-								{row.original.crated_by.name}{' '}
+								{row.original.created_by.name}{' '}
 								<Badge
 									className="capitalize"
-									variant={status(row.original.crated_by.role)}
+									variant={status(row.original.created_by.role)}
 								>
-									{row.original.crated_by.role}
+									{row.original.created_by.role}
 								</Badge>
 							</>
 						)}

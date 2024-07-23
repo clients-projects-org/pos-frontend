@@ -195,10 +195,15 @@ export const menu: MenuType[] = [
 		title: 'Peoples',
 		hr: true,
 		children: [
-			{ id: 18, name: 'Customers', path: '/customers', icon: 'User' },
-			{ id: 19, name: 'Suppliers', path: '/suppliers', icon: 'Truck' },
-			{ id: 20, name: 'Stores', path: '/stores', icon: 'ShoppingBag' },
-			{ id: 21, name: 'Warehouses', path: '/warehouses', icon: 'Warehouse' },
+			{ id: 18, name: 'Customers', path: '/peoples/customers', icon: 'User' },
+			{ id: 19, name: 'Suppliers', path: '/peoples/suppliers', icon: 'Truck' },
+			{ id: 20, name: 'Stores', path: '/peoples/stores', icon: 'ShoppingBag' },
+			{
+				id: 21,
+				name: 'Warehouses',
+				path: '/peoples/warehouses',
+				icon: 'Warehouse',
+			},
 		],
 	},
 	{

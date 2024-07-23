@@ -21,7 +21,7 @@ export const categoryData: CategoryType[] = [
 		created_at: '2022-11-01T00:00:00.000Z',
 		status: 'active',
 		code: 'cpxiw1',
-		crated_by: {
+		created_by: {
 			name: 'Shadcn',
 			id: 'm5gr84i9',
 			role: 'supper admin',
@@ -37,7 +37,7 @@ export const categoryData: CategoryType[] = [
 		created_at: '2022-11-01T00:00:00.000Z',
 		status: 'deactivate',
 		code: 'cpxiwq',
-		crated_by: {
+		created_by: {
 			name: 'Shadcn',
 			id: 'm5gr84i9',
 			role: 'user',
@@ -152,7 +152,7 @@ export const categoryColumn: ColumnDef<CategoryType>[] = [
 		cell: ({ row }) => <div className="lowercase">{row.getValue('code')}</div>,
 	},
 	{
-		accessorKey: 'crated_by',
+		accessorKey: 'created_by',
 		header: ({ column }) => {
 			return (
 				<Button
@@ -166,16 +166,16 @@ export const categoryColumn: ColumnDef<CategoryType>[] = [
 		},
 		cell: ({ row }) => (
 			<div className="capitalize whitespace-nowrap">
-				{row.original.crated_by ? (
+				{row.original.created_by ? (
 					<>
-						{row.original.crated_by.role && (
+						{row.original.created_by.role && (
 							<>
-								{row.original.crated_by.name}{' '}
+								{row.original.created_by.name}{' '}
 								<Badge
 									className="capitalize"
-									variant={status(row.original.crated_by.role)}
+									variant={status(row.original.created_by.role)}
 								>
-									{row.original.crated_by.role}
+									{row.original.created_by.role}
 								</Badge>
 							</>
 						)}

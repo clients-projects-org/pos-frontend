@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { badge } from '@/lib/actions';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const ImageIcon = () => {
 	return {
@@ -81,23 +82,27 @@ const Text = (name, label) => {
 const SelectBox = () => {
 	return {
 		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-				aria-label="Select all"
-			/>
-		),
-		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={(value) => row.toggleSelected(!!value)}
-				aria-label="Select row"
-			/>
-		),
+		header: ({ table }) => {
+			return (
+				<Checkbox
+					checked={
+						table.getIsAllPageRowsSelected() ||
+						(table.getIsSomePageRowsSelected() && 'indeterminate')
+					}
+					onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+					aria-label="Select all"
+				/>
+			);
+		},
+		cell: ({ row }) => {
+			return (
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={(value) => row.toggleSelected(!!value)}
+					aria-label="Select row"
+				/>
+			);
+		},
 		enableSorting: false,
 		enableHiding: false,
 	};
@@ -126,4 +131,31 @@ const Action = ({ children }) => {
 	};
 };
 
-export const TableItem = { ImageIcon, Status, Text, Action, SelectBox };
+const AddLink = ({
+	href,
+	icon,
+	text,
+}: {
+	href: string;
+	icon: string;
+	text: string;
+}) => {
+	return (
+		<Link
+			href={href}
+			className="gap-1 flex items-center border px-3 py-2 text-sm rounded-sm hover:bg-slate-800"
+		>
+			<DynamicIcon icon={icon} className="h-4 w-4 ml-0" />
+			<span className="sr-only sm:not-sr-only !whitespace-nowrap">{text}</span>
+		</Link>
+	);
+};
+
+export const TableItem = {
+	ImageIcon,
+	Status,
+	Text,
+	Action,
+	SelectBox,
+	AddLink,
+};

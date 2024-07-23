@@ -206,7 +206,7 @@ export const roleColumn: ColumnDef<RoleType>[] = [
 	},
 
 	{
-		accessorKey: 'crated_by',
+		accessorKey: 'created_by',
 		header: ({ column }) => {
 			return (
 				<Button

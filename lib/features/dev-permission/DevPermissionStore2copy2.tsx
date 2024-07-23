@@ -81,7 +81,7 @@ export function DevPermissionStore() {
 		};
 		console.log({ dData });
 		addPost(dData).then((e) => {
-			console.log(e);
+			 
 		});
 
 		// toast({

@@ -27,6 +27,9 @@ export function ApiUseHOC({
 			</>
 		);
 	}
+	if (isError) {
+		return <ApiError data={data} />;
+	}
 	return (
 		<>
 			{/* loader  */}

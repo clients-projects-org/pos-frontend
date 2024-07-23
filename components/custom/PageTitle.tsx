@@ -2,6 +2,7 @@
 import React from 'react';
 import { DynamicIcon } from '../actions';
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function PageTitle({
 	title,
@@ -52,5 +53,27 @@ export function PageTitleNoBack({
 			</div>
 			<div>{children}</div>
 		</div>
+	);
+}
+
+export function PageLink({
+	href,
+	text,
+	icon,
+}: {
+	href: string;
+	text: string;
+	icon: string;
+}) {
+	return (
+		<Link
+			href={href}
+			className="gap-1 flex items-center border px-3 py-2 hover:bg-slate-800 rounded"
+		>
+			<DynamicIcon icon={icon} className="h-4 w-4 ml-0" />
+			<span className="sr-only sm:not-sr-only !whitespace-nowrap text-xs ">
+				{text}
+			</span>
+		</Link>
 	);
 }

@@ -5,8 +5,7 @@ export const roleApi = apiSlice.injectEndpoints({
 		getRoles: builder.query<any, void>({
 			query: (payload): string => `user-role?status=${payload}`,
 			providesTags: (result, error, arg) => {
-				console.log({ result, error, arg });
-				return ['Role'];
+ 				return ['Role'];
 			},
 		}),
 
