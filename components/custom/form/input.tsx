@@ -19,6 +19,15 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { ImageSelect } from './ImageIcoSelect';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { DynamicIcon } from '@/components/actions';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 export function FInput({
 	label,
 	id,
@@ -207,5 +216,55 @@ export function RFSubmit({ text }: { text: string }) {
 				{text}
 			</Button>
 		</div>
+	);
+}
+
+export function RFCalender({ methods, label, name }) {
+	return (
+		<FormField
+			control={methods.control}
+			name={name}
+			render={({ field }) => (
+				<FormItem className="flex flex-col">
+					<div>
+						<FormLabel>{label}</FormLabel>
+					</div>
+					<Popover>
+						<PopoverTrigger asChild>
+							<FormControl>
+								<Button
+									variant={'outline'}
+									className={cn(
+										' pl-3 text-left font-normal',
+										!field.value && 'text-muted-foreground'
+									)}
+								>
+									{field.value ? (
+										format(field.value, 'PPP')
+									) : (
+										<span>Pick a date</span>
+									)}
+									<DynamicIcon
+										icon="CalendarIcon"
+										className="ml-auto h-4 w-4 opacity-50"
+									/>
+								</Button>
+							</FormControl>
+						</PopoverTrigger>
+						<PopoverContent className="w-auto p-0" align="start">
+							<Calendar
+								mode="single"
+								selected={field.value}
+								onSelect={field.onChange}
+								disabled={(date) => date < new Date('1900-01-01')}
+								initialFocus
+							/>
+						</PopoverContent>
+					</Popover>
+
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
 	);
 }

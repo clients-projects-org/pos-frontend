@@ -28,7 +28,7 @@ const Column: ColumnDef<UnitType>[] = [
 	TableItem.Status(),
 	TableItem.Text('code', 'Code'),
 	TableItem.Text('created_by', 'Created by'),
-	TableItem.Text('createdAt', 'Created at'),
+	TableItem.Date('createdAt', 'Created at'),
 
 	{
 		id: 'actions',

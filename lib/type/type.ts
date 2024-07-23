@@ -225,3 +225,20 @@ export type WarrantyType = {
 	description?: string;
 	periods?: string;
 };
+
+export type CouponType = {
+	_id: string;
+	code?: string;
+	description?: string;
+	name?: string;
+	image: string;
+	image_type: 'image' | 'icon';
+	coupon_type: 'flat' | 'percentage';
+	status?: StatusType;
+	amount: number;
+	limitation: number;
+	expire_date?: string;
+	created_by?: string;
+	createdAt?: string;
+	slug?: string;
+};

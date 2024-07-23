@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { badge } from '@/lib/actions';
+import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -76,6 +77,25 @@ const Text = (name, label) => {
 			);
 		},
 		cell: ({ row }) => <div className="lowercase">{row.getValue(name)}</div>,
+	};
+};
+const Date = (name, label) => {
+	return {
+		accessorKey: name,
+		header: ({ column }) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					{label}
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }) => (
+			<div className="lowercase">{format(row.getValue(name), 'PPP')}</div>
+		),
 	};
 };
 
@@ -158,4 +178,5 @@ export const TableItem = {
 	Action,
 	SelectBox,
 	AddLink,
+	Date,
 };

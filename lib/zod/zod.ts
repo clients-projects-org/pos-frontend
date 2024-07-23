@@ -6,6 +6,9 @@ const status = z.enum(['draft', 'active', 'deactivated'], {
 const image_type = z.enum(['image', 'icon'], {
 	message: 'Image Type is Required',
 });
+const coupon_type = z.enum(['flat', 'percentage'], {
+	message: 'Coupon Type is Required',
+});
 const image = z.string({
 	message: 'Invalid image/icon',
 });
@@ -25,6 +28,13 @@ const id = z.string({
 	message: 'Is Required',
 });
 
+const number = z.number({
+	message: 'Is required',
+});
+const date = z.date({
+	message: 'Date Is required',
+});
+
 export const zod = {
 	status,
 	image_type,
@@ -34,4 +44,7 @@ export const zod = {
 	image,
 	id,
 	phone,
+	coupon_type,
+	number,
+	date,
 };

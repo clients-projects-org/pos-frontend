@@ -15,6 +15,10 @@ const StatusOptions = {
 		{ value: 'deactivated', label: 'Deactivated' },
 		{ value: 'draft', label: 'Draft' },
 	],
+	flatPercent: [
+		{ value: 'flat', label: 'Flat' },
+		{ value: 'percentage', label: 'Percentage' },
+	],
 };
 
 const SelectStatus = ({

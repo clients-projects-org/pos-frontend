@@ -14,17 +14,17 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableItem } from '@/lib/table/table-items/t-item';
-import { WarehouseType, StatusType } from '@/lib/type';
+import { CouponType, StatusType } from '@/lib/type';
 import { ColumnDef } from '@tanstack/react-table';
 import { useParams, useRouter } from 'next/navigation';
 import {
-	useDeleteWarehouseMutation,
-	useUpdateWarehouseStatusMutation,
+	useDeleteCouponMutation,
+	useUpdateCouponStatusMutation,
 } from './apiSlice';
 import { confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 
-const Column: ColumnDef<WarehouseType>[] = [
+const Column: ColumnDef<CouponType>[] = [
 	TableItem.SelectBox(),
 	TableItem.ImageIcon(),
 	TableItem.Text('name', 'Name'),
@@ -105,14 +105,14 @@ const Filter = ({
 		</>
 	);
 };
-const Actions = ({ data }: { data: WarehouseType }) => {
+const Actions = ({ data }: { data: CouponType }) => {
 	const router = useRouter();
 	const params = useParams<{ slug: string; item: string }>();
 
-	const [deleting, { isLoading }] = useDeleteWarehouseMutation();
+	const [deleting, { isLoading }] = useDeleteCouponMutation();
 
 	const [updateStatus, { isLoading: updateStatusLoading }] =
-		useUpdateWarehouseStatusMutation();
+		useUpdateCouponStatusMutation();
 
 	const loading = isLoading || updateStatusLoading;
 
@@ -136,7 +136,7 @@ const Actions = ({ data }: { data: WarehouseType }) => {
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
 					console.log('first');
-					router.push('/peoples/warehouses');
+					router.push('/user-management/roles-permissions');
 				}
 			} else {
 				console.log('Delete action cancelled');
@@ -168,7 +168,7 @@ const Actions = ({ data }: { data: WarehouseType }) => {
 				icon="SquarePen"
 				name="Edit"
 				onChange={() => {
-					router.push(`/peoples/warehouses/edit-${data._id}`);
+					router.push(`/promo/coupons/edit-${data._id}`);
 				}}
 				disabled={loading}
 			/>
@@ -176,7 +176,7 @@ const Actions = ({ data }: { data: WarehouseType }) => {
 				icon="ScanEye"
 				name="View"
 				onChange={() => {
-					router.push(`/peoples/warehouses/${data._id}`);
+					router.push(`/promo/coupons/${data._id}`);
 				}}
 				disabled={loading}
 			/>
@@ -222,9 +222,9 @@ const Actions = ({ data }: { data: WarehouseType }) => {
 const Add = () => {
 	return (
 		<TableItem.AddLink
-			href="/peoples/warehouses/create"
+			href="/promo/coupons/create"
 			icon="PlusCircle"
-			text="Add Warehouse"
+			text="Add Coupon"
 		/>
 	);
 };
