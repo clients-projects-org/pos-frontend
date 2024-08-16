@@ -4,14 +4,14 @@ export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getBrand: builder.query<any, void>({
 			query: (payload): string => `brand?status=${payload}`,
-			providesTags: (result, error, arg) => {
-				return ['Brand'];
+			providesTags: (_result, _error, arg) => {
+				return ['Brand', { type: 'Brand', status: arg }];
 			},
 		}),
 
 		getBrandById: builder.query<any, string>({
 			query: (id) => `brand/${id}`,
-			providesTags: (result, error, id) => {
+			providesTags: (_result, _error, id) => {
 				return [{ type: 'Brand', id: id }];
 			},
 		}),
@@ -23,7 +23,13 @@ export const api = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return ['Brand'];
+				return [
+					'Brand',
+					{ type: 'Brand', status: 'all' },
+					{ type: 'Brand', status: 'active' },
+					{ type: 'Brand', status: 'deactivated' },
+					{ type: 'Brand', status: 'draft' },
+				];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -43,7 +49,7 @@ export const api = apiSlice.injectEndpoints({
 				body: { status },
 			}),
 
-			invalidatesTags: (result, error, arg) => {
+			invalidatesTags: (_result, _error, arg) => {
 				return ['Brand', { type: 'Brand', id: arg.id }];
 			},
 		}),
