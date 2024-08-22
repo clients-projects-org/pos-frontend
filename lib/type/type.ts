@@ -70,6 +70,7 @@ export type UserType = {
 	slug?: string;
 	email?: string;
 	phone?: string;
+	password?: string;
 	createdAt?: string;
 	role_id?: string;
 	image?: string;

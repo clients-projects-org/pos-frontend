@@ -5,7 +5,7 @@ export const userApi = apiSlice.injectEndpoints({
 		getUser: builder.query<any, void>({
 			query: (payload) => `user?status=${payload}`,
 			providesTags: (result, error, arg) => {
- 				return ['User'];
+				return ['User'];
 			},
 		}),
 
@@ -14,7 +14,12 @@ export const userApi = apiSlice.injectEndpoints({
 				url: `/user/store`,
 				method: 'POST',
 				body: payload,
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+				formData: true,
 			}),
+
 			invalidatesTags: () => {
 				return ['User'];
 			},

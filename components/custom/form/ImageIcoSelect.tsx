@@ -18,6 +18,7 @@ import { LineLoader } from '../loader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { image } from '@/assets/image';
 import { Button } from '@/components/ui/button';
+import { IImageSizeInfoType } from '@/lib/image-size';
 export function ImageIcoRadio({ ...field }) {
 	const onChange = () => {
 		field.onChange;
@@ -41,7 +42,14 @@ export function ImageIcoRadio({ ...field }) {
 	);
 }
 
-export function ImageSelect({ defaultValue, onChange }) {
+export function ImageSelect({
+	imageInfo,
+	onChange,
+}: {
+	imageInfo: IImageSizeInfoType;
+	onChange: (File: File) => void;
+	defaultValue?: string;
+}) {
 	const [imageSrc, setImageSrc] = React.useState<string>(image.placeholder);
 	const [warning, setWarning] = React.useState<string>('');
 	const [loading, setLoading] = React.useState<boolean>(false);
@@ -57,15 +65,17 @@ export function ImageSelect({ defaultValue, onChange }) {
 
 			img.onload = () => {
 				setLoading(false);
-				if (file.size > 150 * 1024) {
-					setWarning('Image Size will be less then 150Kb');
+				if (file.size > imageInfo.size * 1024) {
+					setWarning(`Image Size will be less then ${imageInfo.size}Kb`);
 					URL.revokeObjectURL(objectUrl); // Clean up the object URL
 					setImageSrc(image.placeholder);
 					return;
 				}
 
-				if (img.width > 200 || img.height > 200) {
-					setWarning('Image hight and width less then 200px');
+				if (img.width > imageInfo.width || img.height > imageInfo.height) {
+					setWarning(
+						`Image width and hight less then ${imageInfo.width}px*${imageInfo.width}px`
+					);
 					URL.revokeObjectURL(objectUrl); // Clean up the object URL
 					setImageSrc(image.placeholder);
 					return;
@@ -89,10 +99,10 @@ export function ImageSelect({ defaultValue, onChange }) {
 		<div className="flex items-center gap-2">
 			{loading && <Skeleton className="h-10 w-10 rounded-xl" />}
 			{!loading && (
-				<button type="button" className="h-10">
+				<button type="button" className="">
 					<Image
 						alt="Product image"
-						className="aspect-square rounded-md object-cover h-10 w-10"
+						className={`aspect-square rounded-md object-cover ${imageInfo.viewWidth} ${imageInfo.viewHeight}`}
 						height={40}
 						src={imageSrc}
 						width={40}
@@ -125,10 +135,11 @@ export function ImageSelect({ defaultValue, onChange }) {
 				{imageSrc === image.placeholder && !warning && (
 					<>
 						<p className="text-yellow-500 text-xs ">
-							Image Size will be less then 150Kb
+							Image Size will be less then {imageInfo.size}Kb
 						</p>
 						<p className="text-yellow-500 text-xs ">
-							Image hight and width less then 200px
+							Image width and hight less then {imageInfo.width}px*
+							{imageInfo.width}px
 						</p>
 					</>
 				)}

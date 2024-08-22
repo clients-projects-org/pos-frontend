@@ -21,7 +21,7 @@ export function IconModal({
 	defaultValue: string;
 	onSave: (value: string) => void;
 }) {
-	const [value, setValue] = React.useState(defaultValue || '');
+	const [value, setValue] = React.useState(defaultValue || 'Annoyed');
 	const [open, setOpen] = React.useState(false);
 
 	const handleSave = () => {
@@ -30,7 +30,7 @@ export function IconModal({
 	};
 
 	useEffect(() => {
-		setValue(defaultValue);
+		setValue(typeof defaultValue === 'string' ? defaultValue : 'Annoyed');
 	}, [defaultValue]);
 
 	return (

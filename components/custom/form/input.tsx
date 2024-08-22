@@ -28,6 +28,8 @@ import { format } from 'date-fns';
 import { DynamicIcon } from '@/components/actions';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
+import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
+import { IImageSizeInfoType } from '@/lib/image-size';
 export function FInput({
 	label,
 	id,
@@ -156,19 +158,28 @@ export function RFIcon({ methods, label = true }) {
 		/>
 	);
 }
-export function RFImage({ methods }) {
+
+type RFImageProps<T extends FieldValues> = {
+	methods: UseFormReturn<T>;
+	imageInfo: IImageSizeInfoType;
+};
+export function RFImage<T extends FieldValues>({
+	methods,
+	imageInfo,
+}: RFImageProps<T>) {
 	return (
 		<FormField
 			control={methods.control}
-			name="image"
+			name={'image' as Path<T>}
 			render={({ field }) => (
 				<FormItem>
 					<FormControl>
 						<ImageSelect
-							onChange={(value: string) => {
+							onChange={(value: File) => {
 								field.onChange(value);
 							}}
 							defaultValue={field.value}
+							imageInfo={imageInfo}
 						/>
 					</FormControl>
 					<FormMessage />
