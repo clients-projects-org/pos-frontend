@@ -10,15 +10,19 @@ export const userApi = apiSlice.injectEndpoints({
 		}),
 
 		storeUser: builder.mutation<any, string>({
-			query: (payload) => ({
-				url: `/user/store`,
-				method: 'POST',
-				body: payload,
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-				formData: true,
-			}),
+			query: (payload) => {
+				const body = new FormData();
+				// body.append('Content-Type', 'multipart/form-data');
+				Object.entries(payload).forEach(([key, value]) => {
+					body.append(key, value);
+				});
+				return {
+					url: `/user/store`,
+					method: 'POST',
+					body,
+					formData: true,
+				};
+			},
 
 			invalidatesTags: () => {
 				return ['User'];

@@ -75,10 +75,11 @@ export function UserStore() {
 		});
 
 		console.log(data);
-		store(formData as any).then((e) => {
+		store(data as any).then((e) => {
 			// router.push('/user-management/users', { scroll: false });
 
 			// router.push('/user-management/roles-permissions', { scroll: false });
+			return;
 			toast({
 				title: 'You submitted the following values:',
 				description: (
