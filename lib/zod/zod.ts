@@ -57,6 +57,9 @@ const number = z.number({
 const date = z.date({
 	message: 'Date Is required',
 });
+const password = z.string({
+	message: 'Password Is Required',
+});
 
 export const zod = {
 	status,
@@ -72,4 +75,5 @@ export const zod = {
 	date,
 	refined,
 	refinedImageMessage,
+	password,
 };

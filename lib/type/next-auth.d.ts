@@ -1,4 +1,5 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
+import 'next-auth/jwt';
 
 declare module 'next-auth' {
 	/**
@@ -8,6 +9,9 @@ declare module 'next-auth' {
 		user: {
 			/** The user's postal address. */
 			address: string;
-		};
+		} & DefaultSession['user'];
+
+		accessToken: string;
+		refreshToken: string;
 	}
 }

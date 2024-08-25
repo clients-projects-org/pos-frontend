@@ -1,36 +1,19 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 const handler = NextAuth({
 	providers: [
 		CredentialsProvider({
-			name: 'Credentials',
+			name: 'credentials',
 			credentials: {
-				username: { label: 'Username', type: 'text', placeholder: 'Username' },
-				password: {
-					label: 'Password',
-					type: 'password',
-					placeholder: 'Password',
-				},
+				token: {},
 			},
 			async authorize(credentials) {
-				const res = await fetch('http://localhost:8080/login', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						username: credentials?.username,
-						password: credentials?.password,
-					}),
-				});
-
-				const user = await res.json();
-
-				if (res.ok && user) {
-					// Assuming the token is in `user.token`
+				console.log({ credentials });
+				if (credentials?.token) {
 					return {
-						...user,
-						token: user.token, // Attach the token to the user object
+						id: '123',
+						token: JSON.parse(credentials.token),
 					};
 				}
 				return null;
@@ -41,14 +24,21 @@ const handler = NextAuth({
 		strategy: 'jwt',
 	},
 	callbacks: {
-		async jwt({ token, user }) {
+		async jwt({ token, user }: { token: any; user: any }) {
+			console.log(user, 'user,jwt');
+			console.log(token, 'token, cb');
 			if (user) {
-				token.accessToken = user.token; // Store the token in the JWT
+				return {
+					...user,
+				};
 			}
 			return token;
 		},
-		async session({ session, token }) {
-			session.accessToken = token.accessToken; // Make the token available in the session
+		async session({ session, token }: { session: any; token: any }) {
+			// Attach the JWT token and user details to the session
+			console.log({ session, token }, 'token');
+			session.accessToken = token.token.accessToken;
+			session.refreshToken = token.token.refreshToken;
 			return session;
 		},
 	},

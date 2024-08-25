@@ -2,6 +2,7 @@
 import type { AppStore } from '@/lib/store';
 import { makeStore } from '@/lib/store';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import { SessionProvider } from 'next-auth/react';
 import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 import { Provider } from 'react-redux';
@@ -27,5 +28,9 @@ export const StoreProvider = ({ children }: Props) => {
 		}
 	}, []);
 
-	return <Provider store={storeRef.current}>{children}</Provider>;
+	return (
+		<SessionProvider>
+			<Provider store={storeRef.current}>{children}</Provider>
+		</SessionProvider>
+	);
 };
