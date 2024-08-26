@@ -18,18 +18,20 @@ export type IconType = {
 
 // menu
 export type MenuItemType = {
-	id: number;
+	_id: string;
 	name: string;
 	path?: string;
 	icon?: string;
-	children?: MenuItemType[];
+	show?: boolean;
+	children: MenuItemType[];
 };
 
 export type MenuType = {
-	id: number;
+	_id: string;
 	title: string;
 	hr: boolean;
-	children: MenuItemType[];
+	show?: boolean;
+	sidebarChildren: MenuItemType[];
 };
 
 // product type

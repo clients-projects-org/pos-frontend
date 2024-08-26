@@ -1,27 +1,9 @@
 'use client';
 import * as React from 'react';
 import Link from 'next/link';
-import {
-	CircleUser,
-	Home,
-	LineChart,
-	Menu,
-	Package,
-	Package2,
-	Search,
-	ShoppingCart,
-	Users,
-} from 'lucide-react';
+import { CircleUser, Menu, Package2, Search } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -34,8 +16,10 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ModeToggle } from './theme';
 import { MenuItem } from './sidebar/sidebar-components';
+import Session from '@/lib/session';
 
 export const Nav = () => {
+	const { signOut } = Session();
 	return (
 		<header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
 			<Sheet>
@@ -87,7 +71,7 @@ export const Nav = () => {
 					<DropdownMenuItem>Settings</DropdownMenuItem>
 					<DropdownMenuItem>Support</DropdownMenuItem>
 					<DropdownMenuSeparator />
-					<DropdownMenuItem>Logout</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</header>

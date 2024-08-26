@@ -3,6 +3,7 @@ import { BarLoader, LineLoader } from '../custom/loader';
 import { ApiError } from '../custom/notifications';
 import { NoItemFound } from '../custom/not-found';
 import React from 'react';
+import { Skeleton } from '../ui/skeleton';
 
 export function ApiUseHOC({
 	isLoading,
@@ -24,6 +25,12 @@ export function ApiUseHOC({
 			<>
 				<LineLoader />
 				<BarLoader />
+				{Array.from({ length: 10 }, (_, i) => (
+					<div key={i}>
+						<Skeleton key={i} className="h-10 w-full mt-4" />
+						<Skeleton key={i} className="h-10 w-[90%] mt-4" />
+					</div>
+				))}
 			</>
 		);
 	}
