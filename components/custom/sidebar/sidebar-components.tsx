@@ -18,8 +18,8 @@ export function MenuItem() {
 	if (isLoading) {
 		return Array.from({ length: 10 }, (_, i) => (
 			<div key={i}>
-				<Skeleton key={i} className="h-10 w-full mt-4" />
-				<Skeleton key={i} className="h-10 w-[90%] mt-4" />
+				<Skeleton className="h-10 w-full mt-4" />
+				<Skeleton className="h-10 w-[90%] mt-4" />
 			</div>
 		));
 	}

@@ -7,7 +7,7 @@ import {
 } from '@/components/custom/list-item';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { DevPermissionType, StatusType, UserType } from '@/lib/type';
+import { StatusType, UserType } from '@/lib/type';
 
 import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
@@ -64,7 +64,7 @@ const Actions = ({
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
- 					router.push('/user-management/roles-permissions');
+					router.push('/user-management/roles-permissions');
 				}
 			} else {
 				console.log('Delete action cancelled');

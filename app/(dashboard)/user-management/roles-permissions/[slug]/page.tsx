@@ -1,6 +1,5 @@
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
-import { UserStore } from '@/components/store';
 import {
 	DevPermissionDetails,
 	DevPermissionStore,
@@ -104,7 +103,7 @@ const EditRoleComponent = () => (
 				</span>
 			</Link>
 		</PageTitle>
-		<UserStore />
+		<RoleStore />
 	</>
 );
 

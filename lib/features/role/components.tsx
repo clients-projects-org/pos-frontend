@@ -64,7 +64,7 @@ const Actions = ({
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
- 					router.push('/user-management/roles-permissions');
+					router.push('/user-management/roles-permissions');
 				}
 			} else {
 				console.log('Delete action cancelled');
@@ -105,7 +105,7 @@ const Actions = ({
 					name="Edit"
 					onChange={() => {
 						router.push(
-							`/user-management/roles-permissions/edit_permission-${data._id}`
+							`/user-management/roles-permissions/edit_role-${data._id}`
 						);
 					}}
 					disabled={loading}
@@ -114,9 +114,7 @@ const Actions = ({
 					icon="ScanEye"
 					name="View"
 					onChange={() => {
-						router.push(
-							`/user-management/roles-permissions/permission-${data._id}`
-						);
+						router.push(`/user-management/roles-permissions/role-${data._id}`);
 					}}
 					disabled={loading}
 				/>
