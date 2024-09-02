@@ -67,7 +67,7 @@ export default function InputForm() {
 			console.log(res as any, 'res');
 			if (res.data.success) {
 				const result = await signIn('credentials', {
-					token: JSON.stringify(res.data.data),
+					token: JSON.stringify(res.data),
 					redirect: false,
 				});
 

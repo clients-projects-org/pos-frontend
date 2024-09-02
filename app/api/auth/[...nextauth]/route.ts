@@ -1,24 +1,28 @@
+import { decodeJwt } from '@/lib/actions';
+import { env } from '@/lib/env';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-async function refreshAccessToken(token) {
-	console.log('Refreshing access token', token);
+
+interface TokenPayload {
+	statusCode: number;
+	success: boolean;
+	message: string;
+	data: {
+		accessToken: string;
+		refreshToken: string;
+	};
+}
+
+async function refreshAccessToken(token: { refreshToken: string }) {
+	console.log('refreshAccessToken', token);
 	try {
-		console.log('Beaarer token', `Bearer ${token.refreshToken}`);
-
-		const response = await fetch(
-			`${process.env.API_SERVER_BASE_URL}/api/auth/refresh`,
-			{
-				headers: {
-					Authorization: `Bearer ${token.refreshToken}`,
-				},
-			}
-		);
-
-		console.log(response);
+		const response = await fetch(`${env.baseApi}auth/refresh-token`, {
+			headers: {
+				Authorization: `Bearer ${token.refreshToken}`,
+			},
+		});
 
 		const tokens = await response.json();
-
-		console.log(tokens);
 
 		if (!response.ok) {
 			throw tokens;
@@ -38,14 +42,13 @@ async function refreshAccessToken(token) {
 			refreshToken: tokens.refreshToken ?? token.refreshToken, // Fall back to old refresh token
 		};
 	} catch (error) {
-		console.log(error);
-
 		return {
 			...token,
 			error: 'RefreshAccessTokenError',
 		};
 	}
 }
+
 const handler = NextAuth({
 	providers: [
 		CredentialsProvider({
@@ -53,11 +56,20 @@ const handler = NextAuth({
 			credentials: {
 				token: {},
 			},
+
 			async authorize(credentials) {
-				if (credentials?.token) {
+				// const parsedToken =
+				// 	credentials?.token &&
+				// 	(JSON.parse(credentials.token) as {
+				// 		success: boolean;
+				// 	});
+				const parsedToken: TokenPayload | null =
+					credentials?.token && JSON.parse(credentials.token);
+
+				if (credentials?.token && parsedToken?.success) {
 					return {
 						id: '123',
-						token: JSON.parse(credentials.token),
+						token: parsedToken.data,
 					};
 				}
 				return null;
@@ -68,18 +80,58 @@ const handler = NextAuth({
 		strategy: 'jwt',
 	},
 	callbacks: {
-		async jwt({ token, user }: { token: any; user: any }) {
-			console.log({ token, user });
-			if (Date.now() < token.accessTokenExpires) {
-				return token;
+		async jwt({ token, user }: any) {
+			if (user) {
+				const decodedToken = await decodeJwt(user.token.accessToken);
+				// Overwrite iat and exp based on decoded token
+				token.iat = decodedToken?.iat;
+				token.exp = decodedToken?.exp;
+				token.user = {
+					token: {
+						accessToken: user.token.accessToken,
+						refreshToken: user.token.refreshToken,
+					},
+				};
 			}
-			return refreshAccessToken(token);
+
+			const decodedAccessToken = await decodeJwt(token.user.token.accessToken);
+			if (decodedAccessToken) {
+				if (
+					decodedAccessToken.exp &&
+					Date.now() / 1000 < decodedAccessToken.exp
+				) {
+					console.log('valid token', token);
+					return token;
+				} else {
+					console.log('expired token', token);
+					return await refreshAccessToken(token.user);
+				}
+			} else {
+				console.log('invalid token');
+				// handle invalid token case
+				return null;
+			}
 		},
+
 		async session({ session, token }: { session: any; token: any }) {
 			// Attach the JWT token and user details to the session
-			session.accessToken = token.token.accessToken;
-			session.refreshToken = token.token.refreshToken;
-			session.isLoggedIn = true;
+			console.log(token.user.token, 'token.user.token');
+			if (token.user && token.user.token) {
+				const decodedToken = await decodeJwt(token.user.token.accessToken);
+
+				if (decodedToken) {
+					session.user = {
+						...decodedToken,
+					};
+					delete session.user.iat;
+					delete session.user.exp;
+				}
+
+				session.isLoggedIn = true;
+				session.accessToken = token.user.token.accessToken;
+			} else {
+				session.isLoggedIn = false;
+			}
 			return session;
 		},
 	},

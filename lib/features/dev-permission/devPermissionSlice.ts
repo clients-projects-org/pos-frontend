@@ -6,7 +6,7 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 			query: (payload) => `dev-permission?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				console.log({ result, error, arg });
-				return ['DevPermission'];
+				return ['DevPermission', { type: 'DevPermission', status: arg }];
 			},
 		}),
 
@@ -25,9 +25,14 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				method: 'POST',
 				body: payload,
 			}),
-			invalidatesTags: (result, error, arg) => {
-				console.log({ result, error, status: arg.status });
-				return ['DevPermission'];
+			invalidatesTags: () => {
+				return [
+					'DevPermission',
+					{ type: 'DevPermission', status: 'all' },
+					{ type: 'DevPermission', status: 'active' },
+					{ type: 'DevPermission', status: 'deactivated' },
+					{ type: 'DevPermission', status: 'draft' },
+				];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -43,6 +48,10 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				return [
 					'DevPermission',
 					{ type: 'DevPermission', id: arg.type.mainId },
+					{ type: 'DevPermission', status: 'all' },
+					{ type: 'DevPermission', status: 'active' },
+					{ type: 'DevPermission', status: 'deactivated' },
+					{ type: 'DevPermission', status: 'draft' },
 				];
 			},
 		}),
