@@ -104,7 +104,9 @@ const handler = NextAuth({
 					return token;
 				} else {
 					console.log('expired token', token);
-					return await refreshAccessToken(token.user);
+					const newToken = await refreshAccessToken(token.user);
+					console.log(newToken, 'newToken');
+					return newToken;
 				}
 			} else {
 				console.log('invalid token');

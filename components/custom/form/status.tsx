@@ -33,7 +33,6 @@ const SelectStatus = ({
 	items: string;
 }) => {
 	const [value, setValue] = React.useState(defaultValue);
-	console.log(value);
 	useEffect(() => {
 		setValue(defaultValue);
 	}, [defaultValue]);

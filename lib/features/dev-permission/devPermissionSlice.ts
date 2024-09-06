@@ -37,6 +37,24 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
+		editDevPermission: builder.mutation<any, string>({
+			query: (payload) => ({
+				url: `dev-permission/store`,
+				method: 'POST',
+				body: payload,
+			}),
+			invalidatesTags: () => {
+				return [
+					'DevPermission',
+					{ type: 'DevPermission', status: 'all' },
+					{ type: 'DevPermission', status: 'active' },
+					{ type: 'DevPermission', status: 'deactivated' },
+					{ type: 'DevPermission', status: 'draft' },
+				];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+
 		updateStatus: builder.mutation<any, any>({
 			query: ({ id, status, type }) => ({
 				url: `dev-permission/status/${id}`,
@@ -71,4 +89,5 @@ export const {
 	useStoreDevPermissionMutation,
 	useUpdateStatusMutation,
 	useGetByIdQuery,
+	useEditDevPermissionMutation,
 } = devPermissionApi;

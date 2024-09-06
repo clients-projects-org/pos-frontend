@@ -20,39 +20,44 @@ import {
 	updateAction,
 	updateField,
 	updateRoute,
+	editValueSet,
 } from './createSlice';
 import { DynamicIcon } from '@/components/actions';
 import {
+	useEditDevPermissionMutation,
 	useGetByIdQuery,
 	useStoreDevPermissionMutation,
 } from './devPermissionSlice';
 import { Label } from '@/components/ui/label';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { BarLoader } from '@/components/custom/loader';
 import { zod } from '@/lib/zod';
 
 type InputType = React.ChangeEvent<HTMLInputElement>;
-export function DevPermissionStore({ slug }: { slug?: string }) {
+type PathType = 'edit_permission' | undefined;
+
+export function DevPermissionStore({ slug }: { slug?: PathType }) {
 	const router = useRouter();
+	// get id
 	const id = slug && slug.split('-')[1];
-	const {
-		data,
-		isLoading: isLoadingView,
-		error,
-		isFetching,
-	} = useGetByIdQuery(id);
+	const path = slug && (slug.split('-')[0] as PathType);
+
+	// dispatch & selector
 	const dispatch = useAppDispatch();
 	const formState = useAppSelector((state) => state.form);
 
+	// handle field value change
 	const handleFieldChange = (key: 'name' | 'status', value: string) => {
 		dispatch(updateField({ key, value }));
 	};
 
+	// handle route value change
 	const handleRouteChange = (routeId: string, updates: any, index?: number) => {
 		dispatch(updateRoute({ routeId, updates, index }));
 	};
 
+	// handle action value change
 	const handleActionChange = (
 		routeId: string,
 		actionId: string,
@@ -64,8 +69,8 @@ export function DevPermissionStore({ slug }: { slug?: string }) {
 			updateAction({ routeId, actionId, updates, actionIndex, routeIndex })
 		);
 	};
-	// Define Zod schemas
 
+	// Define Zod schemas
 	const RouteActionSchema = z.object({
 		id: z.string(),
 		name: zod.name,
@@ -91,15 +96,19 @@ export function DevPermissionStore({ slug }: { slug?: string }) {
 		status: zod.status,
 	});
 
-	// useEffect(() => {
-	// 	reset(formState);
-	// }, [formState, reset]);
+	// store api call
 	const [addPost, { isLoading }] = useStoreDevPermissionMutation();
+	const [editPost, { isLoading: isLoadingEdit }] =
+		useEditDevPermissionMutation();
 
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
+
+		// reset error
 		dispatch(clearErrors());
+
 		const result = FormSchema.safeParse(formState);
+		// remove all id from data
 		if (result.success) {
 			const dData = {
 				...formState,
@@ -118,6 +127,8 @@ export function DevPermissionStore({ slug }: { slug?: string }) {
 					};
 				}),
 			};
+
+			// store api call
 			addPost(dData as any).then((e) => {
 				console.log(e);
 				dispatch(reset());
@@ -140,6 +151,23 @@ export function DevPermissionStore({ slug }: { slug?: string }) {
 			console.log('error state', formState);
 		}
 	}
+
+	// get data from api
+	const {
+		data,
+		isLoading: isLoadingView,
+		error,
+		isFetching,
+	} = useGetByIdQuery(id);
+
+	useEffect(() => {
+		if (path === 'edit_permission') {
+			dispatch(editValueSet(data?.data));
+		}
+	}, [data, path]);
+
+	console.log(data?.data);
+	console.log(formState);
 
 	return (
 		<div className="max-w-5xl mx-auto w-full border border-red-200 dark:border-red-950 p-4 rounded">

@@ -170,6 +170,11 @@ const formSlice = createSlice({
 				);
 			}
 		},
+
+		editValueSet(state, action) {
+			return (state = action.payload);
+		},
+
 		setErrors(state, action) {
 			state.errors = action.payload;
 		},
@@ -192,5 +197,6 @@ export const {
 	reset,
 	clearErrors,
 	setErrors,
+	editValueSet,
 } = formSlice.actions;
 export default formSlice;
