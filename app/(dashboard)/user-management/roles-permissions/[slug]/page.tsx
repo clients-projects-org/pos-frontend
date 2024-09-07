@@ -1,3 +1,4 @@
+'use client';
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
 import {

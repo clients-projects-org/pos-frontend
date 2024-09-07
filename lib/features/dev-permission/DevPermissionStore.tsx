@@ -10,14 +10,11 @@ import {
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
 import {
-	addAction,
 	addRoute,
 	clearErrors,
-	removeAction,
 	removeRoute,
 	reset,
 	setErrors,
-	updateAction,
 	updateField,
 	updateRoute,
 	editValueSet,
@@ -58,27 +55,8 @@ export function DevPermissionStore({ slug }: { slug?: PathType }) {
 	};
 
 	// handle action value change
-	const handleActionChange = (
-		routeId: string,
-		actionId: string,
-		updates: any,
-		actionIndex?: number,
-		routeIndex?: number
-	) => {
-		dispatch(
-			updateAction({ routeId, actionId, updates, actionIndex, routeIndex })
-		);
-	};
 
 	// Define Zod schemas
-	const RouteActionSchema = z.object({
-		id: z.string(),
-		name: zod.name,
-		status: zod.status,
-		image: z.string(),
-		image_type: z.literal('icon'),
-		value: z.boolean(),
-	});
 
 	const DevRouteSchema = z.object({
 		id: z.string(),
@@ -87,7 +65,6 @@ export function DevPermissionStore({ slug }: { slug?: PathType }) {
 		image: z.string(),
 		image_type: z.literal('icon'),
 		value: z.boolean(),
-		actions: z.array(RouteActionSchema),
 	});
 
 	const FormSchema = z.object({
@@ -118,12 +95,6 @@ export function DevPermissionStore({ slug }: { slug?: PathType }) {
 					const { id, ...rest } = route;
 					return {
 						...rest,
-						actions: route.actions.map((action) => {
-							const { id, ...rest } = action;
-							return {
-								...rest,
-							};
-						}),
 					};
 				}),
 			};
@@ -275,90 +246,6 @@ export function DevPermissionStore({ slug }: { slug?: PathType }) {
 										<DynamicIcon icon="Trash2" className="h-4 w-4" />
 									</Button>
 								</div>
-							</div>
-							<div className="border border-yellow-200 dark:border-cyan-950 p-3 space-y-3">
-								<div className="flex justify-between mb-3">
-									<h5 className="mb-2 underline">Actions</h5>
-									<Button
-										variant="secondary"
-										type="button"
-										size="sm"
-										onClick={() => dispatch(addAction({ routeId: route.id }))}
-									>
-										<DynamicIcon icon="CirclePlus" className="h-4 w-4" />
-									</Button>
-								</div>
-								{route.actions.map((action, actionIndex) => (
-									<div key={actionIndex} className="grid grid-cols-12 gap-3">
-										<div className="col-span-8">
-											<FInput
-												id={`route-${route.id}-action-${action.id}-name`}
-												label={'Action Name-' + (actionIndex + 1)}
-												value={action.name}
-												onChange={(e: InputType) =>
-													handleActionChange(
-														route.id,
-														action.id,
-														{
-															name: e.target.value,
-														},
-														actionIndex,
-														routeIndex
-													)
-												}
-												placeholder="Enter Action Name"
-												error={
-													formState.errors?.routes?.[routeIndex]?.actions?.[
-														actionIndex
-													].name?._errors
-												}
-											/>
-										</div>
-										<div className="col-span-2">
-											<Label className="capitalize">Status</Label>
-											<SelectStatus
-												placeholder="Select a Status"
-												items="actDeDraft"
-												defaultValue={action.status}
-												onChange={(e) =>
-													handleActionChange(route.id, action.id, {
-														status: e,
-													})
-												}
-											/>
-										</div>
-										<div className="col-span-1 space-y-2 flex flex-col">
-											<Label className="capitalize">Icon</Label>
-											<IconModal
-												onSave={(value) => {
-													handleActionChange(route.id, action.id, {
-														image: value,
-													});
-												}}
-												defaultValue={action.image}
-											/>
-										</div>
-										<div className="col-span-1 space-y-2 flex flex-col">
-											<Label className="capitalize">Action</Label>
-											<Button
-												type="button"
-												variant="outline"
-												className="flex w-full"
-												disabled={route.actions.length === 1}
-												onClick={() =>
-													dispatch(
-														removeAction({
-															routeId: route.id,
-															actionId: action.id,
-														})
-													)
-												}
-											>
-												<DynamicIcon icon="Trash2" className="h-4 w-4" />
-											</Button>
-										</div>
-									</div>
-								))}
 							</div>
 						</div>
 					))}

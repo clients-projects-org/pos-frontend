@@ -10,11 +10,6 @@ export type formType = {
 			name?: {
 				_errors?: string[] | undefined;
 			};
-			actions?: {
-				name?: {
-					_errors?: string[] | undefined;
-				};
-			}[];
 		}[];
 	};
 	status: StatusType;
@@ -25,15 +20,6 @@ export type formType = {
 		image_type: 'icon';
 		status: StatusType;
 		value: boolean;
-
-		actions: {
-			id: string;
-			image: string;
-			image_type: 'icon';
-			name: string;
-			status: StatusType;
-			value: boolean;
-		}[];
 	}[];
 };
 // Initial state
@@ -47,17 +33,7 @@ const initialState: formType = {
 			image: 'BoxSelect',
 			image_type: 'icon',
 			status: 'active',
-			actions: [
-				{
-					id: nanoid(),
-					image: 'CircleDashed',
-					image_type: 'icon',
-					name: '',
-					status: 'active',
-					value: false,
-					errors: {},
-				},
-			],
+
 			value: false,
 			errors: {},
 		},
@@ -76,16 +52,7 @@ const formSlice = createSlice({
 				image: 'BoxSelect',
 				image_type: 'icon',
 				status: 'active',
-				actions: [
-					{
-						id: nanoid(),
-						image: 'CircleDashed',
-						image_type: 'icon',
-						name: '',
-						status: 'active',
-						value: false,
-					},
-				],
+
 				value: false,
 			});
 		},
@@ -116,59 +83,10 @@ const formSlice = createSlice({
 				Object.assign(route, updates);
 			}
 		},
-		updateAction: (state, action) => {
-			const { routeId, actionId, updates } = action.payload;
-			const route = state.routes.find((route) => route.id === routeId);
 
-			if (
-				action.payload.routeIndex !== undefined &&
-				action.payload.actionIndex !== undefined
-			) {
-				const routeIndex = action.payload.routeIndex;
-				const actionIndex = action.payload.actionIndex;
-
-				const routes = state.errors?.routes;
-				if (routes && routes[routeIndex] && routes[routeIndex].actions) {
-					const action = routes[routeIndex].actions[actionIndex];
-					if (action && action.name) {
-						action.name._errors = [];
-					}
-				}
-			}
-
-			if (route) {
-				const action = route.actions.find((action) => action.id === actionId);
-				if (action) {
-					Object.assign(action, updates);
-				}
-			}
-		},
 		removeRoute(state, action) {
 			const { routeId } = action.payload;
 			state.routes = state.routes.filter((route) => route.id !== routeId);
-		},
-		addAction(state, action) {
-			const { routeId } = action.payload;
-			const route = state.routes.find((r) => r.id === routeId);
-			if (route) {
-				route.actions.push({
-					id: nanoid(),
-					image: 'CircleDashed',
-					image_type: 'icon',
-					name: '',
-					status: 'active',
-					value: false,
-				});
-			}
-		},
-		removeAction(state, action) {
-			const { routeId, actionId } = action.payload;
-			const route = state.routes.find((r) => r.id === routeId);
-			if (route) {
-				route.actions = route.actions.filter(
-					(action) => action.id !== actionId
-				);
-			}
 		},
 
 		editValueSet(state, action) {
@@ -189,9 +107,6 @@ const formSlice = createSlice({
 export const {
 	addRoute,
 	removeRoute,
-	addAction,
-	removeAction,
-	updateAction,
 	updateField,
 	updateRoute,
 	reset,

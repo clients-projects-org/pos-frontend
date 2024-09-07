@@ -25,6 +25,22 @@ export type DevRouteType = {
 	// value is
 	_id?: string;
 	value: string;
+
+	actions: DevActionType[];
+};
+
+export type DevActionType = {
+	name: string;
+	slug: string;
+	status: StatusType;
+	image: string;
+
+	// only icon is best thats why image not choose
+	image_type: 'icon';
+
+	// value is
+	_id?: string;
+	value: string;
 };
 
 // full combine title and route

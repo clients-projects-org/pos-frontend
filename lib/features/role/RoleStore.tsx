@@ -5,18 +5,9 @@ import { z } from 'zod';
 import { toast } from '@/components/ui/use-toast';
 
 import { Form } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-} from '@/components/ui/select';
 import {
 	RFIcon,
 	RFInput,
-	RFSelect,
 	RFStatus,
 	RFSubmit,
 	RFTextarea,
@@ -26,6 +17,7 @@ import { useStoreRoleMutation } from '.';
 import { useRouter } from 'next/navigation';
 import { useGetDevPermissionQuery } from '../dev-permission/devPermissionSlice';
 import { DevPermissionType } from '@/lib/type';
+import { Checkbox } from '@/components/ui/checkbox';
 export function RoleStore() {
 	const router = useRouter();
 	const devPermission = useGetDevPermissionQuery('active');
@@ -82,8 +74,8 @@ export function RoleStore() {
 			<FormProvider {...methods}>
 				<Form {...methods}>
 					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
-						<div className="grid grid-cols-12 gap-3">
-							<div className="col-span-8">
+						<div className="grid grid-cols-7 gap-3">
+							<div className="col-span-4 ">
 								<RFInput
 									label="Role Name"
 									methods={methods}
@@ -91,39 +83,53 @@ export function RoleStore() {
 									placeholder="Role Name"
 								/>
 							</div>
-							<div className="col-span-4">
+							<div className="col-span-2 ">
 								<RFStatus methods={methods} name="status" />
 							</div>
-						</div>
-						<div className="grid grid-cols-12 gap-3">
-							<div className="col-span-8">
-								<RFSelect
-									methods={methods}
-									data={devPermission.data?.data}
-									label="Permission"
-									name="dev_permission_id"
-								>
-									<SelectGroup>
-										<SelectLabel>Permission All List</SelectLabel>
-										{devPermission.data?.data?.map((dev: DevPermissionType) => (
-											<SelectItem
-												key={dev._id}
-												className="capitalize"
-												value={dev._id ? dev._id : ''}
-											>
-												{dev.name}
-											</SelectItem>
-										))}
-									</SelectGroup>
-								</RFSelect>
-							</div>
 
-							{/* icon  */}
-							<div className="space-y-2 col-span-4  ">
+							<div className="space-y-2 col-span-1">
 								<RFIcon methods={methods} />
 							</div>
 						</div>
 						<RFTextarea methods={methods} />
+
+						<div>
+							<div className="grid grid-cols-3 gap-4">
+								{devPermission.data?.data?.map((dev: DevPermissionType) => (
+									<div
+										key={dev._id}
+										className="border p-3 shadow space-x-2 space-y-2"
+									>
+										<Checkbox className="scale-125" id={dev._id} />
+										<label
+											htmlFor={dev._id}
+											className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+										>
+											{dev.name}
+										</label>
+										<div className="space-y-6 ps-4">
+											{dev.routes?.map(
+												(route) =>
+													route.status === 'active' && (
+														<div
+															key={route._id}
+															className="space-x-2 space-y-1"
+														>
+															<Checkbox className="scale-125" id={route._id} />
+															<label
+																htmlFor={route._id}
+																className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+															>
+																{route.name}
+															</label>
+														</div>
+													)
+											)}
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
 						<RFSubmit text="Create Role" />
 					</form>
 				</Form>
