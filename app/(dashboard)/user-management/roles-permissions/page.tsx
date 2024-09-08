@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Motion } from '@/components/motion';
 import { ApiUseHOC } from '@/components/hoc';
 import { DynamicIcon } from '@/components/actions';
-import { ListItem } from '@/components/custom/list-item';
 import PageTitle, { PageTitleNoBack } from '@/components/custom/PageTitle';
 import { CardContent } from '@/components/ui/card';
 import { isEmptyArray } from '@/lib/actions';
@@ -13,18 +12,20 @@ import {
 	useGetDevPermissionQuery,
 } from '@/lib/features/dev-permission';
 import { RoleComponents, useGetRolesQuery } from '@/lib/features/role';
+import { RoleType, StatusType, DevNameType } from '@/lib/type';
 import {
-	DevPermissionType,
-	DevRouteType,
-	RoleType,
-	StatusType,
-} from '@/lib/type';
+	DevNameComponents,
+	DevNameStoreModal,
+	useGetDevNameQuery,
+} from '@/lib/features/dev-permission-name';
+import { NoItemFound } from '@/components/custom/not-found';
 
 export default function RoleAndPermissions() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
 	const [valueRole, setValueRole] = useState<StatusType | 'all'>('all');
 	const role = useGetRolesQuery(valueRole);
 	const devPermission = useGetDevPermissionQuery(value);
+	const devPermissionName = useGetDevNameQuery(value);
 
 	return (
 		<>
@@ -93,51 +94,66 @@ export default function RoleAndPermissions() {
 			{!devPermission.isLoading && devPermission.data?.success && (
 				<>
 					<PageTitleNoBack title="Permissions">
-						<Link
-							href={'/user-management/roles-permissions/create-permission'}
-							className="gap-1 flex items-center"
-						>
-							<DynamicIcon icon="PlusCircle" className="h-4 w-4 ml-0" />
-							<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-								Add Permissions
-							</span>
-						</Link>
+						<DevNameStoreModal />
 					</PageTitleNoBack>
 
 					{/* filter  */}
-					<DevPermission.Filter value={value} setValue={setValue} />
+					<DevNameComponents.Filter value={value} setValue={setValue} />
 				</>
 			)}
 
 			<ApiUseHOC
-				data={devPermission.data}
-				isFetching={devPermission.isFetching}
-				isLoading={devPermission.isLoading}
+				data={devPermissionName.data}
+				isFetching={devPermissionName.isFetching}
+				isLoading={devPermissionName.isLoading}
 				notFound
 			>
-				{!isEmptyArray(devPermission.data?.data) && (
+				{!isEmptyArray(devPermissionName.data?.data) && (
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-						{devPermission.data?.data?.map((dev: DevPermissionType) => (
+						{devPermissionName.data?.data?.map((dev: DevNameType) => (
 							<Motion key={dev._id}>
 								<div className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white">
-									<div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
+									<div className=" pb-1 border-b mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
 										<Link
 											href={`/user-management/roles-permissions/permission-${dev._id}`}
 											className="capitalize"
 										>
 											{dev.name}
 										</Link>
-										<DevPermission.Actions data={dev} />
+										<DevNameComponents.Actions data={dev} />
+									</div>
+									<div className="pb-1 border-b mb-2">
+										{dev.routes?.map((route) => (
+											<div
+												key={route._id}
+												className="mb-2 text-xs font-semibold text-gray-800 dark:text-gray-400 flex items-center justify-between"
+											>
+												<Link
+													href={`/user-management/roles-permissions/permission-${dev._id}`}
+													className="capitalize"
+												>
+													{route.name}
+												</Link>
+												<DevPermission.Actions isFor="child" data={route} />
+											</div>
+										))}
+										{isEmptyArray(dev.routes) && <NoItemFound />}
 									</div>
 
-									{isEmptyArray(dev.routes) && (
-										<p className="text-sm  text-stone-500">No Routes</p>
-									)}
-
-									{/* routes list items  */}
-									{dev.routes?.map((route: DevRouteType) => (
-										<ListItem key={route._id} data={route} />
-									))}
+									<div className="text-center">
+										<Link
+											href={{
+												pathname: `/user-management/roles-permissions/create_permission`,
+												query: { dev_name: dev._id },
+											}}
+											className="gap-1 inline-flex items-center justify-center  "
+										>
+											<DynamicIcon icon="PlusCircle" className="h-4 w-4 ml-0" />
+											<span className="sr-only sm:not-sr-only !whitespace-nowrap">
+												Add List
+											</span>
+										</Link>
+									</div>
 								</div>
 							</Motion>
 						))}

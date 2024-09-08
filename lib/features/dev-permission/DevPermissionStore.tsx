@@ -8,7 +8,7 @@ import {
 	SelectStatus,
 } from '@/components/custom/form';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
 	addRoute,
 	clearErrors,
@@ -30,12 +30,27 @@ import React, { useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { BarLoader } from '@/components/custom/loader';
 import { zod } from '@/lib/zod';
+import { useGetDevNameByIdQuery } from '../dev-permission-name';
+import { Badge } from '@/components/ui/badge';
+import { badge } from '@/lib/actions';
+import { ApiUseHOC } from '@/components/hoc';
 
 type InputType = React.ChangeEvent<HTMLInputElement>;
 type PathType = 'edit_permission' | undefined;
 
 export function DevPermissionStore({ slug }: { slug?: PathType }) {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const devNameId = searchParams.get('dev_name');
+	// get data from api
+	const {
+		data: dataDevName,
+		isLoading: isLoadingDevName,
+		error: errorDevName,
+		isFetching: isFetchingDevName,
+	} = useGetDevNameByIdQuery(devNameId);
+	console.log(dataDevName);
+
 	// get id
 	const id = slug && slug.split('-')[1];
 	const path = slug && (slug.split('-')[0] as PathType);
@@ -143,116 +158,124 @@ export function DevPermissionStore({ slug }: { slug?: PathType }) {
 	return (
 		<div className="max-w-5xl mx-auto w-full border border-red-200 dark:border-red-950 p-4 rounded">
 			{isLoading && <BarLoader />}
-			<form onSubmit={onSubmit} className="space-y-5">
-				<div className="border border-blue-200 dark:border-blue-950 p-3">
-					<div className="flex justify-between">
-						<h5 className="mb-2 underline">Main Details</h5>
-					</div>
-					<div className="grid grid-cols-12 gap-3 ">
-						<div className="col-span-8">
-							<FInput
-								id="MainTitle"
-								label="Main Title"
-								value={formState.name}
-								onChange={(e: InputType) =>
-									handleFieldChange('name', e.target.value)
-								}
-								placeholder="Enter Main Title"
-								error={formState.errors?.name?._errors}
-							/>
+			<ApiUseHOC
+				data={dataDevName}
+				isFetching={isFetchingDevName}
+				isLoading={isLoadingDevName}
+			>
+				<form onSubmit={onSubmit} className="space-y-5">
+					<div className="border border-blue-200 dark:border-blue-950 p-3">
+						<div className="flex justify-between">
+							<h5 className="mb-2 underline text-sm">Main Details</h5>
 						</div>
-						<div className="col-span-4 space-y-2 flex flex-col">
-							<Label className="capitalize">Status</Label>
-							<SelectStatus
-								placeholder="Select a Status"
-								items="actDeDraft"
-								defaultValue={formState.status}
-								onChange={(value) => handleFieldChange('status', value)}
-							/>
-						</div>
-					</div>
-				</div>
-
-				<div className="border  border-blue-200 dark:border-blue-950  p-3 space-y-6 ">
-					<div className="flex justify-between mb-3">
-						<h5 className="mb-2 underline">Routes</h5>
-						<Button
-							variant="secondary"
-							type="button"
-							onClick={() => dispatch(addRoute())}
-							size="sm"
-						>
-							<DynamicIcon icon="CirclePlus" className="h-4 w-4" />
-						</Button>
-					</div>
-					{formState.routes.map((route, routeIndex) => (
-						<div
-							key={routeIndex}
-							className="border border-green-200 dark:border-green-950 p-3 space-y-3"
-						>
-							<div className="grid grid-cols-12 gap-3">
-								{/* name  */}
-								<div className="col-span-8">
-									<FInput
-										id={`route-${route.id}-name`}
-										label={'Route Name-' + (routeIndex + 1)}
-										value={route.name}
-										onChange={(e: InputType) =>
-											handleRouteChange(
-												route.id,
-												{ name: e.target.value },
-												routeIndex
+						<div className="grid grid-cols-12 gap-3 ">
+							<div className="col-span-8">
+								<p className="text-xl capitalize">{dataDevName?.data.name}</p>
+							</div>
+							<div className="col-span-4 space-y-2 flex flex-col">
+								<div className="text-right">
+									<Badge
+										variant={
+											dataDevName?.data.status &&
+											badge(
+												dataDevName?.data.status && dataDevName?.data.status
 											)
 										}
-										placeholder="Enter Route Name"
-										error={
-											formState.errors?.routes?.[routeIndex]?.name?._errors
-										}
-									/>
-								</div>
-
-								{/* status  */}
-								<div className="col-span-2 space-y-2 flex flex-col">
-									<Label className="capitalize">Status</Label>
-									<SelectStatus
-										placeholder="Select a Status"
-										items="actDeDraft"
-										defaultValue={route.status}
-										onChange={(e) => handleRouteChange(route.id, { status: e })}
-									/>
-								</div>
-
-								{/* icon  */}
-								<div className="col-span-1 space-y-2 flex flex-col">
-									<Label className="capitalize">Icon</Label>
-									<IconModal
-										onSave={(value) => {
-											handleRouteChange(route.id, { image: value });
-										}}
-										defaultValue={route.image}
-									/>
-								</div>
-
-								{/* actions  */}
-								<div className="col-span-1 space-y-2 flex flex-col">
-									<Label className="capitalize">Action</Label>
-									<Button
-										type="button"
-										variant="outline"
-										className="flex w-full"
-										disabled={formState.routes.length === 1}
-										onClick={() => dispatch(removeRoute({ routeId: route.id }))}
+										// style={{ fontSize: isFor === 'child' ? '10px' : '12px' }}
+										className={`text-xs capitalize `}
 									>
-										<DynamicIcon icon="Trash2" className="h-4 w-4" />
-									</Button>
+										{dataDevName?.data.status}
+									</Badge>
 								</div>
 							</div>
 						</div>
-					))}
-				</div>
+					</div>
 
-				<RFSubmit text="Create Dev Permission" />
-			</form>
+					<div className="border  border-blue-200 dark:border-blue-950  p-3 space-y-6 ">
+						<div className="flex justify-between mb-3">
+							<h5 className="mb-2 underline">Routes</h5>
+							<Button
+								variant="secondary"
+								type="button"
+								onClick={() => dispatch(addRoute())}
+								size="sm"
+							>
+								<DynamicIcon icon="CirclePlus" className="h-4 w-4" />
+							</Button>
+						</div>
+						{formState.routes.map((route, routeIndex) => (
+							<div
+								key={routeIndex}
+								className="border border-green-200 dark:border-green-950 p-3 space-y-3"
+							>
+								<div className="grid grid-cols-12 gap-3">
+									{/* name  */}
+									<div className="col-span-8">
+										<FInput
+											id={`route-${route.id}-name`}
+											label={'Route Name-' + (routeIndex + 1)}
+											value={route.name}
+											onChange={(e: InputType) =>
+												handleRouteChange(
+													route.id,
+													{ name: e.target.value },
+													routeIndex
+												)
+											}
+											placeholder="Enter Route Name"
+											error={
+												formState.errors?.routes?.[routeIndex]?.name?._errors
+											}
+										/>
+									</div>
+
+									{/* status  */}
+									<div className="col-span-2 space-y-2 flex flex-col">
+										<Label className="capitalize">Status</Label>
+										<SelectStatus
+											placeholder="Select a Status"
+											items="actDeDraft"
+											defaultValue={route.status}
+											onChange={(e) =>
+												handleRouteChange(route.id, { status: e })
+											}
+										/>
+									</div>
+
+									{/* icon  */}
+									<div className="col-span-1 space-y-2 flex flex-col">
+										<Label className="capitalize">Icon</Label>
+										<IconModal
+											onSave={(value) => {
+												handleRouteChange(route.id, { image: value });
+											}}
+											defaultValue={route.image}
+										/>
+									</div>
+
+									{/* actions  */}
+									<div className="col-span-1 space-y-2 flex flex-col">
+										<Label className="capitalize">Action</Label>
+										<Button
+											type="button"
+											variant="outline"
+											className="flex w-full"
+											disabled={formState.routes.length === 1}
+											onClick={() =>
+												dispatch(removeRoute({ routeId: route.id }))
+											}
+										>
+											<DynamicIcon icon="Trash2" className="h-4 w-4" />
+										</Button>
+									</div>
+								</div>
+							</div>
+						))}
+					</div>
+
+					<RFSubmit text="Create Dev Permission" />
+				</form>
+			</ApiUseHOC>
 		</div>
 	);
 }

@@ -26,6 +26,7 @@ export const apiSlice = createApi({
 
 	tagTypes: [
 		'DevPermission',
+		'DevName',
 		'Role',
 		'User',
 		'Category',

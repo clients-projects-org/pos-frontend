@@ -104,9 +104,20 @@ const handler = NextAuth({
 					return token;
 				} else {
 					console.log('expired token', token);
-					const newToken = await refreshAccessToken(token.user);
-					console.log(newToken, 'newToken');
-					return newToken;
+					const getNewToken = await refreshAccessToken(token.user);
+					console.log(getNewToken, 'newToken');
+					const decodedToken = await decodeJwt(getNewToken.token.accessToken);
+					console.log(decodedAccessToken, 'decodedAccessToken');
+					// Overwrite iat and exp based on decoded token
+					token.iat = decodedToken?.iat;
+					token.exp = decodedToken?.exp;
+					token.user = {
+						token: {
+							accessToken: getNewToken.token.accessToken,
+							refreshToken: getNewToken.token.refreshToken,
+						},
+					};
+					return token;
 				}
 			} else {
 				console.log('invalid token');

@@ -12,13 +12,13 @@ export default function Page({ params }: { params: { slug: string } }) {
 	const { slug } = params;
 
 	switch (true) {
-		// if crete role
+		// if create role
 		case slug === 'create-role':
 			return <CreateRoleComponent />;
 
-		// if crete permission
-		case slug === 'create-permission':
-			return <CreatePermissionComponent />;
+		// if create permission
+		case slug.startsWith('create_permission'):
+			return <CreatePermissionComponent slug={slug} />;
 
 		// if edit role
 		case slug.startsWith('edit_role'):
@@ -74,7 +74,7 @@ const CreateRoleComponent = () => (
 	</>
 );
 
-const CreatePermissionComponent = () => (
+const CreatePermissionComponent = ({ slug }: { slug: string }) => (
 	<>
 		<PageTitle title="Create Permission">
 			<Link
@@ -87,7 +87,7 @@ const CreatePermissionComponent = () => (
 				</span>
 			</Link>
 		</PageTitle>
-		<DevPermissionStore />
+		<DevPermissionStore slug={slug} />
 	</>
 );
 

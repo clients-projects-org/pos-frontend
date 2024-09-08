@@ -245,3 +245,21 @@ export type CouponType = {
 	createdAt?: string;
 	slug?: string;
 };
+
+export type RouteType = {
+	createdAt?: string;
+	name?: string;
+	status?: string;
+	updatedAt?: string;
+	_id?: string;
+};
+export type DevNameType = {
+	_id?: string;
+	code?: string;
+	description?: string;
+	name?: string;
+	slug?: string;
+	created_by?: UserType;
+	status?: StatusType;
+	routes?: RouteType[];
+};
