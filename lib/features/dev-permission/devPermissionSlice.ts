@@ -5,7 +5,6 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 		getDevPermission: builder.query<any, void>({
 			query: (payload) => `dev-permission?status=${payload}`,
 			providesTags: (result, error, arg) => {
-				console.log({ result, error, arg });
 				return ['DevPermission', { type: 'DevPermission', status: arg }];
 			},
 		}),
@@ -16,7 +15,7 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				method: 'DELETE',
 				body: { type },
 			}),
-			invalidatesTags: ['DevPermission'],
+			invalidatesTags: ['DevPermission', 'DevName'],
 		}),
 
 		storeDevPermission: builder.mutation<any, string>({
@@ -28,6 +27,7 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return [
 					'DevPermission',
+					'DevName',
 					{ type: 'DevPermission', status: 'all' },
 					{ type: 'DevPermission', status: 'active' },
 					{ type: 'DevPermission', status: 'deactivated' },
@@ -46,6 +46,7 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return [
 					'DevPermission',
+					'DevName',
 					{ type: 'DevPermission', status: 'all' },
 					{ type: 'DevPermission', status: 'active' },
 					{ type: 'DevPermission', status: 'deactivated' },
@@ -65,12 +66,24 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 			invalidatesTags: (result, error, arg) => {
 				return [
 					'DevPermission',
+					'DevName',
 					{ type: 'DevPermission', id: arg.type.mainId },
 					{ type: 'DevPermission', status: 'all' },
 					{ type: 'DevPermission', status: 'active' },
 					{ type: 'DevPermission', status: 'deactivated' },
 					{ type: 'DevPermission', status: 'draft' },
 				];
+			},
+		}),
+		// update DevPermission
+		updateDevPermission: builder.mutation<any, { id: string; data: any }>({
+			query: ({ id, data }: { id: string; data: any }) => ({
+				url: `dev-permission/update/${id}`,
+				method: 'PUT',
+				body: data,
+			}),
+			invalidatesTags: () => {
+				return ['DevPermission', 'DevName'];
 			},
 		}),
 
@@ -90,4 +103,5 @@ export const {
 	useUpdateStatusMutation,
 	useGetByIdQuery,
 	useEditDevPermissionMutation,
+	useUpdateDevPermissionMutation,
 } = devPermissionApi;

@@ -25,7 +25,18 @@ export const devNameApi = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return ['DevName'];
 			},
-			// invalidatesTags: ['DevPermission'],
+		}),
+
+		// update DevName
+		updateDevName: builder.mutation<any, { id: string; data: any }>({
+			query: ({ id, data }: { id: string; data: any }) => ({
+				url: `/dev-name/update/${id}`,
+				method: 'PUT',
+				body: data,
+			}),
+			invalidatesTags: () => {
+				return ['DevName'];
+			},
 		}),
 
 		deleteDevName: builder.mutation<any, string>({
@@ -56,4 +67,5 @@ export const {
 	useStoreDevNameMutation,
 	useUpdateDevNameStatusMutation,
 	useGetDevNameByIdQuery,
+	useUpdateDevNameMutation,
 } = devNameApi;

@@ -1,11 +1,8 @@
 'use client';
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
-import {
-	DevPermissionDetails,
-	DevPermissionStore,
-	RoleStore,
-} from '@/lib/features/dev-permission';
+import { DevPermissionDetails, RoleStore } from '@/lib/features/dev-permission';
+import RoleDetails from '@/lib/features/role/RoleDetails';
 import Link from 'next/link';
 
 export default function Page({ params }: { params: { slug: string } }) {
@@ -15,10 +12,6 @@ export default function Page({ params }: { params: { slug: string } }) {
 		// if create role
 		case slug === 'create-role':
 			return <CreateRoleComponent />;
-
-		// if create permission
-		case slug.startsWith('create_permission'):
-			return <CreatePermissionComponent slug={slug} />;
 
 		// if edit role
 		case slug.startsWith('edit_role'):
@@ -74,23 +67,6 @@ const CreateRoleComponent = () => (
 	</>
 );
 
-const CreatePermissionComponent = ({ slug }: { slug: string }) => (
-	<>
-		<PageTitle title="Create Permission">
-			<Link
-				href="/user-management/roles-permissions"
-				className="gap-1 flex items-center"
-			>
-				<DynamicIcon icon="Users" className="h-4 w-4 ml-0" />
-				<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-					All Permission
-				</span>
-			</Link>
-		</PageTitle>
-		<DevPermissionStore slug={slug} />
-	</>
-);
-
 const EditRoleComponent = () => (
 	<>
 		<PageTitle title="Edit Role">
@@ -138,7 +114,7 @@ const RoleDetailsComponent = ({ slug }: { slug: string }) => (
 				</span>
 			</Link>
 		</PageTitle>
-		<div>All role Data page</div>
+		<RoleDetails slug={slug} />
 	</>
 );
 

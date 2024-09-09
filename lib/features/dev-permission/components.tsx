@@ -17,6 +17,7 @@ import { showToast, ToastOptions } from '@/lib/actions/tost';
 import { ToastAction } from '@/components/ui/toast';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import { DevPermissionEditModal } from './DevPermissionStore';
 
 type typeProps = {
 	type: 'routes' | 'main' | 'actions';
@@ -104,7 +105,7 @@ const Actions = ({
 
 			{/* custom dropdown component  */}
 			<DropDownThreeDot isLoading={isLoading || updateStatusLoading}>
-				<DropDownDotItem
+				{/* <DropDownDotItem
 					icon="SquarePen"
 					name="Edit"
 					onChange={() => {
@@ -113,7 +114,8 @@ const Actions = ({
 						);
 					}}
 					disabled={loading}
-				/>
+				/> */}
+				<DevPermissionEditModal data={data} />
 				<DropDownDotItem
 					icon="ScanEye"
 					name="View"
@@ -151,7 +153,7 @@ const Actions = ({
 						disabled={loading}
 					/>
 				)}
-				{(data.status === 'draft' || isFor === 'child') && (
+				{data.status === 'draft' && (
 					<DropDownDotItem
 						icon="Trash2"
 						name="Delete"

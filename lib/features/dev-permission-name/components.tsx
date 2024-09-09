@@ -27,6 +27,8 @@ import {
 import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import { Badge } from '@/components/ui/badge';
+import React from 'react';
+import { DevNameEditModal } from './DevNameStore';
 
 const categoryColumn: ColumnDef<DevNameType>[] = [
 	TableItem.SelectBox(),
@@ -152,22 +154,17 @@ const Actions = ({ data, isFor }: { data: DevNameType; isFor?: string }) => {
 				isLoading={isLoading || updateStatusLoading}
 				icon="MoreHorizontal"
 			>
-				<DropDownDotItem
-					icon="SquarePen"
-					name="Edit"
-					onChange={() => {
-						router.push(`/inventory/category/edit-${data._id}`);
-					}}
-					disabled={loading}
-				/>
-				<DropDownDotItem
+				{/* edit modal */}
+				<DevNameEditModal data={data} />
+				{/* view is off now need to add a modal for view all  */}
+				{/* <DropDownDotItem
 					icon="ScanEye"
 					name="View"
 					onChange={() => {
 						router.push(`/inventory/category/${data._id}`);
 					}}
 					disabled={loading}
-				/>
+				/> */}
 				<DropdownMenuSeparator />
 				{data.status !== 'active' && (
 					<DropDownDotItem

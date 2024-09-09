@@ -5,7 +5,14 @@ export const roleApi = apiSlice.injectEndpoints({
 		getRoles: builder.query<any, void>({
 			query: (payload): string => `user-role?status=${payload}`,
 			providesTags: (result, error, arg) => {
- 				return ['Role'];
+				return ['Role'];
+			},
+		}),
+
+		getRoleById: builder.query<any, string>({
+			query: (id) => `user-role/${id}`,
+			providesTags: (result, error, id) => {
+				return [{ type: 'Role', id: id }];
 			},
 		}),
 
@@ -46,6 +53,7 @@ export const roleApi = apiSlice.injectEndpoints({
 
 export const {
 	useGetRolesQuery,
+	useGetRoleByIdQuery,
 	useStoreRoleMutation,
 	useDeleteRoleMutation,
 	useUpdateRoleStatusMutation,

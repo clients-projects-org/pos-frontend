@@ -1,39 +1,28 @@
 import { StatusType } from '@/lib/type';
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 export type formType = {
-	name: string;
 	errors?: {
-		name?: {
-			_errors?: string[] | undefined;
-		};
 		routes?: {
 			name?: {
 				_errors?: string[] | undefined;
 			};
 		}[];
 	};
-	status: StatusType;
+
 	routes: {
 		id: string;
 		name: string;
-		image: string;
-		image_type: 'icon';
 		status: StatusType;
 		value: boolean;
 	}[];
 };
 // Initial state
 const initialState: formType = {
-	name: '',
-	status: 'active',
 	routes: [
 		{
 			id: nanoid(),
 			name: '',
-			image: 'BoxSelect',
-			image_type: 'icon',
 			status: 'active',
-
 			value: false,
 			errors: {},
 		},
@@ -49,19 +38,10 @@ const formSlice = createSlice({
 			state.routes.push({
 				id: nanoid(),
 				name: '',
-				image: 'BoxSelect',
-				image_type: 'icon',
 				status: 'active',
 
 				value: false,
 			});
-		},
-		updateField: (state, action) => {
-			const { key, value } = action.payload;
-			state[key as 'name' | 'status'] = value;
-			if (state.errors && state.errors.name) {
-				state.errors.name._errors = [];
-			}
 		},
 
 		updateRoute: (state, action) => {
@@ -90,7 +70,7 @@ const formSlice = createSlice({
 		},
 
 		editValueSet(state, action) {
-			return (state = action.payload);
+			return (state.routes = action.payload);
 		},
 
 		setErrors(state, action) {
@@ -107,7 +87,6 @@ const formSlice = createSlice({
 export const {
 	addRoute,
 	removeRoute,
-	updateField,
 	updateRoute,
 	reset,
 	clearErrors,

@@ -6,7 +6,6 @@ const baseQuery = fetchBaseQuery({
 	baseUrl: env.baseApi,
 	prepareHeaders: async (headers) => {
 		const session = await getSession(); // Get session from NextAuth
-		console.log(session, 'session');
 
 		if (session?.accessToken) {
 			headers.set('Authorization', `Bearer ${session.accessToken}`);

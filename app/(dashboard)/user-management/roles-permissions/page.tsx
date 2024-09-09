@@ -9,6 +9,7 @@ import { CardContent } from '@/components/ui/card';
 import { isEmptyArray } from '@/lib/actions';
 import {
 	DevPermission,
+	DevPermissionStoreModal,
 	useGetDevPermissionQuery,
 } from '@/lib/features/dev-permission';
 import { RoleComponents, useGetRolesQuery } from '@/lib/features/role';
@@ -141,18 +142,7 @@ export default function RoleAndPermissions() {
 									</div>
 
 									<div className="text-center">
-										<Link
-											href={{
-												pathname: `/user-management/roles-permissions/create_permission`,
-												query: { dev_name: dev._id },
-											}}
-											className="gap-1 inline-flex items-center justify-center  "
-										>
-											<DynamicIcon icon="PlusCircle" className="h-4 w-4 ml-0" />
-											<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-												Add List
-											</span>
-										</Link>
+										<DevPermissionStoreModal data={dev} />
 									</div>
 								</div>
 							</Motion>

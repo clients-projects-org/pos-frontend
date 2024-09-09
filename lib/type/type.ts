@@ -249,8 +249,10 @@ export type CouponType = {
 export type RouteType = {
 	createdAt?: string;
 	name?: string;
-	status?: string;
+	status?: StatusType;
+	checked?: boolean;
 	updatedAt?: string;
+	parent_id?: string;
 	_id?: string;
 };
 export type DevNameType = {
@@ -262,4 +264,5 @@ export type DevNameType = {
 	created_by?: UserType;
 	status?: StatusType;
 	routes?: RouteType[];
+	checked?: boolean;
 };

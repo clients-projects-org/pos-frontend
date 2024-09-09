@@ -1,281 +1,230 @@
 'use client';
-import { Button } from '@/components/ui/button';
 import { z } from 'zod';
-import {
-	FInput,
-	IconModal,
-	RFSubmit,
-	SelectStatus,
-} from '@/components/custom/form';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { useRouter, useSearchParams } from 'next/navigation';
-import {
-	addRoute,
-	clearErrors,
-	removeRoute,
-	reset,
-	setErrors,
-	updateField,
-	updateRoute,
-	editValueSet,
-} from './createSlice';
-import { DynamicIcon } from '@/components/actions';
-import {
-	useEditDevPermissionMutation,
-	useGetByIdQuery,
-	useStoreDevPermissionMutation,
-} from './devPermissionSlice';
-import { Label } from '@/components/ui/label';
-import React, { useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { BarLoader } from '@/components/custom/loader';
-import { zod } from '@/lib/zod';
-import { useGetDevNameByIdQuery } from '../dev-permission-name';
-import { Badge } from '@/components/ui/badge';
-import { badge } from '@/lib/actions';
-import { ApiUseHOC } from '@/components/hoc';
+import { SelectStatus } from '@/components/custom/form';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+	useStoreDevPermissionMutation,
+	useUpdateDevPermissionMutation,
+} from './devPermissionSlice';
+import { DynamicIcon } from '@/components/actions';
+import { DevNameType } from '@/lib/type';
+import { devZodFrom, devZodFromEdit, FormSchema } from './dev-permission.zod';
 
-type InputType = React.ChangeEvent<HTMLInputElement>;
-type PathType = 'edit_permission' | undefined;
+export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
+	const dev_name_id = data?._id;
+	const [open, setOpen] = React.useState(false);
 
-export function DevPermissionStore({ slug }: { slug?: PathType }) {
-	const router = useRouter();
-	const searchParams = useSearchParams();
-	const devNameId = searchParams.get('dev_name');
-	// get data from api
-	const {
-		data: dataDevName,
-		isLoading: isLoadingDevName,
-		error: errorDevName,
-		isFetching: isFetchingDevName,
-	} = useGetDevNameByIdQuery(devNameId);
-	console.log(dataDevName);
+	const { methods } = devZodFrom();
+	const [store, { isLoading }] = useStoreDevPermissionMutation();
 
-	// get id
-	const id = slug && slug.split('-')[1];
-	const path = slug && (slug.split('-')[0] as PathType);
-
-	// dispatch & selector
-	const dispatch = useAppDispatch();
-	const formState = useAppSelector((state) => state.form);
-
-	// handle field value change
-	const handleFieldChange = (key: 'name' | 'status', value: string) => {
-		dispatch(updateField({ key, value }));
-	};
-
-	// handle route value change
-	const handleRouteChange = (routeId: string, updates: any, index?: number) => {
-		dispatch(updateRoute({ routeId, updates, index }));
-	};
-
-	// handle action value change
-
-	// Define Zod schemas
-
-	const DevRouteSchema = z.object({
-		id: z.string(),
-		name: zod.name,
-		status: zod.status,
-		image: z.string(),
-		image_type: z.literal('icon'),
-		value: z.boolean(),
-	});
-
-	const FormSchema = z.object({
-		routes: z.array(DevRouteSchema),
-		name: zod.name,
-		status: zod.status,
-	});
-
-	// store api call
-	const [addPost, { isLoading }] = useStoreDevPermissionMutation();
-	const [editPost, { isLoading: isLoadingEdit }] =
-		useEditDevPermissionMutation();
-
-	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-
-		// reset error
-		dispatch(clearErrors());
-
-		const result = FormSchema.safeParse(formState);
-		// remove all id from data
-		if (result.success) {
-			const dData = {
-				...formState,
-				name: formState.name,
-				status: formState.status,
-				routes: formState.routes.map((route) => {
-					const { id, ...rest } = route;
-					return {
-						...rest,
-					};
-				}),
-			};
-
-			// store api call
-			addPost(dData as any).then((e) => {
-				console.log(e);
-				dispatch(reset());
-
-				router.push('/user-management/roles-permissions', { scroll: false });
-				toast({
-					title: 'You submitted the following values:',
-					description: (
-						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-							<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-						</pre>
-					),
-				});
+	async function onSubmit(data: z.infer<typeof FormSchema>) {
+		const storeData = {
+			dev_name_id,
+			name: data.name,
+			status: data.status,
+		};
+		try {
+			const response = await store({
+				...storeData,
+			} as any).unwrap();
+			toast({
+				title: 'Success!',
+				description: (
+					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+						<code className="text-white">
+							{JSON.stringify(response, null, 2)}
+						</code>
+					</pre>
+				),
 			});
-		} else {
-			// Handle validation errors
-			const errors = result.error.format();
-			dispatch(setErrors(errors));
-			console.log('errors', errors);
-			console.log('error state', formState);
+			setOpen(false);
+		} catch (error) {
+			toast({
+				title: 'Error',
+				description: 'An error occurred while saving.',
+				variant: 'destructive',
+			});
 		}
 	}
 
-	// get data from api
-	const {
-		data,
-		isLoading: isLoadingView,
-		error,
-		isFetching,
-	} = useGetByIdQuery(id);
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button variant="outline">
+					<DynamicIcon icon="PlusCircle" className="h-4 w-4 sm:mr-2" />
+					<span className="sr-only sm:not-sr-only capitalize">Add List</span>
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[425px]">
+				<DialogHeader>
+					<DialogTitle>Create Permission</DialogTitle>
+					<DialogDescription>
+						Permission Group is a collection of permissions.
+					</DialogDescription>
+				</DialogHeader>
+				<form onSubmit={methods.handleSubmit(onSubmit)}>
+					<div className="grid gap-4 py-4">
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="name" className="text-right">
+								Name
+							</Label>
+							<Input
+								id="name"
+								{...methods.register('name')}
+								className="col-span-3"
+							/>
+							{methods.formState.errors.name && (
+								<p className="text-red-500 col-span-4">
+									{methods.formState.errors.name.message}
+								</p>
+							)}
+						</div>
 
-	useEffect(() => {
-		if (path === 'edit_permission') {
-			dispatch(editValueSet(data?.data));
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="status" className="text-right">
+								Status
+							</Label>
+							<div className="col-span-3">
+								<SelectStatus
+									placeholder="Select a status"
+									items="actDeDraft"
+									defaultValue={methods.getValues('status')}
+									onChange={(value) => methods.setValue('status', value)}
+								/>
+							</div>
+
+							{methods.formState.errors.status && (
+								<p className="text-red-500 col-span-4">
+									{methods.formState.errors.status.message}
+								</p>
+							)}
+						</div>
+					</div>
+					<DialogFooter>
+						<Button type="submit" disabled={isLoading}>
+							{isLoading ? 'Saving...' : 'Save changes'}
+						</Button>
+					</DialogFooter>
+				</form>
+			</DialogContent>
+		</Dialog>
+	);
+}
+export function DevPermissionEditModal({ data }: { data: DevNameType }) {
+	const dev_name_id = data?._id;
+
+	const [open, setOpen] = React.useState(false);
+	const { methods } = devZodFromEdit(data);
+
+	const [store, { isLoading }] = useUpdateDevPermissionMutation();
+
+	async function onSubmit(submitData: z.infer<typeof FormSchema>) {
+		const storeData = {
+			dev_name_id,
+			name: submitData.name,
+			status: submitData.status,
+		};
+		try {
+			const response = await store({
+				data: storeData,
+				id: data._id,
+			} as any).unwrap();
+			toast({
+				title: 'Success!',
+				description: (
+					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+						<code className="text-white">
+							{JSON.stringify(response, null, 2)}
+						</code>
+					</pre>
+				),
+			});
+			setOpen(false);
+		} catch (error) {
+			toast({
+				title: 'Error',
+				description: 'An error occurred while saving.',
+				variant: 'destructive',
+			});
 		}
-	}, [data, path]);
-
-	console.log(data?.data);
-	console.log(formState);
+	}
 
 	return (
-		<div className="max-w-5xl mx-auto w-full border border-red-200 dark:border-red-950 p-4 rounded">
-			{isLoading && <BarLoader />}
-			<ApiUseHOC
-				data={dataDevName}
-				isFetching={isFetchingDevName}
-				isLoading={isLoadingDevName}
-			>
-				<form onSubmit={onSubmit} className="space-y-5">
-					<div className="border border-blue-200 dark:border-blue-950 p-3">
-						<div className="flex justify-between">
-							<h5 className="mb-2 underline text-sm">Main Details</h5>
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button
+					variant="link"
+					className="px-2 w-full justify-start hover:no-underline"
+				>
+					<DynamicIcon icon="SquarePen" className="h-4 w-4 sm:mr-2" />
+					<span className="sr-only sm:not-sr-only capitalize">Edit</span>
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[425px]">
+				<DialogHeader>
+					<DialogTitle>Edit Permission Name</DialogTitle>
+					<DialogDescription>
+						Permission Group is a collection of permissions.
+					</DialogDescription>
+				</DialogHeader>
+				<form onSubmit={methods.handleSubmit(onSubmit)}>
+					<div className="grid gap-4 py-4">
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="name" className="text-right">
+								Name
+							</Label>
+							<Input
+								id="name"
+								{...methods.register('name')}
+								className="col-span-3"
+							/>
+							{methods.formState.errors.name && (
+								<p className="text-red-500 col-span-4">
+									{methods.formState.errors.name.message}
+								</p>
+							)}
 						</div>
-						<div className="grid grid-cols-12 gap-3 ">
-							<div className="col-span-8">
-								<p className="text-xl capitalize">{dataDevName?.data.name}</p>
+
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="status" className="text-right">
+								Status
+							</Label>
+							<div className="col-span-3">
+								<SelectStatus
+									placeholder="Select a status"
+									items="actDeDraft"
+									defaultValue={methods.getValues('status')}
+									onChange={(value) => methods.setValue('status', value)}
+								/>
 							</div>
-							<div className="col-span-4 space-y-2 flex flex-col">
-								<div className="text-right">
-									<Badge
-										variant={
-											dataDevName?.data.status &&
-											badge(
-												dataDevName?.data.status && dataDevName?.data.status
-											)
-										}
-										// style={{ fontSize: isFor === 'child' ? '10px' : '12px' }}
-										className={`text-xs capitalize `}
-									>
-										{dataDevName?.data.status}
-									</Badge>
-								</div>
-							</div>
+
+							{methods.formState.errors.status && (
+								<p className="text-red-500 col-span-4">
+									{methods.formState.errors.status.message}
+								</p>
+							)}
 						</div>
 					</div>
-
-					<div className="border  border-blue-200 dark:border-blue-950  p-3 space-y-6 ">
-						<div className="flex justify-between mb-3">
-							<h5 className="mb-2 underline">Routes</h5>
-							<Button
-								variant="secondary"
-								type="button"
-								onClick={() => dispatch(addRoute())}
-								size="sm"
-							>
-								<DynamicIcon icon="CirclePlus" className="h-4 w-4" />
-							</Button>
-						</div>
-						{formState.routes.map((route, routeIndex) => (
-							<div
-								key={routeIndex}
-								className="border border-green-200 dark:border-green-950 p-3 space-y-3"
-							>
-								<div className="grid grid-cols-12 gap-3">
-									{/* name  */}
-									<div className="col-span-8">
-										<FInput
-											id={`route-${route.id}-name`}
-											label={'Route Name-' + (routeIndex + 1)}
-											value={route.name}
-											onChange={(e: InputType) =>
-												handleRouteChange(
-													route.id,
-													{ name: e.target.value },
-													routeIndex
-												)
-											}
-											placeholder="Enter Route Name"
-											error={
-												formState.errors?.routes?.[routeIndex]?.name?._errors
-											}
-										/>
-									</div>
-
-									{/* status  */}
-									<div className="col-span-2 space-y-2 flex flex-col">
-										<Label className="capitalize">Status</Label>
-										<SelectStatus
-											placeholder="Select a Status"
-											items="actDeDraft"
-											defaultValue={route.status}
-											onChange={(e) =>
-												handleRouteChange(route.id, { status: e })
-											}
-										/>
-									</div>
-
-									{/* icon  */}
-									<div className="col-span-1 space-y-2 flex flex-col">
-										<Label className="capitalize">Icon</Label>
-										<IconModal
-											onSave={(value) => {
-												handleRouteChange(route.id, { image: value });
-											}}
-											defaultValue={route.image}
-										/>
-									</div>
-
-									{/* actions  */}
-									<div className="col-span-1 space-y-2 flex flex-col">
-										<Label className="capitalize">Action</Label>
-										<Button
-											type="button"
-											variant="outline"
-											className="flex w-full"
-											disabled={formState.routes.length === 1}
-											onClick={() =>
-												dispatch(removeRoute({ routeId: route.id }))
-											}
-										>
-											<DynamicIcon icon="Trash2" className="h-4 w-4" />
-										</Button>
-									</div>
-								</div>
-							</div>
-						))}
-					</div>
-
-					<RFSubmit text="Create Dev Permission" />
+					<DialogFooter>
+						<Button type="submit" disabled={isLoading}>
+							{isLoading ? 'Saving...' : 'Edit changes'}
+						</Button>
+					</DialogFooter>
 				</form>
-			</ApiUseHOC>
-		</div>
+			</DialogContent>
+		</Dialog>
 	);
 }

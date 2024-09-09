@@ -1,43 +1,87 @@
+import { DevNameType } from '@/lib/type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface PermissionState {
-	[key: string]: {
-		checked: boolean;
-		children: { [key: string]: boolean };
-	};
+	data: DevNameType[];
 }
 
-const initialState: PermissionState = {};
+const initialState: PermissionState = {
+	data: [],
+};
 
 const roleSlice = createSlice({
 	name: 'role-create',
 	initialState,
 	reducers: {
+		setPermissions(state, action: PayloadAction<DevNameType[]>) {
+			const modifiedData = action.payload?.map((main) => {
+				return {
+					_id: main._id,
+					name: main.name,
+					checked: false,
+					routes: main.routes
+						?.filter((status) => status.status === 'active')
+						?.map((route) => {
+							return {
+								_id: route._id,
+								parent_id: main._id,
+								name: route.name,
+								status: route.status,
+								checked: false,
+							};
+						}),
+				};
+			});
+			state.data = modifiedData;
+		},
+
 		toggleParent(state, action: PayloadAction<string>) {
-			const parentId = action.payload;
-			const parent = state[parentId];
+			const devId = action.payload;
+
+			const parent = state.data.find((dev) => dev._id === devId);
 			if (parent) {
+				// Toggle the parent's checked state
 				parent.checked = !parent.checked;
-				Object.keys(parent.children).forEach(
-					(childId) => (parent.children[childId] = parent.checked)
-				);
+
+				// Toggle all child routes to match the parent's state
+				parent.routes?.forEach((route) => {
+					route.checked = parent.checked;
+				});
 			}
 		},
+
 		toggleChild(
 			state,
-			action: PayloadAction<{ parentId: string; childId: string }>
+			action: PayloadAction<{ devId: string; routeId: string }>
 		) {
-			const { parentId, childId } = action.payload;
-			const parent = state[parentId];
+			const { devId, routeId } = action.payload;
+			const parent = state.data.find((dev) => dev._id === devId);
 			if (parent) {
-				parent.children[childId] = !parent.children[childId];
+				const route = parent.routes?.find((route) => route._id === routeId);
+				if (route) {
+					// Toggle only the child's checked state
+					route.checked = !route.checked;
+
+					// Check if all children are checked or not to update parent
+					const allChecked = parent.routes?.every((route) => route.checked);
+
+					// Update parent's checked state based on children
+					parent.checked = allChecked ? true : false;
+				}
 			}
-		},
-		setPermissions(state, action: PayloadAction<PermissionState>) {
-			return action.payload;
 		},
 	},
 });
 
-export const { toggleParent, toggleChild, setPermissions } = roleSlice.actions;
+export const { setPermissions, toggleParent, toggleChild } = roleSlice.actions;
 export default roleSlice;
+
+export const getCheckedRoutes = (permissions: DevNameType[]) => {
+	// Flatten all routes from all permissions, filter by checked status and active status
+	return permissions.flatMap(
+		(permission) =>
+			permission.routes?.filter(
+				(route) => route.checked && route.status === 'active'
+			) || []
+	);
+};
