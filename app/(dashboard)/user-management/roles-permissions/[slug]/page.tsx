@@ -3,6 +3,7 @@ import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
 import { DevPermissionDetails, RoleStore } from '@/lib/features/dev-permission';
 import RoleDetails from '@/lib/features/role/RoleDetails';
+import { RoleEdit } from '@/lib/features/role/RoleEdit';
 import Link from 'next/link';
 
 export default function Page({ params }: { params: { slug: string } }) {
@@ -80,11 +81,11 @@ const EditRoleComponent = () => (
 				</span>
 			</Link>
 		</PageTitle>
-		<RoleStore />
+		<RoleEdit />
 	</>
 );
 
-const EditPermissionComponent = ({ slug }: { slug: string }) => (
+const EditPermissionComponent = () => (
 	<>
 		<PageTitle title="Edit Permission">
 			<Link
@@ -97,7 +98,7 @@ const EditPermissionComponent = ({ slug }: { slug: string }) => (
 				</span>
 			</Link>
 		</PageTitle>
-		<DevPermissionStore slug={slug} />
+		{/* <DevPermissionStore slug={slug} /> */}
 	</>
 );
 

@@ -266,3 +266,14 @@ export type DevNameType = {
 	routes?: RouteType[];
 	checked?: boolean;
 };
+
+export type RoleDetailsType = {
+	parent: string;
+	_id: string;
+	status: string;
+	children: {
+		permission_id: string;
+		name: string;
+		status: string;
+	}[];
+};

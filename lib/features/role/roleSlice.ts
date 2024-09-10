@@ -1,6 +1,10 @@
-import { DevNameType } from '@/lib/type';
+import { DevNameType, RoleDetailsType } from '@/lib/type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+interface actionType {
+	permissionData: DevNameType[];
+	roleData: RoleDetailsType[];
+}
 interface PermissionState {
 	data: DevNameType[];
 }
@@ -32,6 +36,45 @@ const roleSlice = createSlice({
 						}),
 				};
 			});
+			state.data = modifiedData;
+		},
+		setEditPermissions(state, action: PayloadAction<actionType>) {
+			const roleData = action.payload.roleData;
+			const permissionData = action.payload.permissionData;
+
+			const modifiedData = permissionData?.map((main) => {
+				// Find matching role data for the current permission
+				const matchingRole = roleData.find((role) => role._id === main._id);
+
+				// Map over routes and check if they match the permissions in roleData
+				const routes = main.routes
+					?.filter((route) => route.status === 'active')
+					?.map((route) => {
+						// Find if the route in permission matches the role's child permissions
+						const matchingChild = matchingRole?.children.find(
+							(child) => child.permission_id === route._id
+						);
+
+						return {
+							_id: route._id,
+							parent_id: main._id,
+							name: route.name,
+							status: route.status,
+							checked: matchingChild ? true : false, // Set checked if matching
+						};
+					});
+
+				// Check if all routes are checked
+				const allRoutesChecked = routes?.every((route) => route.checked);
+
+				return {
+					_id: main._id,
+					name: main.name,
+					checked: allRoutesChecked || false, // Set parent checked if all routes are checked
+					routes,
+				};
+			});
+
 			state.data = modifiedData;
 		},
 
@@ -73,7 +116,8 @@ const roleSlice = createSlice({
 	},
 });
 
-export const { setPermissions, toggleParent, toggleChild } = roleSlice.actions;
+export const { setPermissions, toggleParent, toggleChild, setEditPermissions } =
+	roleSlice.actions;
 export default roleSlice;
 
 export const getCheckedRoutes = (permissions: DevNameType[]) => {

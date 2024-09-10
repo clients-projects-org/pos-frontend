@@ -10,7 +10,12 @@ import {
 	RFSubmit,
 	RFTextarea,
 } from '@/components/custom/form';
-import { useStoreRoleMutation } from '.';
+import {
+	useGetRoleByIdQuery,
+	useStoreRoleMutation,
+	useUpdateRoleMutation,
+} from '.';
+import { useParams, useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useGetDevNameQuery } from '../dev-permission-name';
@@ -18,19 +23,26 @@ import { DevNameType, RouteType } from '@/lib/type';
 import { useEffect } from 'react';
 import {
 	getCheckedRoutes,
-	setPermissions,
+	setEditPermissions,
 	toggleChild,
 	toggleParent,
 } from './roleSlice';
-import { createZodFrom, FormSchema } from './role.zod';
+import { FormSchema, useEditZodFrom } from './role.zod';
 import { PageDetailsApiHOC } from '@/components/hoc';
-export function RoleStore() {
+export function RoleEdit() {
+	const param = useParams();
+	const router = useRouter();
 	const devPermissionName = useGetDevNameQuery('active');
+	const { data: roleDetails, isLoading: isLoadingRole } = useGetRoleByIdQuery(
+		(param.slug as string).split('-')[1],
+		{
+			skip: !param.slug,
+		}
+	);
 
 	const dispatch = useAppDispatch();
 	const permissions = useAppSelector((state) => state.role);
 	const checked = getCheckedRoutes(permissions.data);
-	console.log(checked);
 	const handleParentToggle = (devId: string) => {
 		dispatch(toggleParent(devId));
 	};
@@ -40,16 +52,19 @@ export function RoleStore() {
 	};
 
 	useEffect(() => {
-		if (devPermissionName.data) {
-			dispatch(setPermissions(devPermissionName.data?.data));
+		if (devPermissionName.data && roleDetails?.data) {
+			dispatch(
+				setEditPermissions({
+					permissionData: devPermissionName.data?.data,
+					roleData: roleDetails?.data?.permissions,
+				})
+			);
 		}
-	}, [devPermissionName.data, dispatch]);
+	}, [devPermissionName.data, dispatch, roleDetails?.data]);
 
-	console.log(permissions);
+	const { methods } = useEditZodFrom(roleDetails?.data);
 
-	const { methods } = createZodFrom();
-
-	const [store, { isLoading }] = useStoreRoleMutation();
+	const [store, { isLoading }] = useUpdateRoleMutation();
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
 		const submitData = {
@@ -61,23 +76,26 @@ export function RoleStore() {
 				parent_id: e.parent_id,
 			})),
 		};
-		store({ ...submitData } as any).then((e) => {
-			toast({
-				title: 'You submitted the following values:',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-					</pre>
-				),
-			});
-		});
+
+		store({ id: roleDetails?.data?._id, payload: submitData } as any).then(
+			(e) => {
+				toast({
+					title: 'You submitted the following values:',
+					description: (
+						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+							<code className="text-white">{JSON.stringify(e, null, 2)}</code>
+						</pre>
+					),
+				});
+			}
+		);
 	}
 
 	return (
 		<PageDetailsApiHOC
 			data={devPermissionName.data}
 			isError={devPermissionName.isError}
-			isLoading={devPermissionName.isLoading}
+			isLoading={devPermissionName.isLoading || isLoadingRole}
 			isFetching={devPermissionName.isFetching || isLoading}
 		>
 			<div className="max-w-5xl mx-auto w-full border p-4 rounded">

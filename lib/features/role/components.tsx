@@ -18,23 +18,7 @@ import {
 	useUpdateRoleStatusMutation,
 } from './roleApiSlice';
 
-type typeProps = {
-	type: 'routes' | 'main' | 'actions';
-	mainId?: string;
-	actionsId?: string;
-	routesId?: string;
-};
-const Actions = ({
-	data,
-	isFor,
-	type = {
-		type: 'main',
-	},
-}: {
-	data: DevPermissionType;
-	isFor?: 'child';
-	type?: typeProps;
-}) => {
+const Actions = ({ data }: { data: DevPermissionType }) => {
 	const router = useRouter();
 	const params = useParams<{ slug: string; item: string }>();
 
@@ -55,7 +39,7 @@ const Actions = ({
 
 			if (confirmed) {
 				// Perform the delete action here
-				await deleting({ id, type }).unwrap();
+				await deleting({ id }).unwrap();
 				const options: ToastOptions = {
 					title: 'Successfully Deleted',
 					description: 'Item delete is done, You can not find it, Thanks',
@@ -82,7 +66,7 @@ const Actions = ({
 
 	const handleStatusChange = async (status: StatusType) => {
 		try {
-			await updateStatus({ id: data._id, status, type }).unwrap();
+			await updateStatus({ id: data._id, status }).unwrap();
 		} catch (err) {
 			console.error('Failed to update the status: ', err);
 		}
@@ -90,11 +74,7 @@ const Actions = ({
 
 	return (
 		<div className="ml-auto flex items-center gap-2">
-			<Badge
-				variant={badge(data.status)}
-				style={{ fontSize: isFor === 'child' ? '10px' : '12px' }}
-				className={`text-xs capitalize ${isFor === 'child' ? 'py-0' : 'py-1'}`}
-			>
+			<Badge variant={badge(data.status)} className={`text-xs capitalize py-1`}>
 				{data.status}
 			</Badge>
 
@@ -145,7 +125,7 @@ const Actions = ({
 						disabled={loading}
 					/>
 				)}
-				{(data.status === 'draft' || isFor === 'child') && (
+				{data.status === 'draft' && (
 					<DropDownDotItem
 						icon="Trash2"
 						name="Delete"

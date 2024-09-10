@@ -1,9 +1,10 @@
+import { StatusType } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const roleApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getRoles: builder.query<any, void>({
-			query: (payload): string => `user-role?status=${payload}`,
+		getRoles: builder.query<any, StatusType>({
+			query: (payload: StatusType) => `user-role?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Role'];
 			},
@@ -20,6 +21,18 @@ export const roleApi = apiSlice.injectEndpoints({
 			query: (payload) => ({
 				url: `/user-role/store`,
 				method: 'POST',
+				body: payload,
+			}),
+			invalidatesTags: () => {
+				return ['Role'];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+
+		updateRole: builder.mutation<any, { id: string; payload: any }>({
+			query: ({ id, payload }) => ({
+				url: `/user-role/update/${id}`,
+				method: 'PUT',
 				body: payload,
 			}),
 			invalidatesTags: () => {
@@ -57,4 +70,5 @@ export const {
 	useStoreRoleMutation,
 	useDeleteRoleMutation,
 	useUpdateRoleStatusMutation,
+	useUpdateRoleMutation,
 } = roleApi;
