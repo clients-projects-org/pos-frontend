@@ -8,13 +8,13 @@ const variants = {
 
 export function Motion({ children }: { children: React.ReactNode }) {
 	return (
-		<motion.main
+		<motion.div
 			variants={variants}
 			initial="hidden"
 			animate="enter"
 			transition={{ duration: 0.5 }}
 		>
 			{children}
-		</motion.main>
+		</motion.div>
 	);
 }

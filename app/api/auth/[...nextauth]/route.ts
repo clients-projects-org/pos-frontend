@@ -14,17 +14,21 @@ interface TokenPayload {
 }
 
 async function refreshAccessToken(token: { refreshToken: string }) {
-	console.log('refreshAccessToken', token);
+	console.log('refreshAccessToken.refreshToken', token.token.refreshToken);
 	try {
 		const response = await fetch(`${env.baseApi}auth/refresh-token`, {
 			headers: {
-				Authorization: `Bearer ${token.refreshToken}`,
+				Authorization: `Bearer ${token.token.refreshToken}`,
 			},
 		});
 
 		const tokens = await response.json();
 
+		console.log(tokens, 'tokens');
+		console.log(response, 'response');
+
 		if (!response.ok) {
+			console.log(tokens, 'Not ok , tokens');
 			throw tokens;
 		}
 
@@ -35,11 +39,10 @@ async function refreshAccessToken(token: { refreshToken: string }) {
       }*/
 
 		//return token;
-
+		console.log('return new token ', tokens);
 		return {
-			...token,
-			accessToken: tokens.accessToken,
-			refreshToken: tokens.refreshToken ?? token.refreshToken, // Fall back to old refresh token
+			accessToken: tokens?.data?.accessToken,
+			refreshToken: tokens?.data?.refreshToken ?? token.token.refreshToken, // Fall back to old refresh token
 		};
 	} catch (error) {
 		return {
@@ -106,15 +109,15 @@ const handler = NextAuth({
 					console.log('expired token', token);
 					const getNewToken = await refreshAccessToken(token.user);
 					console.log(getNewToken, 'newToken');
-					const decodedToken = await decodeJwt(getNewToken.token.accessToken);
+					const decodedToken = await decodeJwt(getNewToken.accessToken);
 					console.log(decodedAccessToken, 'decodedAccessToken');
 					// Overwrite iat and exp based on decoded token
 					token.iat = decodedToken?.iat;
 					token.exp = decodedToken?.exp;
 					token.user = {
 						token: {
-							accessToken: getNewToken.token.accessToken,
-							refreshToken: getNewToken.token.refreshToken,
+							accessToken: getNewToken.accessToken,
+							refreshToken: getNewToken.refreshToken,
 						},
 					};
 					return token;

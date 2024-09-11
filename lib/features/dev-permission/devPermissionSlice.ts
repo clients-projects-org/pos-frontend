@@ -1,9 +1,10 @@
+import { StatusTypeApi } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const devPermissionApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getDevPermission: builder.query<any, void>({
-			query: (payload) => `dev-permission?status=${payload}`,
+		getDevPermission: builder.query<any, StatusTypeApi>({
+			query: (payload: StatusTypeApi) => `dev-permission?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['DevPermission', { type: 'DevPermission', status: arg }];
 			},

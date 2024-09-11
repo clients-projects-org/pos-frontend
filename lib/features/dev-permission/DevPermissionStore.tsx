@@ -34,6 +34,7 @@ export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 		const storeData = {
 			dev_name_id,
 			name: data.name,
+			code: data.code,
 			status: data.status,
 		};
 		try {
@@ -92,6 +93,21 @@ export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 								</p>
 							)}
 						</div>
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="code" className="text-right">
+								Code
+							</Label>
+							<Input
+								id="code"
+								{...methods.register('code')}
+								className="col-span-3"
+							/>
+							{methods.formState.errors.code && (
+								<p className="text-red-500 col-span-4">
+									{methods.formState.errors.code.message}
+								</p>
+							)}
+						</div>
 
 						<div className="grid grid-cols-4 items-center gap-4">
 							<Label htmlFor="status" className="text-right">
@@ -135,6 +151,7 @@ export function DevPermissionEditModal({ data }: { data: DevNameType }) {
 		const storeData = {
 			dev_name_id,
 			name: submitData.name,
+			code: submitData.code,
 			status: submitData.status,
 		};
 		try {
@@ -194,6 +211,22 @@ export function DevPermissionEditModal({ data }: { data: DevNameType }) {
 							{methods.formState.errors.name && (
 								<p className="text-red-500 col-span-4">
 									{methods.formState.errors.name.message}
+								</p>
+							)}
+						</div>
+
+						<div className="grid grid-cols-4 items-center gap-4">
+							<Label htmlFor="code" className="text-right">
+								Code
+							</Label>
+							<Input
+								id="code"
+								{...methods.register('code')}
+								className="col-span-3"
+							/>
+							{methods.formState.errors.code && (
+								<p className="text-red-500 col-span-4">
+									{methods.formState.errors.code.message}
 								</p>
 							)}
 						</div>

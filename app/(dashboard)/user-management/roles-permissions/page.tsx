@@ -13,7 +13,7 @@ import {
 	useGetDevPermissionQuery,
 } from '@/lib/features/dev-permission';
 import { RoleComponents, useGetRolesQuery } from '@/lib/features/role';
-import { RoleType, StatusType, DevNameType } from '@/lib/type';
+import { RoleType, StatusType, DevNameType, StatusTypeApi } from '@/lib/type';
 import {
 	DevNameComponents,
 	DevNameStoreModal,
@@ -22,8 +22,8 @@ import {
 import { NoItemFound } from '@/components/custom/not-found';
 
 export default function RoleAndPermissions() {
-	const [value, setValue] = useState<StatusType | 'all'>('all');
-	const [valueRole, setValueRole] = useState<StatusType | 'all'>('all');
+	const [value, setValue] = useState<StatusTypeApi>('all');
+	const [valueRole, setValueRole] = useState<StatusTypeApi>('all');
 	const role = useGetRolesQuery(valueRole);
 	const devPermission = useGetDevPermissionQuery(value);
 	const devPermissionName = useGetDevNameQuery(value);
@@ -65,16 +65,13 @@ export default function RoleAndPermissions() {
 							<Motion key={data._id}>
 								<CardContent className="p-0 ">
 									<div className="flex items-center space-x-4 rounded-md border p-4">
-										<Link href={`/user-management/users/${data?.slug}`}>
-											<DynamicIcon icon={data?.image as string} />
-										</Link>
 										<div className="flex-1 space-y-1">
 											<Link href={`/user-management/users/${data?.slug}`}>
-												<p className="text-sm font-medium leading-none">
+												<p className="text-sm font-medium  mb-1 capitalize">
 													{data?.name}
 												</p>
 												<p className="text-sm text-muted-foreground">
-													by {data?.role}
+													{data?.description}
 												</p>
 											</Link>
 										</div>

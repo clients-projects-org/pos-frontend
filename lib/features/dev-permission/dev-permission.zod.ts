@@ -9,6 +9,9 @@ export const FormSchema = z.object({
 	name: z.string().min(2, {
 		message: 'Must be at least 2 characters.',
 	}),
+	code: z.string().min(4, {
+		message: 'Code be at least 4 characters.',
+	}),
 
 	status: zod.status,
 });
@@ -20,6 +23,7 @@ export const devZodFrom = () => {
 		defaultValues: {
 			name: '',
 			status: 'active',
+			code: '',
 		},
 	});
 
@@ -33,6 +37,7 @@ export const devZodFromEdit = (data: RouteType) => {
 		defaultValues: {
 			name: data.name,
 			status: data.status,
+			code: data.code,
 		},
 	});
 

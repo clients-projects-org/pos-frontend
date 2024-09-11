@@ -1,4 +1,5 @@
 export type StatusType = 'draft' | 'active' | 'deactivated';
+export type StatusTypeApi = StatusType | 'all';
 export type PeriodsType = 'day' | 'week' | 'month' | 'year';
 export type UseRole = 'admin' | 'supper admin' | 'staff' | 'user';
 export type DiscountType = 'flat' | 'percentage' | 'none';
@@ -74,20 +75,19 @@ export type UserType = {
 	phone?: string;
 	password?: string;
 	createdAt?: string;
-	role_id?: string;
+	role_id?: RoleType;
 	image?: string;
 	image_type: ImageType;
 	status?: StatusType;
-	created_by?: string;
+	created_by?: UserType;
 };
 
 export type RoleType = {
 	_id?: string;
 	name?: string;
 	slug?: string;
-	status?: string;
-	image?: string;
-	image_type: ImageType;
+	status?: StatusType;
+	description?: string;
 	created_by?: UserType;
 	createdAt?: string;
 	updatedAt?: string;
@@ -249,6 +249,7 @@ export type CouponType = {
 export type RouteType = {
 	createdAt?: string;
 	name?: string;
+	code: string;
 	status?: StatusType;
 	checked?: boolean;
 	updatedAt?: string;

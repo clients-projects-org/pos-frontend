@@ -7,7 +7,7 @@ import {
 } from '@/components/custom/list-item';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { DevPermissionType, StatusType } from '@/lib/type';
+import { RoleType, StatusType } from '@/lib/type';
 
 import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
@@ -18,7 +18,7 @@ import {
 	useUpdateRoleStatusMutation,
 } from './roleApiSlice';
 
-const Actions = ({ data }: { data: DevPermissionType }) => {
+const Actions = ({ data }: { data: RoleType }) => {
 	const router = useRouter();
 	const params = useParams<{ slug: string; item: string }>();
 
@@ -74,7 +74,10 @@ const Actions = ({ data }: { data: DevPermissionType }) => {
 
 	return (
 		<div className="ml-auto flex items-center gap-2">
-			<Badge variant={badge(data.status)} className={`text-xs capitalize py-1`}>
+			<Badge
+				variant={badge(data.status && data.status)}
+				className={`text-xs capitalize py-1`}
+			>
 				{data.status}
 			</Badge>
 

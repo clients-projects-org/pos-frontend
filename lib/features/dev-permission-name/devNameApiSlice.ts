@@ -1,9 +1,10 @@
+import { StatusTypeApi } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const devNameApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getDevName: builder.query<any, void>({
-			query: (payload): string => `dev-name?status=${payload}`,
+		getDevName: builder.query<any, StatusTypeApi>({
+			query: (payload: StatusTypeApi) => `dev-name?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['DevName'];
 			},

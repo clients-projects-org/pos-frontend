@@ -1,10 +1,10 @@
-import { StatusType } from '@/lib/type';
+import { StatusTypeApi } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const roleApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getRoles: builder.query<any, StatusType>({
-			query: (payload: StatusType) => `user-role?status=${payload}`,
+		getRoles: builder.query<any, StatusTypeApi>({
+			query: (payload) => `user-role?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Role'];
 			},

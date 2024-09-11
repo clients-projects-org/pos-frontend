@@ -65,8 +65,11 @@ export default function userManagementUser() {
 												<p className="text-sm font-medium leading-none">
 													{data?.name}
 												</p>
-												<p className="text-sm text-muted-foreground">
-													by {data?.role}
+												<p className="text-sm text-muted-foreground capitalize">
+													Created By {data?.created_by?.name}
+												</p>
+												<p className="text-sm text-muted-foreground capitalize">
+													Role {data?.role_id?.name}
 												</p>
 											</Link>
 										</div>
