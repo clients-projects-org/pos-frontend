@@ -10,10 +10,9 @@ import { isEmptyArray } from '@/lib/actions';
 import {
 	DevPermission,
 	DevPermissionStoreModal,
-	useGetDevPermissionQuery,
 } from '@/lib/features/dev-permission';
 import { RoleComponents, useGetRolesQuery } from '@/lib/features/role';
-import { RoleType, StatusType, DevNameType, StatusTypeApi } from '@/lib/type';
+import { RoleType, DevNameType, StatusTypeApi } from '@/lib/type';
 import {
 	DevNameComponents,
 	DevNameStoreModal,
@@ -25,7 +24,6 @@ export default function RoleAndPermissions() {
 	const [value, setValue] = useState<StatusTypeApi>('all');
 	const [valueRole, setValueRole] = useState<StatusTypeApi>('all');
 	const role = useGetRolesQuery(valueRole);
-	const devPermission = useGetDevPermissionQuery(value);
 	const devPermissionName = useGetDevNameQuery(value);
 
 	return (
@@ -47,7 +45,7 @@ export default function RoleAndPermissions() {
 						</Link>
 					</PageTitle>
 
-					{/* role filter  */}
+					{/* --- Role filter ----  */}
 					<RoleComponents.Filter value={valueRole} setValue={setValueRole} />
 				</>
 			)}
@@ -58,7 +56,9 @@ export default function RoleAndPermissions() {
 				isFetching={role.isFetching}
 				isLoading={role.isLoading}
 				notFound
+				loadingBox={3}
 			>
+				{/* --- Role List ---- */}
 				{!isEmptyArray(role.data?.data) && (
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 						{role.data?.data?.map((data: RoleType) => (
@@ -66,7 +66,9 @@ export default function RoleAndPermissions() {
 								<CardContent className="p-0 ">
 									<div className="flex items-center space-x-4 rounded-md border p-4">
 										<div className="flex-1 space-y-1">
-											<Link href={`/user-management/users/${data?.slug}`}>
+											<Link
+												href={`/user-management/roles-permissions/role-${data?._id}`}
+											>
 												<p className="text-sm font-medium  mb-1 capitalize">
 													{data?.name}
 												</p>
@@ -89,9 +91,10 @@ export default function RoleAndPermissions() {
 			{/* -----------------------dev permission--------------------------------- */}
 
 			{/* permissions title*/}
-			{!devPermission.isLoading && devPermission.data?.success && (
+			{!devPermissionName.isLoading && devPermissionName.data?.success && (
 				<>
 					<PageTitleNoBack title="Permissions">
+						{/* create permission */}
 						<DevNameStoreModal />
 					</PageTitleNoBack>
 
@@ -105,33 +108,27 @@ export default function RoleAndPermissions() {
 				isFetching={devPermissionName.isFetching}
 				isLoading={devPermissionName.isLoading}
 				notFound
+				loadingBox={3}
 			>
+				{/* --- Permission List ---- */}
 				{!isEmptyArray(devPermissionName.data?.data) && (
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 						{devPermissionName.data?.data?.map((dev: DevNameType) => (
 							<Motion key={dev._id}>
 								<div className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white">
 									<div className=" pb-1 border-b mb-2 text-lg font-semibold text-gray-900 dark:text-white flex items-center justify-between">
-										<Link
-											href={`/user-management/roles-permissions/permission-${dev._id}`}
-											className="capitalize"
-										>
-											{dev.name}
-										</Link>
+										{/* permission name  */}
+										<p className="capitalize">{dev.name}</p>
 										<DevNameComponents.Actions data={dev} />
 									</div>
 									<div className="pb-1 border-b mb-2">
+										{/* route list  */}
 										{dev.routes?.map((route) => (
 											<div
 												key={route._id}
 												className="mb-2 text-xs font-semibold text-gray-800 dark:text-gray-400 flex items-center justify-between"
 											>
-												<Link
-													href={`/user-management/roles-permissions/permission-${dev._id}`}
-													className="capitalize"
-												>
-													{route.name}
-												</Link>
+												<p className="capitalize">{route.name}</p>
 												<DevPermission.Actions isFor="child" data={route} />
 											</div>
 										))}

@@ -5,16 +5,15 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getDevPermission: builder.query<any, StatusTypeApi>({
 			query: (payload: StatusTypeApi) => `dev-permission?status=${payload}`,
-			providesTags: (result, error, arg) => {
-				return ['DevPermission', { type: 'DevPermission', status: arg }];
+			providesTags: () => {
+				return ['DevPermission', 'DevName'];
 			},
 		}),
 
-		deleteDevPermission: builder.mutation<any, string>({
-			query: ({ id, type }: any) => ({
+		deleteDevPermission: builder.mutation<any, { id: string }>({
+			query: ({ id }) => ({
 				url: `dev-permission/${id}`,
 				method: 'DELETE',
-				body: { type },
 			}),
 			invalidatesTags: ['DevPermission', 'DevName'],
 		}),
@@ -26,16 +25,8 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return [
-					'DevPermission',
-					'DevName',
-					{ type: 'DevPermission', status: 'all' },
-					{ type: 'DevPermission', status: 'active' },
-					{ type: 'DevPermission', status: 'deactivated' },
-					{ type: 'DevPermission', status: 'draft' },
-				];
+				return ['DevPermission', 'DevName'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		editDevPermission: builder.mutation<any, string>({
@@ -45,35 +36,19 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return [
-					'DevPermission',
-					'DevName',
-					{ type: 'DevPermission', status: 'all' },
-					{ type: 'DevPermission', status: 'active' },
-					{ type: 'DevPermission', status: 'deactivated' },
-					{ type: 'DevPermission', status: 'draft' },
-				];
+				return ['DevPermission', 'DevName'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
-		updateStatus: builder.mutation<any, any>({
-			query: ({ id, status, type }) => ({
+		updateStatus: builder.mutation<any, { id: string; status: StatusTypeApi }>({
+			query: ({ id, status }) => ({
 				url: `dev-permission/status/${id}`,
 				method: 'PUT',
-				body: { status, type },
+				body: { status },
 			}),
 
-			invalidatesTags: (result, error, arg) => {
-				return [
-					'DevPermission',
-					'DevName',
-					{ type: 'DevPermission', id: arg.type.mainId },
-					{ type: 'DevPermission', status: 'all' },
-					{ type: 'DevPermission', status: 'active' },
-					{ type: 'DevPermission', status: 'deactivated' },
-					{ type: 'DevPermission', status: 'draft' },
-				];
+			invalidatesTags: () => {
+				return ['DevPermission', 'DevName'];
 			},
 		}),
 		// update DevPermission
@@ -90,7 +65,7 @@ export const devPermissionApi = apiSlice.injectEndpoints({
 
 		getById: builder.query<any, string>({
 			query: (id) => `dev-permission/${id}`,
-			providesTags: (result, error, id) => {
+			providesTags: (_result, _error, id) => {
 				return [{ type: 'DevPermission', id: id }];
 			},
 		}),

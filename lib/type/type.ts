@@ -271,10 +271,33 @@ export type DevNameType = {
 export type RoleDetailsType = {
 	parent: string;
 	_id: string;
-	status: string;
+	status: StatusType;
 	children: {
 		permission_id: string;
 		name: string;
-		status: string;
+		status: StatusType;
 	}[];
 };
+
+export type ErrorMessage = {
+	path: string | number;
+	message: string;
+};
+// Define the success response type
+export interface ApiSuccessResponse<T> {
+	message: string;
+	statusCode: number;
+	success: boolean;
+	data: T;
+}
+
+// Define the error response type (you can adjust this based on your actual error structure)
+export interface ApiErrorResponse {
+	message: string;
+	statusCode: number;
+	success: boolean;
+	errorMessages?: ErrorMessage[];
+}
+
+// Define a union type for both success and error responses
+export type ApiResponse<T> = ApiSuccessResponse<T>;

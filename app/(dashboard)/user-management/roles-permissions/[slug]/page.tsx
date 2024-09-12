@@ -1,7 +1,7 @@
 'use client';
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
-import { DevPermissionDetails, RoleStore } from '@/lib/features/dev-permission';
+import { RoleStore } from '@/lib/features/dev-permission';
 import RoleDetails from '@/lib/features/role/RoleDetails';
 import { RoleEdit } from '@/lib/features/role/RoleEdit';
 import Link from 'next/link';
@@ -18,17 +18,9 @@ export default function Page({ params }: { params: { slug: string } }) {
 		case slug.startsWith('edit_role'):
 			return <EditRoleComponent />;
 
-		// if edit permission
-		case slug.startsWith('edit_permission'):
-			return <EditPermissionComponent slug={slug} />;
-
 		// if view role
 		case slug.startsWith('role'):
 			return <RoleDetailsComponent slug={slug} />;
-
-		// if view permission
-		case slug.startsWith('permission'):
-			return <PermissionDetailsComponent slug={slug} />;
 
 		// default all
 		default:
@@ -85,23 +77,6 @@ const EditRoleComponent = () => (
 	</>
 );
 
-const EditPermissionComponent = () => (
-	<>
-		<PageTitle title="Edit Permission">
-			<Link
-				href="/user-management/roles-permissions"
-				className="gap-1 flex items-center"
-			>
-				<DynamicIcon icon="Users" className="h-4 w-4 ml-0" />
-				<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-					All Permission
-				</span>
-			</Link>
-		</PageTitle>
-		{/* <DevPermissionStore slug={slug} /> */}
-	</>
-);
-
 const RoleDetailsComponent = ({ slug }: { slug: string }) => (
 	<>
 		<PageTitle title="Role Details">
@@ -116,23 +91,5 @@ const RoleDetailsComponent = ({ slug }: { slug: string }) => (
 			</Link>
 		</PageTitle>
 		<RoleDetails slug={slug} />
-	</>
-);
-
-const PermissionDetailsComponent = ({ slug }: { slug: string }) => (
-	<>
-		<PageTitle title="Permission Details">
-			<Link
-				href={`/user-management/roles-permissions/edit_${slug}`}
-				className="gap-1 flex items-center"
-			>
-				<DynamicIcon icon="SquarePen" className="h-4 w-4 ml-0" />
-				<span className="sr-only sm:not-sr-only !whitespace-nowrap">
-					Edit Permission
-				</span>
-			</Link>
-		</PageTitle>
-
-		<DevPermissionDetails slug={slug.split('-')[1]} />
 	</>
 );

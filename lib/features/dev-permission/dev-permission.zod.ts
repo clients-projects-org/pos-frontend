@@ -1,4 +1,4 @@
-import { RouteType } from '@/lib/type';
+import { DevNameType } from '@/lib/type';
 import { zod } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -31,7 +31,7 @@ export const devZodFrom = () => {
 };
 
 // edit
-export const devZodFromEdit = (data: RouteType) => {
+export const devZodFromEdit = (data: DevNameType) => {
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {

@@ -10,6 +10,7 @@ export type ToastOptions = {
 	action?: ToastActionElement;
 	autoClose?: boolean; // New property to enable auto-close
 	autoCloseDelay?: number; // Delay in milliseconds before auto-closing
+	variant?: 'default' | 'destructive';
 };
 
 const showToast = (options: ToastOptions): void => {
@@ -21,7 +22,14 @@ const showToast = (options: ToastOptions): void => {
 		const { toast } = useToast();
 
 		useEffect(() => {
-			const { title, description, action, autoClose, autoCloseDelay } = options;
+			const {
+				title,
+				description,
+				action,
+				autoClose = true,
+				autoCloseDelay = 3000,
+				variant = 'default',
+			} = options;
 
 			const closeToast = () => {
 				root.unmount();
@@ -34,7 +42,7 @@ const showToast = (options: ToastOptions): void => {
 				}
 			}, autoCloseDelay || 5000); // Default delay of 5 seconds if not specified
 
-			toast({ title, description, action });
+			toast({ title, description, action, variant });
 
 			return () => {
 				clearTimeout(timeoutId); // Clear timeout on unmount

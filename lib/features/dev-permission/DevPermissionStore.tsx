@@ -1,6 +1,5 @@
 'use client';
 import { z } from 'zod';
-import { toast } from '@/components/ui/use-toast';
 import { SelectStatus } from '@/components/custom/form';
 import React from 'react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,16 @@ import {
 import { DynamicIcon } from '@/components/actions';
 import { DevNameType } from '@/lib/type';
 import { devZodFrom, devZodFromEdit, FormSchema } from './dev-permission.zod';
-
+import { UseFormReturn } from 'react-hook-form';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import { env } from '@/lib/env';
+type FormValues = z.infer<typeof FormSchema>;
+interface FormProps {
+	methods: UseFormReturn<FormValues>;
+	onSubmit: (data: FormValues) => void;
+	isLoading: boolean;
+	type: 'create' | 'edit';
+}
 export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 	const dev_name_id = data?._id;
 	const [open, setOpen] = React.useState(false);
@@ -30,7 +38,7 @@ export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 	const { methods } = devZodFrom();
 	const [store, { isLoading }] = useStoreDevPermissionMutation();
 
-	async function onSubmit(data: z.infer<typeof FormSchema>) {
+	async function onSubmit(data: FormValues) {
 		const storeData = {
 			dev_name_id,
 			name: data.name,
@@ -41,23 +49,12 @@ export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 			const response = await store({
 				...storeData,
 			} as any).unwrap();
-			toast({
-				title: 'Success!',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">
-							{JSON.stringify(response, null, 2)}
-						</code>
-					</pre>
-				),
-			});
+			apiReqResponse(response);
+			methods.reset();
 			setOpen(false);
-		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'An error occurred while saving.',
-				variant: 'destructive',
-			});
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+			env.env === 'development' && console.error(error);
 		}
 	}
 
@@ -76,65 +73,13 @@ export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 						Permission Group is a collection of permissions.
 					</DialogDescription>
 				</DialogHeader>
-				<form onSubmit={methods.handleSubmit(onSubmit)}>
-					<div className="grid gap-4 py-4">
-						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="name" className="text-right">
-								Name
-							</Label>
-							<Input
-								id="name"
-								{...methods.register('name')}
-								className="col-span-3"
-							/>
-							{methods.formState.errors.name && (
-								<p className="text-red-500 col-span-4">
-									{methods.formState.errors.name.message}
-								</p>
-							)}
-						</div>
-						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="code" className="text-right">
-								Code
-							</Label>
-							<Input
-								id="code"
-								{...methods.register('code')}
-								className="col-span-3"
-							/>
-							{methods.formState.errors.code && (
-								<p className="text-red-500 col-span-4">
-									{methods.formState.errors.code.message}
-								</p>
-							)}
-						</div>
-
-						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="status" className="text-right">
-								Status
-							</Label>
-							<div className="col-span-3">
-								<SelectStatus
-									placeholder="Select a status"
-									items="actDeDraft"
-									defaultValue={methods.getValues('status')}
-									onChange={(value) => methods.setValue('status', value)}
-								/>
-							</div>
-
-							{methods.formState.errors.status && (
-								<p className="text-red-500 col-span-4">
-									{methods.formState.errors.status.message}
-								</p>
-							)}
-						</div>
-					</div>
-					<DialogFooter>
-						<Button type="submit" disabled={isLoading}>
-							{isLoading ? 'Saving...' : 'Save changes'}
-						</Button>
-					</DialogFooter>
-				</form>
+				{/* form  */}
+				<FormMutation
+					isLoading={isLoading}
+					methods={methods}
+					onSubmit={onSubmit}
+					type="create"
+				/>
 			</DialogContent>
 		</Dialog>
 	);
@@ -147,35 +92,23 @@ export function DevPermissionEditModal({ data }: { data: DevNameType }) {
 
 	const [store, { isLoading }] = useUpdateDevPermissionMutation();
 
-	async function onSubmit(submitData: z.infer<typeof FormSchema>) {
+	async function onSubmit(data: FormValues) {
 		const storeData = {
 			dev_name_id,
-			name: submitData.name,
-			code: submitData.code,
-			status: submitData.status,
+			name: data.name,
+			code: data.code,
+			status: data.status,
 		};
 		try {
 			const response = await store({
-				data: storeData,
-				id: data._id,
+				...storeData,
 			} as any).unwrap();
-			toast({
-				title: 'Success!',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">
-							{JSON.stringify(response, null, 2)}
-						</code>
-					</pre>
-				),
-			});
+			apiReqResponse(response);
+			methods.reset();
 			setOpen(false);
-		} catch (error) {
-			toast({
-				title: 'Error',
-				description: 'An error occurred while saving.',
-				variant: 'destructive',
-			});
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+			env.env === 'development' && console.error(error);
 		}
 	}
 
@@ -197,67 +130,90 @@ export function DevPermissionEditModal({ data }: { data: DevNameType }) {
 						Permission Group is a collection of permissions.
 					</DialogDescription>
 				</DialogHeader>
-				<form onSubmit={methods.handleSubmit(onSubmit)}>
-					<div className="grid gap-4 py-4">
-						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="name" className="text-right">
-								Name
-							</Label>
-							<Input
-								id="name"
-								{...methods.register('name')}
-								className="col-span-3"
-							/>
-							{methods.formState.errors.name && (
-								<p className="text-red-500 col-span-4">
-									{methods.formState.errors.name.message}
-								</p>
-							)}
-						</div>
-
-						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="code" className="text-right">
-								Code
-							</Label>
-							<Input
-								id="code"
-								{...methods.register('code')}
-								className="col-span-3"
-							/>
-							{methods.formState.errors.code && (
-								<p className="text-red-500 col-span-4">
-									{methods.formState.errors.code.message}
-								</p>
-							)}
-						</div>
-
-						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="status" className="text-right">
-								Status
-							</Label>
-							<div className="col-span-3">
-								<SelectStatus
-									placeholder="Select a status"
-									items="actDeDraft"
-									defaultValue={methods.getValues('status')}
-									onChange={(value) => methods.setValue('status', value)}
-								/>
-							</div>
-
-							{methods.formState.errors.status && (
-								<p className="text-red-500 col-span-4">
-									{methods.formState.errors.status.message}
-								</p>
-							)}
-						</div>
-					</div>
-					<DialogFooter>
-						<Button type="submit" disabled={isLoading}>
-							{isLoading ? 'Saving...' : 'Edit changes'}
-						</Button>
-					</DialogFooter>
-				</form>
+				{/* form  */}
+				<FormMutation
+					isLoading={isLoading}
+					methods={methods}
+					onSubmit={onSubmit}
+					type="edit"
+				/>
 			</DialogContent>
 		</Dialog>
 	);
 }
+
+const FormMutation: React.FC<FormProps> = ({
+	methods,
+	onSubmit,
+	isLoading,
+	type,
+}: FormProps) => {
+	return (
+		<form onSubmit={methods.handleSubmit(onSubmit)}>
+			<div className="grid gap-4 py-4">
+				<div className="grid grid-cols-4 items-center gap-4">
+					<Label htmlFor="name" className="text-right">
+						Name
+					</Label>
+					<Input
+						id="name"
+						{...methods.register('name')}
+						className="col-span-3"
+					/>
+					{methods.formState.errors.name && (
+						<p className="text-red-500 col-span-4">
+							{methods.formState.errors.name.message}
+						</p>
+					)}
+				</div>
+
+				<div className="grid grid-cols-4 items-center gap-4">
+					<Label htmlFor="code" className="text-right">
+						Code
+					</Label>
+					<Input
+						id="code"
+						{...methods.register('code')}
+						className="col-span-3"
+					/>
+					{methods.formState.errors.code && (
+						<p className="text-red-500 col-span-4">
+							{methods.formState.errors.code.message}
+						</p>
+					)}
+				</div>
+
+				<div className="grid grid-cols-4 items-center gap-4">
+					<Label htmlFor="status" className="text-right">
+						Status
+					</Label>
+					<div className="col-span-3">
+						<SelectStatus
+							placeholder="Select a status"
+							items="actDeDraft"
+							defaultValue={methods.getValues('status')}
+							onChange={(value) => methods.setValue('status', value)}
+						/>
+					</div>
+
+					{methods.formState.errors.status && (
+						<p className="text-red-500 col-span-4">
+							{methods.formState.errors.status.message}
+						</p>
+					)}
+				</div>
+			</div>
+			<DialogFooter>
+				<Button type="submit" disabled={isLoading}>
+					{isLoading
+						? type === 'create'
+							? 'Creating...'
+							: 'Updating...'
+						: type === 'create'
+							? 'Create New'
+							: 'Update Changes'}
+				</Button>
+			</DialogFooter>
+		</form>
+	);
+};

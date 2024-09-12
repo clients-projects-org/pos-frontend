@@ -12,11 +12,7 @@ import {
 	useDeleteDevPermissionMutation,
 	useUpdateStatusMutation,
 } from './devPermissionSlice';
-import { badge, confirm } from '@/lib/actions';
-import { showToast, ToastOptions } from '@/lib/actions/tost';
-import { ToastAction } from '@/components/ui/toast';
-import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
+import { badge, handleDelete, handleStatusChange } from '@/lib/actions';
 import { DevPermissionEditModal } from './DevPermissionStore';
 
 type typeProps = {
@@ -28,69 +24,20 @@ type typeProps = {
 const Actions = ({
 	data,
 	isFor,
-	type = {
-		type: 'main',
-	},
 }: {
 	data: DevPermissionType;
 	isFor?: 'child';
 	type?: typeProps;
 }) => {
-	const router = useRouter();
-	const params = useParams<{ slug: string; item: string }>();
-
-	const [deleteDevPermission, { isLoading }] = useDeleteDevPermissionMutation();
+	const [deleting, { isLoading }] = useDeleteDevPermissionMutation();
 
 	const [updateStatus, { isLoading: updateStatusLoading }] =
 		useUpdateStatusMutation();
 
 	const loading = isLoading || updateStatusLoading;
 
-	const handleDelete = async (id: string) => {
-		try {
-			const confirmed = await confirm({
-				message:
-					'This action cannot be undone. This will permanently delete your account and remove your data from our servers.',
-				title: 'Delete Account',
-			});
-
-			if (confirmed) {
-				// Perform the delete action here
-				await deleteDevPermission({ id, type }).unwrap();
-				const options: ToastOptions = {
-					title: 'Scheduled: Catch up',
-					description: 'Friday, February 10, 2023 at 5:57 PM',
-					action: (
-						<ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-					),
-					autoClose: true,
-					autoCloseDelay: 5000,
-				};
-				showToast(options);
-				if (params.slug.startsWith('permission')) {
-					console.log('first');
-					router.push('/user-management/roles-permissions');
-				}
-			} else {
-				console.log('Delete action cancelled');
-			}
-		} catch (err) {
-			console.error('Failed to delete the permission: ', err);
-		}
-	};
-
-	/*
-		if main id ok fine only [main id] 
-		if routes need [main id] and [routes id] 
-		if actions need [main id] and [routes id] and [actions id]
-	*/
-
-	const handleStatusChange = async (status: StatusType) => {
-		try {
-			await updateStatus({ id: data._id, status, type }).unwrap();
-		} catch (err) {
-			console.error('Failed to update the status: ', err);
-		}
+	const statusHandler = async (id: string, status: StatusType) => {
+		handleStatusChange(id, status, updateStatus);
 	};
 
 	return (
@@ -105,33 +52,14 @@ const Actions = ({
 
 			{/* custom dropdown component  */}
 			<DropDownThreeDot isLoading={isLoading || updateStatusLoading}>
-				{/* <DropDownDotItem
-					icon="SquarePen"
-					name="Edit"
-					onChange={() => {
-						router.push(
-							`/user-management/roles-permissions/edit_permission-${data._id}`
-						);
-					}}
-					disabled={loading}
-				/> */}
 				<DevPermissionEditModal data={data} />
-				<DropDownDotItem
-					icon="ScanEye"
-					name="View"
-					onChange={() => {
-						router.push(
-							`/user-management/roles-permissions/permission-${data._id}`
-						);
-					}}
-					disabled={loading}
-				/>
+
 				<DropdownMenuSeparator />
 				{data.status !== 'active' && (
 					<DropDownDotItem
 						icon="CircleCheckBig"
 						name="Active"
-						onChange={() => data._id && handleStatusChange('active')}
+						onChange={() => data._id && statusHandler(data._id, 'active')}
 						disabled={loading}
 					/>
 				)}
@@ -140,7 +68,7 @@ const Actions = ({
 					<DropDownDotItem
 						icon="CircleSlash2"
 						name="Deactivated"
-						onChange={() => data._id && handleStatusChange('deactivated')}
+						onChange={() => data._id && statusHandler(data._id, 'deactivated')}
 						disabled={loading}
 					/>
 				)}
@@ -149,7 +77,7 @@ const Actions = ({
 					<DropDownDotItem
 						icon="PackageX"
 						name="Draft"
-						onChange={() => data._id && handleStatusChange('draft')}
+						onChange={() => data._id && statusHandler(data._id, 'draft')}
 						disabled={loading}
 					/>
 				)}
@@ -157,7 +85,7 @@ const Actions = ({
 					<DropDownDotItem
 						icon="Trash2"
 						name="Delete"
-						onChange={() => data._id && handleDelete(data._id)}
+						onChange={() => data._id && handleDelete(data._id, deleting)}
 						disabled={loading}
 					/>
 				)}
@@ -173,7 +101,7 @@ const Filter = ({
 	value: StatusType | 'all';
 	setValue: Function;
 }) => {
-	const statusHandler = (status: StatusType | 'all') => {
+	const tabHandler = (status: StatusType | 'all') => {
 		setValue(status);
 	};
 	return (
@@ -181,23 +109,23 @@ const Filter = ({
 			<TabList>
 				<TabListItem
 					name="All"
-					onClick={() => statusHandler('all')}
+					onClick={() => tabHandler('all')}
 					active={value === 'all'}
 				/>
 
 				<TabListItem
 					name="Active"
-					onClick={() => statusHandler('active')}
+					onClick={() => tabHandler('active')}
 					active={value === 'active'}
 				/>
 				<TabListItem
 					name="Deactivated"
-					onClick={() => statusHandler('deactivated')}
+					onClick={() => tabHandler('deactivated')}
 					active={value === 'deactivated'}
 				/>
 				<TabListItem
 					name="Draft"
-					onClick={() => statusHandler('draft')}
+					onClick={() => tabHandler('draft')}
 					active={value === 'draft'}
 				/>
 			</TabList>

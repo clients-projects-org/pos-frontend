@@ -6,11 +6,14 @@ import { z } from 'zod';
 
 // schema
 export const FormSchema = z.object({
-	name: z.string().min(2, {
-		message: 'Must be at least 2 characters.',
-	}),
-	code: z.optional(z.string()),
-	description: z.optional(z.string()),
+	name: z
+		.string()
+		.min(2, {
+			message: 'Must be at least 2 characters.',
+		})
+		.trim(),
+	code: z.optional(z.string().trim()),
+	description: z.optional(z.string().trim()),
 	status: zod.status,
 });
 
