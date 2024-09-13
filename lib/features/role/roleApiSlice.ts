@@ -5,14 +5,14 @@ export const roleApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getRoles: builder.query<any, StatusTypeApi>({
 			query: (payload) => `user-role?status=${payload}`,
-			providesTags: (result, error, arg) => {
+			providesTags: (_result, _error, _arg) => {
 				return ['Role'];
 			},
 		}),
 
 		getRoleById: builder.query<any, string>({
 			query: (id) => `user-role/${id}`,
-			providesTags: (result, error, id) => {
+			providesTags: (_result, _error, id) => {
 				return [{ type: 'Role', id: id }];
 			},
 		}),
@@ -26,7 +26,6 @@ export const roleApi = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return ['Role'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		updateRole: builder.mutation<any, { id: string; payload: any }>({
@@ -38,27 +37,25 @@ export const roleApi = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return ['Role'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		deleteRole: builder.mutation<any, string>({
-			query: ({ id, type }: any) => ({
+			query: ({ id }: any) => ({
 				url: `user-role/${id}`,
 				method: 'DELETE',
-				body: { type },
 			}),
 			invalidatesTags: ['Role'],
 		}),
 
 		updateRoleStatus: builder.mutation<any, any>({
-			query: ({ id, status, type }) => ({
+			query: ({ id, status }) => ({
 				url: `user-role/status/${id}`,
 				method: 'PUT',
-				body: { status, type },
+				body: { status },
 			}),
 
-			invalidatesTags: (result, error, arg) => {
-				return ['Role', { type: 'Role', id: arg.type.mainId }];
+			invalidatesTags: () => {
+				return ['Role'];
 			},
 		}),
 	}),

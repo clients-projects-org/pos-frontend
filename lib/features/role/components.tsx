@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { RoleType, StatusType } from '@/lib/type';
 
-import { badge, confirm } from '@/lib/actions';
+import { badge, confirm, handleDelete } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
@@ -28,35 +28,6 @@ const Actions = ({ data }: { data: RoleType }) => {
 		useUpdateRoleStatusMutation();
 
 	const loading = isLoading || updateStatusLoading;
-
-	const handleDelete = async (id: string) => {
-		try {
-			const confirmed = await confirm({
-				message:
-					'This action cannot be undone. This will permanently delete your account and remove your data from our servers.',
-				title: 'Delete Account',
-			});
-
-			if (confirmed) {
-				// Perform the delete action here
-				await deleting({ id }).unwrap();
-				const options: ToastOptions = {
-					title: 'Successfully Deleted',
-					description: 'Item delete is done, You can not find it, Thanks',
-					autoClose: true,
-					autoCloseDelay: 5000,
-				};
-				showToast(options);
-				if (params.slug.startsWith('permission')) {
-					router.push('/user-management/roles-permissions');
-				}
-			} else {
-				console.log('Delete action cancelled');
-			}
-		} catch (err) {
-			console.error('Failed to delete the permission: ', err);
-		}
-	};
 
 	/*
 		if main id ok fine only [main id] 
@@ -132,7 +103,7 @@ const Actions = ({ data }: { data: RoleType }) => {
 					<DropDownDotItem
 						icon="Trash2"
 						name="Delete"
-						onChange={() => data._id && handleDelete(data._id)}
+						onChange={() => data._id && handleDelete(data._id, deleting)}
 						disabled={loading}
 					/>
 				)}

@@ -4,6 +4,7 @@ import { Inter as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/provider/theme-provider';
 import { StoreProvider } from '../components/provider/StoreProvider';
+// import { Toaster } from '@/components/ui/toaster';
 
 const fontSans = FontSans({
 	subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({
 						disableTransitionOnChange
 					>
 						{children}
+						{/* <Toaster /> */}
 					</ThemeProvider>
 				</body>
 			</html>

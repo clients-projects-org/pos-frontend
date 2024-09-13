@@ -1,9 +1,10 @@
+import { StatusTypeApi } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const userApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getUser: builder.query<any, void>({
-			query: (payload) => `user?status=${payload}`,
+		getUser: builder.query<any, StatusTypeApi>({
+			query: (payload: StatusTypeApi) => `user?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['User'];
 			},
@@ -54,7 +55,7 @@ export const userApi = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['User', { type: 'User', id: arg.type.mainId }];
+				return ['User'];
 			},
 		}),
 	}),

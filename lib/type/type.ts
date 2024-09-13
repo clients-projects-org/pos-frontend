@@ -292,7 +292,7 @@ export interface ApiSuccessResponse<T> {
 }
 
 // Define the error response type (you can adjust this based on your actual error structure)
-export interface ApiErrorResponse {
+export interface ApiErrorResponseType {
 	message: string;
 	statusCode: number;
 	success: boolean;

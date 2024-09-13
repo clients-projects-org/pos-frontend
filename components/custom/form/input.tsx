@@ -216,17 +216,17 @@ export function RFSelect({ methods, label, data, children, name }) {
 	);
 }
 
-export function RFSubmit({ text }: { text: string }) {
+export function RFSubmit({
+	text,
+	isLoading = false,
+}: {
+	text: string;
+	isLoading?: boolean;
+}) {
 	return (
-		<div className="flex justify-end">
-			<Button
-				variant="outline"
-				className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600"
-				type="submit"
-			>
-				{text}
-			</Button>
-		</div>
+		<Button disabled={isLoading} variant="default" className=" " type="submit">
+			{text}
+		</Button>
 	);
 }
 

@@ -1,7 +1,6 @@
 'use client';
 import { FormProvider } from 'react-hook-form';
 import { z } from 'zod';
-import { toast } from '@/components/ui/use-toast';
 
 import { Form } from '@/components/ui/form';
 import {
@@ -24,34 +23,45 @@ import {
 } from './roleSlice';
 import { createZodFrom, FormSchema } from './role.zod';
 import { PageDetailsApiHOC } from '@/components/hoc';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 export function RoleStore() {
-	const devPermissionName = useGetDevNameQuery('active');
+	const router = useRouter();
 
+	// state
 	const dispatch = useAppDispatch();
 	const permissions = useAppSelector((state) => state.role);
+
+	// get all permissions that is in dev name api
+	const devPermissionName = useGetDevNameQuery('active');
+
+	// all checked true data
 	const checked = getCheckedRoutes(permissions.data);
-	console.log(checked);
+
+	// handler for toggle parent name
 	const handleParentToggle = (devId: string) => {
 		dispatch(toggleParent(devId));
 	};
 
+	// handler for toggle child item
 	const handleChildToggle = (devId: string, routeId: string) => {
 		dispatch(toggleChild({ devId, routeId }));
 	};
 
 	useEffect(() => {
+		// set data in redux store
 		if (devPermissionName.data) {
 			dispatch(setPermissions(devPermissionName.data?.data));
 		}
 	}, [devPermissionName.data, dispatch]);
 
-	console.log(permissions);
-
 	const { methods } = createZodFrom();
 
 	const [store, { isLoading }] = useStoreRoleMutation();
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
+	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		const submitData = {
 			name: data.name,
 			status: data.status,
@@ -61,16 +71,16 @@ export function RoleStore() {
 				parent_id: e.parent_id,
 			})),
 		};
-		store({ ...submitData } as any).then((e) => {
-			toast({
-				title: 'You submitted the following values:',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-					</pre>
-				),
-			});
-		});
+		try {
+			const response = await store({
+				...submitData,
+			} as any).unwrap();
+			apiReqResponse(response);
+			methods.reset();
+			router.push('/user-management/roles-permissions');
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
 	}
 
 	return (
@@ -153,7 +163,20 @@ export function RoleStore() {
 								<RFTextarea methods={methods} />
 							</div>
 
-							<RFSubmit text="Create Role" />
+							<div className="flex justify-end gap-3">
+								<Link href="/user-management/roles-permissions">
+									<Button
+										disabled={isLoading}
+										variant="destructive"
+										type="button"
+									>
+										Cancel
+									</Button>
+								</Link>
+								<Button disabled={isLoading} variant="default" type="submit">
+									{isLoading ? 'Creating...' : 'Create Role'}
+								</Button>
+							</div>
 						</form>
 					</Form>
 				</FormProvider>

@@ -40,6 +40,7 @@ export default function userManagementUser() {
 				isFetching={isFetching}
 				isLoading={isLoading}
 				notFound
+				isError={isError}
 			>
 				{!isEmptyArray(data?.data) && (
 					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">

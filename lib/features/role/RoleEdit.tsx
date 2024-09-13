@@ -10,11 +10,7 @@ import {
 	RFSubmit,
 	RFTextarea,
 } from '@/components/custom/form';
-import {
-	useGetRoleByIdQuery,
-	useStoreRoleMutation,
-	useUpdateRoleMutation,
-} from '.';
+import { useGetRoleByIdQuery, useUpdateRoleMutation } from '.';
 import { useParams, useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -29,6 +25,9 @@ import {
 } from './roleSlice';
 import { FormSchema, useEditZodFrom } from './role.zod';
 import { PageDetailsApiHOC } from '@/components/hoc';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 export function RoleEdit() {
 	const param = useParams();
 	const router = useRouter();
@@ -66,7 +65,7 @@ export function RoleEdit() {
 
 	const [store, { isLoading }] = useUpdateRoleMutation();
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
+	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		const submitData = {
 			name: data.name,
 			status: data.status,
@@ -77,18 +76,17 @@ export function RoleEdit() {
 			})),
 		};
 
-		store({ id: roleDetails?.data?._id, payload: submitData } as any).then(
-			(e) => {
-				toast({
-					title: 'You submitted the following values:',
-					description: (
-						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-							<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-						</pre>
-					),
-				});
-			}
-		);
+		try {
+			const response = await store({
+				id: roleDetails?.data?._id,
+				payload: submitData,
+			} as any).unwrap();
+			apiReqResponse(response);
+			methods.reset();
+			router.push('/user-management/roles-permissions');
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
 	}
 
 	return (
@@ -171,7 +169,21 @@ export function RoleEdit() {
 								<RFTextarea methods={methods} />
 							</div>
 
-							<RFSubmit text="Create Role" />
+							<div className="flex justify-end gap-3">
+								<Link href="/user-management/roles-permissions">
+									<Button
+										disabled={isLoading}
+										variant="destructive"
+										type="button"
+									>
+										Cancel
+									</Button>
+								</Link>
+								<RFSubmit
+									text={`${isLoading ? 'Updating...' : 'Update Role'}`}
+									isLoading={isLoading}
+								/>
+							</div>
 						</form>
 					</Form>
 				</FormProvider>

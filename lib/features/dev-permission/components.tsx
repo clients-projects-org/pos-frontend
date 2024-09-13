@@ -7,7 +7,7 @@ import {
 } from '@/components/custom/list-item';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { DevPermissionType, StatusType } from '@/lib/type';
+import { RouteType, StatusType } from '@/lib/type';
 import {
 	useDeleteDevPermissionMutation,
 	useUpdateStatusMutation,
@@ -15,20 +15,7 @@ import {
 import { badge, handleDelete, handleStatusChange } from '@/lib/actions';
 import { DevPermissionEditModal } from './DevPermissionStore';
 
-type typeProps = {
-	type: 'routes' | 'main' | 'actions';
-	mainId?: string;
-	actionsId?: string;
-	routesId?: string;
-};
-const Actions = ({
-	data,
-	isFor,
-}: {
-	data: DevPermissionType;
-	isFor?: 'child';
-	type?: typeProps;
-}) => {
+const Actions = ({ data, isFor }: { data: RouteType; isFor?: 'child' }) => {
 	const [deleting, { isLoading }] = useDeleteDevPermissionMutation();
 
 	const [updateStatus, { isLoading: updateStatusLoading }] =
@@ -43,7 +30,7 @@ const Actions = ({
 	return (
 		<div className="ml-auto flex items-center gap-2">
 			<Badge
-				variant={badge(data.status)}
+				variant={data.status && badge(data.status)}
 				style={{ fontSize: isFor === 'child' ? '10px' : '12px' }}
 				className={`text-xs capitalize ${isFor === 'child' ? 'py-0' : 'py-1'}`}
 			>

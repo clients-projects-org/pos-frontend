@@ -9,34 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { StatusType, UserType } from '@/lib/type';
 
-import { badge, confirm } from '@/lib/actions';
-import { showToast, ToastOptions } from '@/lib/actions/tost';
+import { badge, handleDelete, handleStatusChange } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
 import {
 	useDeleteUserMutation,
 	useUpdateUserStatusMutation,
 } from './UserApiSlice';
 
-type typeProps = {
-	type: 'routes' | 'main' | 'actions';
-	mainId?: string;
-	actionsId?: string;
-	routesId?: string;
-};
-const Actions = ({
-	data,
-	isFor,
-	type = {
-		type: 'main',
-	},
-}: {
-	data: UserType;
-	isFor?: 'child';
-	type?: typeProps;
-}) => {
+const Actions = ({ data }: { data: UserType }) => {
 	const router = useRouter();
-	const params = useParams<{ slug: string; item: string }>();
 
 	const [deleting, { isLoading }] = useDeleteUserMutation();
 
@@ -45,55 +26,16 @@ const Actions = ({
 
 	const loading = isLoading || updateStatusLoading;
 
-	const handleDelete = async (id: string) => {
-		try {
-			const confirmed = await confirm({
-				message:
-					'This action cannot be undone. This will permanently delete your account and remove your data from our servers.',
-				title: 'Delete Account',
-			});
-
-			if (confirmed) {
-				// Perform the delete action here
-				await deleting({ id, type }).unwrap();
-				const options: ToastOptions = {
-					title: 'Successfully Deleted',
-					description: 'Item delete is done, You can not find it, Thanks',
-					autoClose: true,
-					autoCloseDelay: 5000,
-				};
-				showToast(options);
-				if (params.slug.startsWith('permission')) {
-					router.push('/user-management/roles-permissions');
-				}
-			} else {
-				console.log('Delete action cancelled');
-			}
-		} catch (err) {
-			console.error('Failed to delete the permission: ', err);
-		}
-	};
-
-	/*
-		if main id ok fine only [main id] 
-		if routes need [main id] and [routes id] 
-		if actions need [main id] and [routes id] and [actions id]
-	*/
-
-	const handleStatusChange = async (status: StatusType) => {
-		try {
-			await updateStatus({ id: data._id, status, type }).unwrap();
-		} catch (err) {
-			console.error('Failed to update the status: ', err);
-		}
+	const statusHandler = async (id: string, status: StatusType) => {
+		handleStatusChange(id, status, updateStatus);
 	};
 
 	return (
 		<div className="ml-auto flex items-center gap-2">
 			<Badge
 				variant={data.status && badge(data.status)}
-				style={{ fontSize: isFor === 'child' ? '10px' : '12px' }}
-				className={`text-xs capitalize ${isFor === 'child' ? 'py-0' : 'py-1'}`}
+				style={{ fontSize: '12px' }}
+				className={`text-xs capitalize py-1`}
 			>
 				{data.status}
 			</Badge>
@@ -121,7 +63,7 @@ const Actions = ({
 					<DropDownDotItem
 						icon="CircleCheckBig"
 						name="Active"
-						onChange={() => data._id && handleStatusChange('active')}
+						onChange={() => data._id && statusHandler(data._id, 'active')}
 						disabled={loading}
 					/>
 				)}
@@ -130,7 +72,7 @@ const Actions = ({
 					<DropDownDotItem
 						icon="CircleSlash2"
 						name="Deactivated"
-						onChange={() => data._id && handleStatusChange('deactivated')}
+						onChange={() => data._id && statusHandler(data._id, 'deactivated')}
 						disabled={loading}
 					/>
 				)}
@@ -139,15 +81,15 @@ const Actions = ({
 					<DropDownDotItem
 						icon="PackageX"
 						name="Draft"
-						onChange={() => data._id && handleStatusChange('draft')}
+						onChange={() => data._id && statusHandler(data._id, 'draft')}
 						disabled={loading}
 					/>
 				)}
-				{(data.status === 'draft' || isFor === 'child') && (
+				{data.status === 'draft' && (
 					<DropDownDotItem
 						icon="Trash2"
 						name="Delete"
-						onChange={() => data._id && handleDelete(data._id)}
+						onChange={() => data._id && handleDelete(data._id, deleting)}
 						disabled={loading}
 					/>
 				)}
@@ -163,7 +105,7 @@ const Filter = ({
 	value: StatusType | 'all';
 	setValue: Function;
 }) => {
-	const statusHandler = (status: StatusType | 'all') => {
+	const tabHandler = (status: StatusType | 'all') => {
 		setValue(status);
 	};
 	return (
@@ -171,23 +113,23 @@ const Filter = ({
 			<TabList>
 				<TabListItem
 					name="All"
-					onClick={() => statusHandler('all')}
+					onClick={() => tabHandler('all')}
 					active={value === 'all'}
 				/>
 
 				<TabListItem
 					name="Active"
-					onClick={() => statusHandler('active')}
+					onClick={() => tabHandler('active')}
 					active={value === 'active'}
 				/>
 				<TabListItem
 					name="Deactivated"
-					onClick={() => statusHandler('deactivated')}
+					onClick={() => tabHandler('deactivated')}
 					active={value === 'deactivated'}
 				/>
 				<TabListItem
 					name="Draft"
-					onClick={() => statusHandler('draft')}
+					onClick={() => tabHandler('draft')}
 					active={value === 'draft'}
 				/>
 			</TabList>

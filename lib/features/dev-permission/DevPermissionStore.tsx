@@ -23,7 +23,6 @@ import { DevNameType } from '@/lib/type';
 import { devZodFrom, devZodFromEdit, FormSchema } from './dev-permission.zod';
 import { UseFormReturn } from 'react-hook-form';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
-import { env } from '@/lib/env';
 type FormValues = z.infer<typeof FormSchema>;
 interface FormProps {
 	methods: UseFormReturn<FormValues>;
@@ -54,7 +53,6 @@ export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 			setOpen(false);
 		} catch (error: unknown) {
 			apiErrorResponse(error, methods, FormSchema);
-			env.env === 'development' && console.error(error);
 		}
 	}
 
@@ -92,23 +90,23 @@ export function DevPermissionEditModal({ data }: { data: DevNameType }) {
 
 	const [store, { isLoading }] = useUpdateDevPermissionMutation();
 
-	async function onSubmit(data: FormValues) {
+	async function onSubmit(event: FormValues) {
 		const storeData = {
 			dev_name_id,
-			name: data.name,
-			code: data.code,
-			status: data.status,
+			name: event.name,
+			code: event.code,
+			status: event.status,
 		};
 		try {
 			const response = await store({
-				...storeData,
+				data: storeData,
+				id: data._id,
 			} as any).unwrap();
 			apiReqResponse(response);
 			methods.reset();
 			setOpen(false);
 		} catch (error: unknown) {
 			apiErrorResponse(error, methods, FormSchema);
-			env.env === 'development' && console.error(error);
 		}
 	}
 

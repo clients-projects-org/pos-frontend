@@ -1,5 +1,7 @@
+import { SerializedError } from '@reduxjs/toolkit';
 import { BarLoader, LineLoader } from '../custom/loader';
 import { ApiError } from '../custom/notifications';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function PageDetailsApiHOC({
 	isLoading,
@@ -14,6 +16,7 @@ export function PageDetailsApiHOC({
 	isError: boolean;
 	data: any;
 	children: React.ReactNode;
+	error: FetchBaseQueryError | SerializedError | undefined;
 }) {
 	if (isLoading) {
 		return (

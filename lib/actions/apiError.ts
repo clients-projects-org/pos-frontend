@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { Path, UseFormReturn } from 'react-hook-form';
-import { ApiErrorResponse } from '../type';
+import { ApiErrorResponseType } from '../type';
 import { showToast } from './tost';
+import { env } from '../env';
 
 // Define your ApiErrorResponse type
 
@@ -12,7 +13,7 @@ export function apiErrorResponse<T extends z.ZodTypeAny>(
 	FormSchema: T
 ) {
 	if (error && typeof error === 'object' && 'data' in error) {
-		const { data } = error as { data: ApiErrorResponse };
+		const { data } = error as { data: ApiErrorResponseType };
 
 		if (data.statusCode === 422 && !data.success) {
 			data.errorMessages &&
@@ -22,12 +23,19 @@ export function apiErrorResponse<T extends z.ZodTypeAny>(
 						message: err.message,
 					});
 				});
-			showToast({ title: 'Error', description: data.message });
+			showToast({
+				title: 'Wait!',
+				variant: 'destructive',
+				description: data.message,
+			});
 		}
 	} else {
 		showToast({
 			title: 'Error',
+			variant: 'destructive',
 			description: 'An error occurred, please try later',
 		});
 	}
+
+	env.env === 'development' && console.error(error);
 }

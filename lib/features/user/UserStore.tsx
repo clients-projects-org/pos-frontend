@@ -2,7 +2,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { toast } from '@/components/ui/use-toast';
 
 import {
 	Form,
@@ -29,6 +28,7 @@ import { DevPermissionType } from '@/lib/type';
 import { useStoreUserMutation } from './UserApiSlice';
 import { useGetRolesQuery } from '../role';
 import { userStoreImageInfo } from '@/lib/image-size';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 
 const FormSchema = z
 	.object({
@@ -66,29 +66,15 @@ export function UserStore() {
 	});
 	const [store] = useStoreUserMutation();
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
-		const formData = new FormData();
-
-		// Convert the form data to FormData
-		Object.entries(data).forEach(([key, value]) => {
-			formData.append(key, value);
-		});
-
-		console.log(data);
-		store(data as any).then((e) => {
-			// router.push('/user-management/users', { scroll: false });
-
-			// router.push('/user-management/roles-permissions', { scroll: false });
-			return;
-			toast({
-				title: 'You submitted the following values:',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-					</pre>
-				),
-			});
-		});
+	async function onSubmit(data: z.infer<typeof FormSchema>) {
+		try {
+			const response = await store(data as any).unwrap();
+			apiReqResponse(response);
+			methods.reset();
+			router.push('/user-management/users');
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
 	}
 	const watching = methods.watch();
 	// const methods = useForm();
