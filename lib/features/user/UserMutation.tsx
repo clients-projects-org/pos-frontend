@@ -1,5 +1,5 @@
 'use client';
-import { FormProvider } from 'react-hook-form';
+import { FormProvider, UseFormReturn } from 'react-hook-form';
 import {
 	Form,
 	FormControl,
@@ -19,14 +19,78 @@ import {
 	RFTextarea,
 } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
-import { DevPermissionType } from '@/lib/type';
-import { useStoreUserMutation } from './UserApiSlice';
+import { RoleType } from '@/lib/type';
+import { useGetUserByIdQuery, useStoreUserMutation } from './UserApiSlice';
 import { useGetRolesQuery } from '../role';
 import { userStoreImageInfo } from '@/lib/image-size';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
-import { createZodFrom, FormSchema, FormValues } from './user.zod';
+import {
+	createZodFrom,
+	editZodFrom,
+	FormSchema,
+	FormValues,
+	FormValuesEdit,
+} from './user.zod';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { PageDetailsApiHOC } from '@/components/hoc';
+interface FormProps {
+	methods: UseFormReturn<FormValues>;
+	onSubmit: (data: FormValues) => void;
+	isLoading: boolean;
+	type: 'create' | 'edit';
+	roles: RoleType[];
+	watching: FormValues;
+}
+interface FormPropsEdit {
+	methods: UseFormReturn<FormValuesEdit>;
+	onSubmit: (data: FormValuesEdit) => void;
+	isLoading: boolean;
+	type: 'create' | 'edit';
+	roles: RoleType[];
+	watching: FormValuesEdit;
+}
+export function UserEdit({ slug }: { slug: string }) {
+	const userData = useGetUserByIdQuery(slug);
+	const router = useRouter();
+	const roles = useGetRolesQuery('active');
+
+	const { methods } = editZodFrom(userData?.data?.data);
+	const [store, { isLoading }] = useStoreUserMutation();
+
+	async function onSubmit(data: FormValuesEdit) {
+		console.log(data);
+		// try {
+		// 	const response = await store(data as any).unwrap();
+		// 	apiReqResponse(response);
+		// 	methods.reset();
+		// 	router.push('/user-management/users');
+		// } catch (error: unknown) {
+		// 	apiErrorResponse(error, methods, FormSchema);
+		// }
+	}
+	const watching = methods.watch();
+	// const methods = useForm();
+	// const onSubmit = (data) => console.log(data);
+	return (
+		<PageDetailsApiHOC
+			data={userData.data}
+			isError={userData.isError}
+			isLoading={userData.isLoading || roles.isLoading}
+			isFetching={userData.isFetching || isLoading}
+			error={userData.error}
+		>
+			<FormMutation
+				methods={methods}
+				onSubmit={onSubmit}
+				isLoading={isLoading}
+				roles={roles?.data?.data}
+				watching={watching}
+				type="edit"
+			/>
+		</PageDetailsApiHOC>
+	);
+}
 
 export function UserStore() {
 	const router = useRouter();
@@ -48,6 +112,34 @@ export function UserStore() {
 	const watching = methods.watch();
 	// const methods = useForm();
 	// const onSubmit = (data) => console.log(data);
+	return (
+		<PageDetailsApiHOC
+			data={{ data: true, success: true }}
+			isError={roles.isError}
+			isLoading={roles.isLoading}
+			isFetching={roles.isFetching || isLoading}
+			error={roles.error}
+		>
+			<FormMutation
+				methods={methods}
+				onSubmit={onSubmit}
+				isLoading={isLoading}
+				roles={roles?.data?.data}
+				watching={watching}
+				type="create"
+			/>
+		</PageDetailsApiHOC>
+	);
+}
+
+const FormMutation = ({
+	methods,
+	onSubmit,
+	isLoading,
+	type,
+	roles,
+	watching,
+}: FormProps) => {
 	return (
 		<div className="max-w-5xl mx-auto w-full border p-4 rounded">
 			<FormProvider {...methods}>
@@ -109,31 +201,32 @@ export function UserStore() {
 						</div>
 						<div className="grid grid-cols-12 gap-3">
 							{/* password  */}
-							<div className="col-span-6">
-								<RFInput
-									label="Password"
-									methods={methods}
-									name="password"
-									placeholder="Password"
-								/>
-							</div>
-
+							{type === 'create' && (
+								<div className="col-span-6">
+									<RFInput
+										label="Password"
+										methods={methods}
+										name="password"
+										placeholder="Password"
+									/>
+								</div>
+							)}
 							{/* Permission  */}
 							<div className="col-span-6">
 								<RFSelect
 									methods={methods}
-									data={roles.data?.data}
+									data={roles}
 									label="Role"
 									name="role_id"
 								>
 									<SelectGroup>
 										<SelectLabel>Role All List</SelectLabel>
-										{roles.data?.data?.map((dev: DevPermissionType) => (
+										{roles?.map((item: RoleType) => (
 											<SelectItem
 												className="capitalize"
-												value={dev._id ? dev._id : ''}
+												value={item._id ? item._id : ''}
 											>
-												{dev.name}
+												{item.name}
 											</SelectItem>
 										))}
 									</SelectGroup>
@@ -154,7 +247,13 @@ export function UserStore() {
 								</Button>
 							</Link>
 							<Button disabled={isLoading} variant="default" type="submit">
-								{isLoading ? 'Creating...' : 'Create User'}
+								{isLoading
+									? type === 'create'
+										? 'Creating...'
+										: 'Updating...'
+									: type === 'create'
+										? 'Create New'
+										: 'Update Changes'}
 							</Button>
 						</div>
 					</form>
@@ -162,4 +261,4 @@ export function UserStore() {
 			</FormProvider>
 		</div>
 	);
-}
+};

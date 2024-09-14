@@ -201,7 +201,7 @@ export function RFSelect({ methods, label, data, children, name }) {
 					)}
 					{!isEmptyArray(data) && (
 						<FormControl>
-							<Select onValueChange={field.onChange}>
+							<Select defaultValue={field.value} onValueChange={field.onChange}>
 								<SelectTrigger className="capitalize">
 									<SelectValue placeholder={`Select a ${label}`} />
 								</SelectTrigger>

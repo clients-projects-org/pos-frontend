@@ -5,7 +5,7 @@ export const userApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getUser: builder.query<any, StatusTypeApi>({
 			query: (payload: StatusTypeApi) => `user?status=${payload}`,
-			providesTags: (result, error, arg) => {
+			providesTags: () => {
 				return ['User'];
 			},
 		}),

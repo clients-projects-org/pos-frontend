@@ -42,9 +42,9 @@ export const useEditZodFrom = (data: DevNameType) => {
 	useEffect(() => {
 		if (data) {
 			methods.reset({
-				name: data.name || '',
-				status: data.status || 'active',
-				description: data.description || '',
+				name: data?.name || '',
+				status: data?.status || 'active',
+				description: data?.description || '',
 			});
 		}
 	}, [data, methods.reset]);

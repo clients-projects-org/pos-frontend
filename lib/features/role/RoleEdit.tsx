@@ -1,7 +1,6 @@
 'use client';
 import { FormProvider } from 'react-hook-form';
 import { z } from 'zod';
-import { toast } from '@/components/ui/use-toast';
 
 import { Form } from '@/components/ui/form';
 import {
@@ -95,6 +94,7 @@ export function RoleEdit() {
 			isError={devPermissionName.isError}
 			isLoading={devPermissionName.isLoading || isLoadingRole}
 			isFetching={devPermissionName.isFetching || isLoading}
+			error={devPermissionName.error}
 		>
 			<div className="max-w-5xl mx-auto w-full border p-4 rounded">
 				<FormProvider {...methods}>

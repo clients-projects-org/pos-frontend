@@ -1,7 +1,6 @@
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
-import { UserDetails, UserStore } from '@/lib/features/user';
-// import { UserStore } from '@/components/store';
+import { UserDetails, UserStore, UserEdit } from '@/lib/features/user';
 import Link from 'next/link';
 
 export default function Page({ params }: { params: { slug: string } }) {
@@ -14,7 +13,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 		// if edit
 		case slug.startsWith('edit-'):
-			return <EditComponent />;
+			return <EditComponent slug={slug} />;
 
 		// default all
 		default:
@@ -36,7 +35,7 @@ const CreateComponent = () => (
 	</>
 );
 
-const EditComponent = () => (
+const EditComponent = ({ slug }: { slug: string }) => (
 	<>
 		<PageTitle title="Edit User">
 			<Link href="/user-management/users" className="gap-1 flex items-center">
@@ -46,7 +45,7 @@ const EditComponent = () => (
 				</span>
 			</Link>
 		</PageTitle>
-		<UserStore />
+		<UserEdit slug={slug.split('edit-')[1]} />
 	</>
 );
 

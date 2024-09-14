@@ -48,7 +48,7 @@ export function DevNameStoreModal() {
 			methods.reset();
 			setOpen(false);
 		} catch (error: unknown) {
-			apiErrorResponse(error, methods, FormSchema, showToast);
+			apiErrorResponse(error, methods, FormSchema);
 		}
 	}
 
@@ -95,7 +95,7 @@ export function DevNameEditModal({ data }: { data: DevNameType }) {
 			methods.reset();
 			setOpen(false);
 		} catch (error) {
-			apiErrorResponse(error, methods, FormSchema, showToast);
+			apiErrorResponse(error, methods, FormSchema);
 		}
 	}
 
