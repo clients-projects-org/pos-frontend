@@ -70,7 +70,7 @@ export default function WebsiteSetting() {
 						{data?.data?.map((e: MenuType) => (
 							<div
 								key={e._id}
-								className={`p-2 rounded ${e.show ? '' : 'bg-slate-300 dark:bg-slate-500'}`}
+								className={`p-2 rounded ${e.show ? '' : 'bg-slate-300 dark:bg-slate-900'}`}
 							>
 								{e.title && (
 									<div className={`flex   gap-1 items-center `}>
@@ -137,7 +137,7 @@ export default function WebsiteSetting() {
 													{subItem.children.map((subChild) => (
 														<p
 															key={subChild._id}
-															className={`hover:bg-muted justify-between  flex items-center gap-3 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm ${subChild.show ? '' : 'bg-slate-300 dark:bg-slate-500'}`}
+															className={`hover:bg-muted justify-between  flex items-center gap-3 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm ${subChild.show ? '' : 'bg-slate-300 dark:bg-slate-900'}`}
 														>
 															<span className="flex items-center gap-3">
 																<DynamicIcon
@@ -175,7 +175,7 @@ export default function WebsiteSetting() {
 									) : (
 										<p
 											key={subItem._id}
-											className={`hover:bg-muted  flex justify-between items-center gap-3 my-1 sm:my-2 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm ${subItem.show ? '' : 'bg-slate-300 dark:bg-slate-500'}`}
+											className={`hover:bg-muted  flex justify-between items-center gap-3 my-1 sm:my-2 rounded-lg px-3 py-2  text-muted-foreground transition-all hover:text-primary text-xs sm:text-sm ${subItem.show ? '' : 'bg-slate-300 dark:bg-slate-900'}`}
 										>
 											<span className="flex items-center gap-3">
 												<DynamicIcon icon={subItem.icon} className="h-4 w-4" />

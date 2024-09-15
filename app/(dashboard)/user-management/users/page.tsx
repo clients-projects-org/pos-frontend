@@ -13,7 +13,6 @@ import { useState } from 'react';
 export default function userManagementUser() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
 	const { data, isLoading, isFetching, isError } = useGetUserQuery(value);
-
 	return (
 		<>
 			{/* roles title*/}

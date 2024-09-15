@@ -72,6 +72,7 @@ export function RoleEdit() {
 			permissions: checked.map((e) => ({
 				permission_id: e._id,
 				parent_id: e.parent_id,
+				code: e.code,
 			})),
 		};
 

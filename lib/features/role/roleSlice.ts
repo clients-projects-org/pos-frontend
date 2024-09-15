@@ -29,6 +29,7 @@ const roleSlice = createSlice({
 							return {
 								_id: route._id,
 								parent_id: main._id,
+								code: route.code,
 								name: route.name,
 								status: route.status,
 								checked: false,
@@ -59,6 +60,7 @@ const roleSlice = createSlice({
 							_id: route._id,
 							parent_id: main._id,
 							name: route.name,
+							code: route.code,
 							status: route.status,
 							checked: matchingChild ? true : false, // Set checked if matching
 						};

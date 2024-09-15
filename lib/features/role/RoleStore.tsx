@@ -39,7 +39,7 @@ export function RoleStore() {
 
 	// all checked true data
 	const checked = getCheckedRoutes(permissions.data);
-
+	console.log(checked, 'checked');
 	// handler for toggle parent name
 	const handleParentToggle = (devId: string) => {
 		dispatch(toggleParent(devId));
@@ -69,6 +69,7 @@ export function RoleStore() {
 			permissions: checked.map((e) => ({
 				permission_id: e._id,
 				parent_id: e.parent_id,
+				code: e.code,
 			})),
 		};
 		try {
