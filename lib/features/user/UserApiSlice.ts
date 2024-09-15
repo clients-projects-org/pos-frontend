@@ -1,4 +1,4 @@
-import { StatusTypeApi } from '@/lib/type';
+import { StatusTypeApi, UserType } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const userApi = apiSlice.injectEndpoints({
@@ -13,7 +13,6 @@ export const userApi = apiSlice.injectEndpoints({
 		storeUser: builder.mutation<any, string>({
 			query: (payload) => {
 				const body = new FormData();
-				// body.append('Content-Type', 'multipart/form-data');
 				Object.entries(payload).forEach(([key, value]) => {
 					body.append(key, value);
 				});
@@ -28,7 +27,26 @@ export const userApi = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return ['User'];
 			},
-			// invalidatesTags: ['DevPermission'],
+		}),
+
+		// update user
+		updateUser: builder.mutation<any, { id: string; data: any }>({
+			query: (payload) => {
+				const body = new FormData();
+				Object.entries(payload.data).forEach(([key, value]) => {
+					body.append(key, value as string);
+				});
+				return {
+					url: `/user/update/${payload.id}`,
+					method: 'PUT',
+					body,
+					formData: true,
+				};
+			},
+
+			invalidatesTags: () => {
+				return ['User'];
+			},
 		}),
 
 		deleteUser: builder.mutation<any, string>({
@@ -67,4 +85,5 @@ export const {
 	useDeleteUserMutation,
 	useUpdateUserStatusMutation,
 	useGetUserByIdQuery,
+	useUpdateUserMutation,
 } = userApi;

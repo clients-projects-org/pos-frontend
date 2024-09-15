@@ -20,7 +20,11 @@ import {
 } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
 import { RoleType } from '@/lib/type';
-import { useGetUserByIdQuery, useStoreUserMutation } from './UserApiSlice';
+import {
+	useGetUserByIdQuery,
+	useStoreUserMutation,
+	useUpdateUserMutation,
+} from './UserApiSlice';
 import { useGetRolesQuery } from '../role';
 import { userStoreImageInfo } from '@/lib/image-size';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
@@ -56,18 +60,18 @@ export function UserEdit({ slug }: { slug: string }) {
 	const roles = useGetRolesQuery('active');
 
 	const { methods } = editZodFrom(userData?.data?.data);
-	const [store, { isLoading }] = useStoreUserMutation();
+	const [store, { isLoading }] = useUpdateUserMutation();
 
 	async function onSubmit(data: FormValuesEdit) {
 		console.log(data);
-		// try {
-		// 	const response = await store(data as any).unwrap();
-		// 	apiReqResponse(response);
-		// 	methods.reset();
-		// 	router.push('/user-management/users');
-		// } catch (error: unknown) {
-		// 	apiErrorResponse(error, methods, FormSchema);
-		// }
+		try {
+			const response = await store({ data: data as any, id: slug }).unwrap();
+			apiReqResponse(response);
+			methods.reset();
+			router.push('/user-management/users');
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
 	}
 	const watching = methods.watch();
 	// const methods = useForm();
@@ -198,11 +202,10 @@ const FormMutation = ({
 								name="phone"
 								placeholder="Phone"
 							/>
-						</div>
-						<div className="grid grid-cols-12 gap-3">
+
 							{/* password  */}
 							{type === 'create' && (
-								<div className="col-span-6">
+								<div>
 									<RFInput
 										label="Password"
 										methods={methods}
@@ -212,7 +215,7 @@ const FormMutation = ({
 								</div>
 							)}
 							{/* Permission  */}
-							<div className="col-span-6">
+							<div>
 								<RFSelect
 									methods={methods}
 									data={roles}

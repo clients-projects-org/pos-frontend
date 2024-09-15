@@ -37,5 +37,19 @@ export function apiErrorResponse<T extends z.ZodTypeAny>(
 		});
 	}
 
-	env.env === 'development' && console.error(error);
+	// if status 404
+	if (
+		error &&
+		typeof error === 'object' &&
+		'status' in error &&
+		error.status === 404
+	) {
+		showToast({
+			title: 'Error 404 !',
+			variant: 'destructive',
+			description: 'Something Is Wrong, We are working on it',
+		});
+	}
+
+	env.env === 'development' && console.error(error, 'apiError.ts');
 }
