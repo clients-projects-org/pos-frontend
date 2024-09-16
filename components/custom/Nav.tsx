@@ -17,9 +17,12 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ModeToggle } from './theme';
 import { MenuItem } from './sidebar/sidebar-components';
 import Session from '@/lib/session';
+import { useAllSettingsQuery } from '@/lib/features/all-settings';
 
 export const Nav = () => {
-	const { signOut, session } = Session();
+	const { signOut } = Session();
+	const { data: allSettings } = useAllSettingsQuery();
+
 	return (
 		<header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
 			<Sheet>
@@ -66,7 +69,7 @@ export const Nav = () => {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
-					<DropdownMenuLabel>My Account</DropdownMenuLabel>
+					<DropdownMenuLabel>{allSettings?.data?.user?.name}</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem>Settings</DropdownMenuItem>
 					<DropdownMenuItem>Support</DropdownMenuItem>

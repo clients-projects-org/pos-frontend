@@ -4,7 +4,7 @@ import Sidebar from '@/components/custom/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetSidebarPrivetQuery } from '@/lib/features/sidebar/apiSlice';
 import Session from '@/lib/session';
-import { useRouter, usePathname, notFound } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function RootLayout({
@@ -14,16 +14,14 @@ export default function RootLayout({
 }>) {
 	const { session, status } = Session();
 	const router = useRouter();
-	const pathname = usePathname(); // Get the current path
 	const { data, isLoading, isError } = useGetSidebarPrivetQuery();
-	console.log(pathname, 'index');
+	console.log(data, 'data');
 	useEffect(() => {
 		if (!session?.isLoggedIn && status !== 'loading') {
 			router.push('/login');
 		}
-	}, [session, status, router]);
+	}, [session, router]);
 
-	// Check for session and loading states
 	if (status === 'loading' || isLoading) {
 		return <Skeleton />;
 	}
@@ -32,14 +30,10 @@ export default function RootLayout({
 		return <div>Error</div>;
 	}
 
-	// Check if the current path (pathname) is in the allowed paths in data
-	// const hasAccessToCurrentPath = data?.data.path?.includes(pathname);
-
-	// If the user is not logged in or does not have access to the current path, return null
-	// if (!session?.isLoggedIn || !hasAccessToCurrentPath) {
-	// 	return notFound();
-	// }
-
+	// Optionally, you can return null or a loading state while the redirect is happening
+	if (!session?.isLoggedIn) {
+		return null; // Or you can return a loading spinner
+	}
 	return (
 		<div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
 			<Sidebar />

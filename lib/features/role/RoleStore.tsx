@@ -17,6 +17,7 @@ import { DevNameType, RouteType } from '@/lib/type';
 import { useEffect } from 'react';
 import {
 	getCheckedRoutes,
+	getCheckedSidebars,
 	setPermissions,
 	toggleChild,
 	toggleChildChildrenSidebar,
@@ -33,20 +34,16 @@ import { Button } from '@/components/ui/button';
 import { useGetSidebarQuery } from '../sidebar/apiSlice';
 export function RoleStore() {
 	const router = useRouter();
-	const {
-		data: sidebar,
-		isLoading: isLoadingSidebar,
-		isError,
-	} = useGetSidebarQuery();
+	const sidebarData = useGetSidebarQuery();
 	// state
 	const dispatch = useAppDispatch();
 	const permissions = useAppSelector((state) => state.role);
-	console.log(permissions, 'permissions');
 	// get all permissions that is in dev name api
 	const devPermissionName = useGetDevNameQuery('active');
 
 	// all checked true data
 	const checked = getCheckedRoutes(permissions.data);
+	const checkedSidebar = getCheckedSidebars(permissions.sidebarData);
 	// handler for toggle parent name
 	const handleParentToggle = (devId: string) => {
 		dispatch(toggleParent(devId));
@@ -59,15 +56,15 @@ export function RoleStore() {
 
 	useEffect(() => {
 		// set data in redux store
-		if (devPermissionName.data && sidebar.data) {
+		if (devPermissionName.data && sidebarData.data) {
 			dispatch(
 				setPermissions({
 					data: devPermissionName.data.data,
-					sidebarData: sidebar.data,
+					sidebarData: sidebarData.data.data,
 				})
 			);
 		}
-	}, [devPermissionName.data, dispatch, sidebar?.data]);
+	}, [devPermissionName.data, dispatch, sidebarData?.data]);
 
 	const { methods } = createZodFrom();
 
@@ -83,6 +80,7 @@ export function RoleStore() {
 				parent_id: e.parent_id,
 				code: e.code,
 			})),
+			sidebars: checkedSidebar,
 		};
 		try {
 			const response = await store({
@@ -123,6 +121,10 @@ export function RoleStore() {
 								<div className="col-span-2 ">
 									<RFStatus methods={methods} name="status" />
 								</div>
+							</div>
+
+							<div>
+								<p className="mt-5 text-lg">All Permissions</p>
 							</div>
 
 							<div className="grid grid-cols-5 gap-4">
@@ -174,7 +176,7 @@ export function RoleStore() {
 							</div>
 
 							<div>
-								<RFTextarea methods={methods} />
+								<p className="mt-5 text-lg">Sidebar Permissions</p>
 							</div>
 
 							<div className="grid grid-cols-5 gap-4">
@@ -183,20 +185,53 @@ export function RoleStore() {
 										key={dev._id}
 										className="border p-3 shadow space-x-2 space-y-2"
 									>
-										<Checkbox
-											className="scale-125"
-											id={dev._id}
-											checked={dev.checked}
-											onCheckedChange={() =>
-												dev._id && dispatch(toggleParentSidebar(dev._id))
-											}
-										/>
-										<label
-											htmlFor={dev._id}
-											className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-										>
-											{dev.title}
-										</label>
+										<div className="flex justify-between items-center">
+											<div className="flex items-center gap-2">
+												<Checkbox
+													className="scale-125"
+													id={dev._id}
+													checked={dev.checked}
+													onCheckedChange={() =>
+														dev._id &&
+														dispatch(
+															toggleParentSidebar({
+																devId: dev._id,
+																type: 'single',
+															})
+														)
+													}
+												/>
+												<label
+													htmlFor={dev._id}
+													className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+												>
+													{dev.title}
+												</label>
+											</div>
+											<div className="flex items-center gap-2">
+												<Checkbox
+													className="scale-125"
+													id={dev._id + 'All'}
+													checked={dev.show}
+													onCheckedChange={() =>
+														dev._id &&
+														dispatch(
+															toggleParentSidebar({
+																devId: dev._id,
+																type: 'all',
+															})
+														)
+													}
+												/>
+												<label
+													htmlFor={dev._id + 'All'}
+													className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+												>
+													All
+												</label>
+											</div>
+										</div>
+
 										<div className="space-y-2 ps-4">
 											{dev.sidebarChildren?.map((route) =>
 												route.show ? (
@@ -263,6 +298,10 @@ export function RoleStore() {
 										</div>
 									</div>
 								))}
+							</div>
+
+							<div>
+								<RFTextarea methods={methods} />
 							</div>
 
 							<div className="flex justify-end gap-3">

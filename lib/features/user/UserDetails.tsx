@@ -30,11 +30,11 @@ export function UserDetails({ slug }: { slug: string }) {
 			isFetching={isFetching}
 			error={error}
 		>
-			<div className=" h-full w-full flex items-center justify-center dark:bg-gray-900">
+			<div className=" w-full flex items-center justify-center dark:bg-gray-900">
 				{/* <!-- Author card --> */}
 				<div className="relative w-full max-w-2xl my-8 md:my-16 flex flex-col items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 px-4 py-8 border-2 border-dashed border-gray-400 dark:border-gray-400 shadow-lg rounded-lg">
 					<span className="absolute text-xs font-medium top-0 left-0 rounded-br-lg rounded-tl-lg px-2 py-1 bg-primary-100 dark:bg-gray-900 dark:text-gray-300 border-gray-400 dark:border-gray-400 border-b-2 border-l-2 border-dashed ">
-						{data?.data?.role_id && data?.data?.role.name}
+						{data?.data?.role && data?.data?.role.name}
 					</span>
 					<span className="absolute text-xs font-medium top-0 right-0 rounded-br-lg rounded-tl-lg px-2 py-1 bg-primary-100 dark:bg-gray-900 dark:text-gray-300 border-gray-400 dark:border-gray-400 border-b-2 border-r-2 border-dashed ">
 						{data?.data?.status}

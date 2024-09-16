@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { SidebarStore } from '@/lib/features/sidebar/SidebarStore';
 import { env } from '@/lib/env';
 import {
+	useGetSidebarPrivetQuery,
 	useGetSidebarQuery,
 	useUpdateSidebarStatusMutation,
 } from '@/lib/features/sidebar/apiSlice';
@@ -74,7 +75,9 @@ export default function WebsiteSetting() {
 							>
 								{e.title && (
 									<div className={`flex   gap-1 items-center `}>
-										<h1 className=" font-semibold text-sm sm:text-base">
+										<h1
+											className={`font-semibold text-sm sm:text-base ${e.show ? '' : 'text-slate-500 dark:text-slate-400'}`}
+										>
 											{e.title}
 										</h1>
 										<Switch
@@ -94,7 +97,9 @@ export default function WebsiteSetting() {
 									</div>
 								)}
 								{e.sidebarChildren?.map((subItem) => {
-									return subItem.children?.length > 0 && subItem.children ? (
+									return subItem?.children &&
+										subItem?.children?.length > 0 &&
+										subItem.children ? (
 										<Accordion
 											key={subItem._id}
 											type="single"

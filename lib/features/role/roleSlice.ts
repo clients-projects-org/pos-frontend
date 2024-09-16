@@ -9,6 +9,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface actionType {
 	permissionData: DevNameType[];
 	roleData: RoleDetailsType[];
+	activeSidebars: string[];
+	sidebarData: MenuTypeRoleState[];
 }
 interface PermissionState {
 	data: DevNameType[];
@@ -18,6 +20,19 @@ interface PermissionState {
 const initialState: PermissionState = {
 	data: [],
 	sidebarData: [],
+};
+
+const checkIs = (parent: MenuTypeRoleState) => {
+	const allChecked = parent.sidebarChildren?.every((route) => {
+		return (
+			parent.checked &&
+			route.checked &&
+			route.children?.every((child) => {
+				return child.checked;
+			})
+		);
+	});
+	return allChecked ? true : false;
 };
 
 const roleSlice = createSlice({
@@ -52,7 +67,7 @@ const roleSlice = createSlice({
 						_id: main._id,
 						title: main.title,
 						checked: false,
-						show: main.show,
+						show: false,
 						sidebarChildren: main.sidebarChildren
 							?.filter((status) => status.show)
 							?.map((route) => {
@@ -83,6 +98,10 @@ const roleSlice = createSlice({
 		setEditPermissions(state, action: PayloadAction<actionType>) {
 			const roleData = action.payload.roleData;
 			const permissionData = action.payload.permissionData;
+			const sidebarData = action.payload.sidebarData;
+			const activeSidebars = action.payload.activeSidebars; // Array of active _id values
+
+			console.log(activeSidebars, sidebarData, 'roleData');
 
 			const modifiedData = permissionData?.map((main) => {
 				// Find matching role data for the current permission
@@ -118,12 +137,56 @@ const roleSlice = createSlice({
 				};
 			});
 
+			const modifiedSidebarData = action.payload.sidebarData
+				?.filter((item) => item.show)
+				?.map((main) => {
+					const sidebarChildren = main.sidebarChildren
+						?.filter((status) => status.show)
+						?.map((route) => {
+							const children = route.children
+								?.filter((status) => status.show)
+								?.map((child) => {
+									return {
+										_id: child._id,
+										parent_id: route._id,
+										name: child.name,
+										show: child.show,
+										checked: activeSidebars.includes(child._id),
+									};
+								});
+
+							return {
+								_id: route._id,
+								parent_id: main._id,
+								name: route.name,
+								checked: activeSidebars.includes(route._id),
+								show: route.show,
+								children,
+							};
+						});
+
+					return {
+						_id: main._id,
+						title: main.title,
+						checked: activeSidebars.includes(main._id),
+						show: checkIs({
+							...main,
+							checked: activeSidebars.includes(main._id),
+							sidebarChildren,
+						}),
+						sidebarChildren,
+					};
+				});
+
 			state.data = modifiedData;
+			state.sidebarData = modifiedSidebarData;
 		},
 
-		toggleParentSidebar(state, action: PayloadAction<string>) {
-			const devId = action.payload;
-			console.log(action, 'devId');
+		toggleParentSidebar(
+			state,
+			action: PayloadAction<{ devId: string; type: 'all' | 'single' }>
+		) {
+			const { devId, type } = action.payload;
 
 			const parent = state.sidebarData.find((dev) => dev._id === devId);
 			if (parent) {
@@ -131,13 +194,19 @@ const roleSlice = createSlice({
 				parent.checked = !parent.checked;
 
 				// Toggle all child routes to match the parent's state
-				parent.sidebarChildren?.forEach((route) => {
-					route.checked = parent.checked;
+				if (type === 'all') {
+					parent.show = !parent.show;
+					parent.sidebarChildren?.forEach((route) => {
+						parent.checked = parent.show as boolean;
+						route.checked = parent.show;
 
-					route.children?.forEach((child) => {
-						child.checked = parent.checked;
+						route.children?.forEach((child) => {
+							child.checked = parent.show;
+						});
 					});
-				});
+				}
+
+				parent.show = checkIs(parent);
 			}
 		},
 
@@ -169,6 +238,7 @@ const roleSlice = createSlice({
 				if (route) {
 					// Toggle only the child's checked state
 					route.checked = !route.checked;
+					parent.show = checkIs(parent);
 				}
 			}
 		},
@@ -190,6 +260,8 @@ const roleSlice = createSlice({
 					if (child) {
 						// Toggle only the child's checked state
 						child.checked = !child.checked;
+
+						parent.show = checkIs(parent);
 					}
 				}
 			}
@@ -236,4 +308,32 @@ export const getCheckedRoutes = (permissions: DevNameType[]) => {
 				(route) => route.checked && route.status === 'active'
 			) || []
 	);
+};
+
+export const getCheckedSidebars = (permissions: MenuTypeRoleState[]) => {
+	// Flatten all routes from all permissions, filter by checked status and active status
+	return permissions?.reduce((acc: string[], main) => {
+		// If main is checked, add its _id
+		if (main.checked) {
+			acc.push(main._id);
+		}
+
+		// Process sidebarChildren
+		main.sidebarChildren?.forEach((route) => {
+			// If route is checked, add its _id
+			if (route.checked) {
+				acc.push(route._id);
+			}
+
+			// Process children
+			route.children?.forEach((child) => {
+				// If child is checked, add its _id
+				if (child.checked) {
+					acc.push(child._id);
+				}
+			});
+		});
+
+		return acc;
+	}, []);
 };

@@ -1,4 +1,5 @@
 import { apiSlice } from '../api/apiSlice';
+import { apiPrivetResponse } from './sidebar-response.interface';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
@@ -7,6 +8,9 @@ export const api = apiSlice.injectEndpoints({
 			providesTags: (_result, _error, arg) => {
 				return ['Sidebar', { type: 'Sidebar', status: arg }];
 			},
+		}),
+		getSidebarPrivet: builder.query<apiPrivetResponse, void>({
+			query: (): string => `sidebar/privet`,
 		}),
 
 		getSidebarById: builder.query<any, string>({
@@ -62,4 +66,5 @@ export const {
 	useStoreSidebarMutation,
 	useUpdateSidebarStatusMutation,
 	useGetSidebarByIdQuery,
+	useGetSidebarPrivetQuery,
 } = api;

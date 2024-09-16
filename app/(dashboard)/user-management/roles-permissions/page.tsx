@@ -114,7 +114,7 @@ export default function RoleAndPermissions() {
 			>
 				{/* --- Permission List ---- */}
 				{!isEmptyArray(devPermissionName.data?.data) && (
-					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+					<div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
 						{devPermissionName.data?.data?.map((dev: DevNameType) => (
 							<Motion key={dev._id}>
 								<div className="text-gray-900 px-4 py-2  border rounded-lg    dark:text-white">

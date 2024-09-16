@@ -7,16 +7,14 @@ import {
 	AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAllSettingsQuery } from '@/lib/features/all-settings';
 // import { menu } from '@/lib/dummy-data';
-import { useGetSidebarQuery } from '@/lib/features/sidebar/apiSlice';
+import { useGetSidebarPrivetQuery } from '@/lib/features/sidebar/apiSlice';
 import { MenuType } from '@/lib/type';
 
 import Link from 'next/link';
 
 export function MenuItem() {
-	const { data, isLoading, isError } = useGetSidebarQuery();
-	const { data: allSettings } = useAllSettingsQuery();
+	const { data, isLoading, isError } = useGetSidebarPrivetQuery();
 	if (isLoading) {
 		return Array.from({ length: 10 }, (_, i) => (
 			<div key={i}>
@@ -29,7 +27,7 @@ export function MenuItem() {
 	if (!isLoading && isError) {
 		return <div>Something went wrong</div>;
 	}
-	return data?.data?.map(
+	return data?.data?.sidebar?.map(
 		(e: MenuType) =>
 			e.show && (
 				<div key={e?._id}>
@@ -39,8 +37,10 @@ export function MenuItem() {
 						</h1>
 					)}
 					{e.show &&
+						e.sidebarChildren &&
 						e.sidebarChildren.map((subItem) => {
-							return subItem.children?.length > 0 &&
+							return subItem.children &&
+								subItem.children?.length > 0 &&
 								subItem.show &&
 								subItem.children ? (
 								<Accordion
@@ -63,6 +63,7 @@ export function MenuItem() {
 										<AccordionContent className="pb-0 mt-2">
 											{subItem.children.map(
 												(subChild) =>
+													subItem?.children &&
 													subItem?.children?.length > 0 &&
 													subChild.show && (
 														<Link

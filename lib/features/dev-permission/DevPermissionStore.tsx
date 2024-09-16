@@ -41,7 +41,7 @@ export function DevPermissionStoreModal({ data }: { data?: DevNameType }) {
 		const storeData = {
 			dev_name_id,
 			name: data.name,
-			code: data.code,
+			code: data.code?.toLocaleLowerCase(),
 			status: data.status,
 		};
 		try {
@@ -94,7 +94,7 @@ export function DevPermissionEditModal({ data }: { data: DevNameType }) {
 		const storeData = {
 			dev_name_id,
 			name: event.name,
-			code: event.code,
+			code: event.code?.toLocaleLowerCase(),
 			status: event.status,
 		};
 		try {
