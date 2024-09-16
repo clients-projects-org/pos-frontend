@@ -7,6 +7,7 @@ import {
 	AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAllSettingsQuery } from '@/lib/features/all-settings';
 // import { menu } from '@/lib/dummy-data';
 import { useGetSidebarQuery } from '@/lib/features/sidebar/apiSlice';
 import { MenuType } from '@/lib/type';
@@ -15,6 +16,7 @@ import Link from 'next/link';
 
 export function MenuItem() {
 	const { data, isLoading, isError } = useGetSidebarQuery();
+	const { data: allSettings } = useAllSettingsQuery();
 	if (isLoading) {
 		return Array.from({ length: 10 }, (_, i) => (
 			<div key={i}>

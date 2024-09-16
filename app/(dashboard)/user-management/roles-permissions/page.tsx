@@ -19,12 +19,14 @@ import {
 	useGetDevNameQuery,
 } from '@/lib/features/dev-permission-name';
 import { NoItemFound } from '@/components/custom/not-found';
+import { useAllSettingsQuery } from '@/lib/features/all-settings';
 
 export default function RoleAndPermissions() {
 	const [value, setValue] = useState<StatusTypeApi>('all');
 	const [valueRole, setValueRole] = useState<StatusTypeApi>('all');
 	const role = useGetRolesQuery(valueRole);
 	const devPermissionName = useGetDevNameQuery(value);
+	const { data: allSettings } = useAllSettingsQuery();
 
 	return (
 		<>

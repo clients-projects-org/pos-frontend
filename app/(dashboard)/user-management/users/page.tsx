@@ -5,6 +5,7 @@ import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
 import { CardContent } from '@/components/ui/card';
 import { isEmptyArray } from '@/lib/actions';
+import { useAllSettingsQuery } from '@/lib/features/all-settings';
 import { useGetUserQuery, UserComponents } from '@/lib/features/user';
 import { StatusType, UserType } from '@/lib/type';
 import Image from 'next/image';
@@ -13,6 +14,8 @@ import { useState } from 'react';
 export default function userManagementUser() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
 	const { data, isLoading, isFetching, isError } = useGetUserQuery(value);
+	const { data: allSettings } = useAllSettingsQuery();
+
 	return (
 		<>
 			{/* roles title*/}

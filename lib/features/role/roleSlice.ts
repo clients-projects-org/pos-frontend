@@ -1,4 +1,9 @@
-import { DevNameType, RoleDetailsType } from '@/lib/type';
+import {
+	DevNameType,
+	MenuType,
+	MenuTypeRoleState,
+	RoleDetailsType,
+} from '@/lib/type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface actionType {
@@ -7,18 +12,20 @@ interface actionType {
 }
 interface PermissionState {
 	data: DevNameType[];
+	sidebarData: MenuTypeRoleState[];
 }
 
 const initialState: PermissionState = {
 	data: [],
+	sidebarData: [],
 };
 
 const roleSlice = createSlice({
 	name: 'role-create',
 	initialState,
 	reducers: {
-		setPermissions(state, action: PayloadAction<DevNameType[]>) {
-			const modifiedData = action.payload?.map((main) => {
+		setPermissions(state, action: PayloadAction<PermissionState>) {
+			const modifiedData = action.payload.data?.map((main) => {
 				return {
 					_id: main._id,
 					name: main.name,
@@ -37,7 +44,41 @@ const roleSlice = createSlice({
 						}),
 				};
 			});
+
+			const modifiedSidebarData = action.payload.sidebarData
+				?.filter((item) => item.show)
+				?.map((main) => {
+					return {
+						_id: main._id,
+						title: main.title,
+						checked: false,
+						show: main.show,
+						sidebarChildren: main.sidebarChildren
+							?.filter((status) => status.show)
+							?.map((route) => {
+								return {
+									_id: route._id,
+									parent_id: main._id,
+									name: route.name,
+									checked: false,
+									show: route.show,
+									children: route.children
+										?.filter((status) => status.show)
+										?.map((child) => {
+											return {
+												_id: child._id,
+												parent_id: route._id,
+												name: child.name,
+												show: child.show,
+												checked: false,
+											};
+										}),
+								};
+							}),
+					};
+				});
 			state.data = modifiedData;
+			state.sidebarData = modifiedSidebarData;
 		},
 		setEditPermissions(state, action: PayloadAction<actionType>) {
 			const roleData = action.payload.roleData;
@@ -80,6 +121,26 @@ const roleSlice = createSlice({
 			state.data = modifiedData;
 		},
 
+		toggleParentSidebar(state, action: PayloadAction<string>) {
+			const devId = action.payload;
+			console.log(action, 'devId');
+
+			const parent = state.sidebarData.find((dev) => dev._id === devId);
+			if (parent) {
+				// Toggle the parent's checked state
+				parent.checked = !parent.checked;
+
+				// Toggle all child routes to match the parent's state
+				parent.sidebarChildren?.forEach((route) => {
+					route.checked = parent.checked;
+
+					route.children?.forEach((child) => {
+						child.checked = parent.checked;
+					});
+				});
+			}
+		},
+
 		toggleParent(state, action: PayloadAction<string>) {
 			const devId = action.payload;
 
@@ -95,6 +156,44 @@ const roleSlice = createSlice({
 			}
 		},
 
+		toggleChildSidebar(
+			state,
+			action: PayloadAction<{ devId: string; routeId: string }>
+		) {
+			const { devId, routeId } = action.payload;
+			const parent = state.sidebarData.find((dev) => dev._id === devId);
+			if (parent) {
+				const route = parent.sidebarChildren?.find(
+					(route) => route._id === routeId
+				);
+				if (route) {
+					// Toggle only the child's checked state
+					route.checked = !route.checked;
+				}
+			}
+		},
+		toggleChildChildrenSidebar(
+			state,
+			action: PayloadAction<{ devId: string; routeId: string; childId: string }>
+		) {
+			const { devId, routeId, childId } = action.payload;
+			console.log(action, 'devId');
+			const parent = state.sidebarData.find((dev) => dev._id === devId);
+			if (parent) {
+				const route = parent.sidebarChildren?.find(
+					(route) => route._id === routeId
+				);
+				if (route) {
+					// Toggle only the child's checked state
+					const child = route.children?.find((child) => child._id === childId);
+					// route.checked = !route.checked;
+					if (child) {
+						// Toggle only the child's checked state
+						child.checked = !child.checked;
+					}
+				}
+			}
+		},
 		toggleChild(
 			state,
 			action: PayloadAction<{ devId: string; routeId: string }>
@@ -118,8 +217,15 @@ const roleSlice = createSlice({
 	},
 });
 
-export const { setPermissions, toggleParent, toggleChild, setEditPermissions } =
-	roleSlice.actions;
+export const {
+	setPermissions,
+	toggleParent,
+	toggleChild,
+	setEditPermissions,
+	toggleParentSidebar,
+	toggleChildSidebar,
+	toggleChildChildrenSidebar,
+} = roleSlice.actions;
 export default roleSlice;
 
 export const getCheckedRoutes = (permissions: DevNameType[]) => {

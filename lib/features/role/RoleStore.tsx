@@ -19,7 +19,10 @@ import {
 	getCheckedRoutes,
 	setPermissions,
 	toggleChild,
+	toggleChildChildrenSidebar,
+	toggleChildSidebar,
 	toggleParent,
+	toggleParentSidebar,
 } from './roleSlice';
 import { createZodFrom, FormSchema } from './role.zod';
 import { PageDetailsApiHOC } from '@/components/hoc';
@@ -27,19 +30,23 @@ import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useGetSidebarQuery } from '../sidebar/apiSlice';
 export function RoleStore() {
 	const router = useRouter();
-
+	const {
+		data: sidebar,
+		isLoading: isLoadingSidebar,
+		isError,
+	} = useGetSidebarQuery();
 	// state
 	const dispatch = useAppDispatch();
 	const permissions = useAppSelector((state) => state.role);
-
+	console.log(permissions, 'permissions');
 	// get all permissions that is in dev name api
 	const devPermissionName = useGetDevNameQuery('active');
 
 	// all checked true data
 	const checked = getCheckedRoutes(permissions.data);
-	console.log(checked, 'checked');
 	// handler for toggle parent name
 	const handleParentToggle = (devId: string) => {
 		dispatch(toggleParent(devId));
@@ -52,10 +59,15 @@ export function RoleStore() {
 
 	useEffect(() => {
 		// set data in redux store
-		if (devPermissionName.data) {
-			dispatch(setPermissions(devPermissionName.data?.data));
+		if (devPermissionName.data && sidebar.data) {
+			dispatch(
+				setPermissions({
+					data: devPermissionName.data.data,
+					sidebarData: sidebar.data,
+				})
+			);
 		}
-	}, [devPermissionName.data, dispatch]);
+	}, [devPermissionName.data, dispatch, sidebar?.data]);
 
 	const { methods } = createZodFrom();
 
@@ -92,7 +104,7 @@ export function RoleStore() {
 			isFetching={devPermissionName.isFetching || isLoading}
 			error={devPermissionName.error}
 		>
-			<div className="max-w-5xl mx-auto w-full border p-4 rounded">
+			<div className=" w-full border p-4 rounded">
 				<FormProvider {...methods}>
 					<Form {...methods}>
 						<form
@@ -113,7 +125,7 @@ export function RoleStore() {
 								</div>
 							</div>
 
-							<div className="grid grid-cols-3 gap-4">
+							<div className="grid grid-cols-5 gap-4">
 								{permissions.data?.map((dev: DevNameType) => (
 									<div
 										key={dev._id}
@@ -163,6 +175,94 @@ export function RoleStore() {
 
 							<div>
 								<RFTextarea methods={methods} />
+							</div>
+
+							<div className="grid grid-cols-5 gap-4">
+								{permissions.sidebarData?.map((dev) => (
+									<div
+										key={dev._id}
+										className="border p-3 shadow space-x-2 space-y-2"
+									>
+										<Checkbox
+											className="scale-125"
+											id={dev._id}
+											checked={dev.checked}
+											onCheckedChange={() =>
+												dev._id && dispatch(toggleParentSidebar(dev._id))
+											}
+										/>
+										<label
+											htmlFor={dev._id}
+											className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+										>
+											{dev.title}
+										</label>
+										<div className="space-y-2 ps-4">
+											{dev.sidebarChildren?.map((route) =>
+												route.show ? (
+													<div key={route._id} className="space-x-2 space-y-1">
+														<Checkbox
+															className="scale-125"
+															id={route._id}
+															checked={route.checked}
+															onCheckedChange={() =>
+																dev._id &&
+																route._id &&
+																dispatch(
+																	toggleChildSidebar({
+																		devId: dev._id,
+																		routeId: route._id,
+																	})
+																)
+															}
+														/>
+														<label
+															htmlFor={route._id}
+															className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+														>
+															{route.name}
+														</label>
+
+														<div className="space-y-2 ps-4">
+															{route.children?.map((child) =>
+																route.show ? (
+																	<div
+																		key={child._id}
+																		className="space-x-2 space-y-1"
+																	>
+																		<Checkbox
+																			className="scale-125"
+																			id={route._id}
+																			checked={child.checked}
+																			onCheckedChange={() =>
+																				dev._id &&
+																				route._id &&
+																				child._id &&
+																				dispatch(
+																					toggleChildChildrenSidebar({
+																						devId: dev._id,
+																						routeId: route._id,
+																						childId: child._id,
+																					})
+																				)
+																			}
+																		/>
+																		<label
+																			htmlFor={route._id}
+																			className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+																		>
+																			{child.name}
+																		</label>
+																	</div>
+																) : null
+															)}
+														</div>
+													</div>
+												) : null
+											)}
+										</div>
+									</div>
+								))}
 							</div>
 
 							<div className="flex justify-end gap-3">

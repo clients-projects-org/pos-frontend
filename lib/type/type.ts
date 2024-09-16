@@ -24,16 +24,21 @@ export type MenuItemType = {
 	path?: string;
 	icon?: string;
 	show?: boolean;
-	children: MenuItemType[];
+	checked?: boolean;
+	children?: MenuItemType[];
 };
 
 export type MenuType = {
 	_id: string;
 	title: string;
-	hr: boolean;
+	hr?: boolean;
 	show?: boolean;
-	sidebarChildren: MenuItemType[];
+	sidebarChildren?: MenuItemType[];
 };
+
+export interface MenuTypeRoleState extends MenuType {
+	checked: boolean;
+}
 
 // product type
 export type ProductType = {

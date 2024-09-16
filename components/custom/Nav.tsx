@@ -19,7 +19,7 @@ import { MenuItem } from './sidebar/sidebar-components';
 import Session from '@/lib/session';
 
 export const Nav = () => {
-	const { signOut } = Session();
+	const { signOut, session } = Session();
 	return (
 		<header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
 			<Sheet>
