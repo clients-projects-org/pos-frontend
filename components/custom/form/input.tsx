@@ -30,6 +30,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { IImageSizeInfoType } from '@/lib/image-size';
+
 export function FInput({
 	label,
 	id,
@@ -63,7 +64,17 @@ export function FInput({
 	);
 }
 
-export function RFInput({ methods, name, label, placeholder = 'type...' }) {
+export function RFInput({
+	methods,
+	name,
+	label,
+	placeholder = 'type...',
+}: {
+	methods: any;
+	name: any;
+	label?: string;
+	placeholder?: string;
+}) {
 	return (
 		<FormField
 			control={methods.control}
@@ -163,6 +174,7 @@ type RFImageProps<T extends FieldValues> = {
 	methods: UseFormReturn<T>;
 	imageInfo: IImageSizeInfoType;
 };
+
 export function RFImage<T extends FieldValues>({
 	methods,
 	imageInfo,
@@ -188,6 +200,7 @@ export function RFImage<T extends FieldValues>({
 		/>
 	);
 }
+
 export function RFSelect({ methods, label, data, children, name }) {
 	return (
 		<FormField
@@ -279,3 +292,14 @@ export function RFCalender({ methods, label, name }) {
 		/>
 	);
 }
+
+export const RFrom = {
+	RFInput,
+	RFSelect,
+	RFSubmit,
+	RFCalender,
+	RFIcon,
+	RFImage,
+	RFTextarea,
+	RFStatus,
+};

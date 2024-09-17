@@ -1,4 +1,10 @@
-export type StatusType = 'draft' | 'active' | 'deactivated';
+export type StatusType = 'draft' | 'active' | 'deactivated' | 'deleted';
+export const statusData = [
+	'draft',
+	'active',
+	'deactivated',
+	'deleted',
+] as const;
 export type StatusTypeApi = StatusType | 'all';
 export type PeriodsType = 'day' | 'week' | 'month' | 'year';
 export type UseRole = 'admin' | 'supper admin' | 'staff' | 'user';
@@ -119,7 +125,6 @@ export type SupplierType = {
 
 export type CustomerType = {
 	_id: string;
-	code?: string;
 	name?: string;
 	slug?: string;
 	email?: string;
@@ -130,7 +135,8 @@ export type CustomerType = {
 	description: string;
 	status: StatusType;
 	createdAt?: string;
-	created_by?: UserType;
+	created_by?: string;
+	createdBy?: UserType;
 };
 
 export type WarehouseType = {

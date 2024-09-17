@@ -1,4 +1,4 @@
-import { DynamicIcon, status } from '@/components/actions';
+import { DynamicIcon } from '@/components/actions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -6,7 +6,28 @@ import { badge } from '@/lib/actions';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
-
+/*
+	<Image
+		alt="Product image"
+		className="aspect-square rounded-md object-cover"
+		height="40"
+		src={row.original.image as string}
+		width="40"
+	/>
+*/
+function isValidCloudImageUrl(url: string): boolean {
+	// This regex checks for common image formats, even if there are query parameters in the URL
+	const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp|svg)(\?.*)?$/i;
+	try {
+		// Attempt to construct a valid URL object (helps validate the overall URL format)
+		new URL(url);
+		// Return true if the URL has a valid image extension, false otherwise
+		return imageExtensions.test(url);
+	} catch {
+		// If URL constructor fails, the URL is not valid
+		return false;
+	}
+}
 const ImageIcon = () => {
 	return {
 		accessorKey: 'image',
@@ -18,7 +39,11 @@ const ImageIcon = () => {
 						alt="Product image"
 						className="aspect-square rounded-md object-cover"
 						height="40"
-						src={row.original.image as string}
+						src={
+							isValidCloudImageUrl(row.original.image as string)
+								? (row.original.image as string)
+								: 'https://ui.shadcn.com/placeholder.svg'
+						}
 						width="40"
 					/>
 				) : (

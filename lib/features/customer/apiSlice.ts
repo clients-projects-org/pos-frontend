@@ -1,10 +1,11 @@
+'use client';
 import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getCustomer: builder.query<any, void>({
 			query: (payload): string => `customer?status=${payload}`,
-			providesTags: (result, error, arg) => {
+			providesTags: () => {
 				return ['Customer'];
 			},
 		}),
@@ -17,11 +18,33 @@ export const api = apiSlice.injectEndpoints({
 		}),
 
 		storeCustomer: builder.mutation<any, string>({
-			query: (payload) => ({
-				url: `/customer/store`,
-				method: 'POST',
-				body: payload,
-			}),
+			query: (payload) => {
+				const body = new FormData();
+				Object.entries(payload).forEach(([key, value]) => {
+					body.append(key, value);
+				});
+				return {
+					url: `/customer/store`,
+					method: 'POST',
+					body,
+					formData: true,
+				};
+			},
+
+			invalidatesTags: () => {
+				return ['Customer'];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+		updateCustomer: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/customer/update/${payload._id}`,
+					method: 'PUT',
+					body: payload,
+				};
+			},
+
 			invalidatesTags: () => {
 				return ['Customer'];
 			},
@@ -56,4 +79,5 @@ export const {
 	useStoreCustomerMutation,
 	useUpdateCustomerStatusMutation,
 	useGetCustomerByIdQuery,
+	useUpdateCustomerMutation,
 } = api;

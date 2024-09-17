@@ -47,6 +47,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { DropDownSelect } from '@/components/custom/list-item';
+import { NoItemFound } from '@/components/custom/not-found';
 interface TableBoxProps<DataType> {
 	columns: ColumnDef<DataType>[];
 	data: DataType[];
@@ -149,7 +150,7 @@ function TB<ProductType>({
 					) : (
 						<TableRow>
 							<TableCell colSpan={columns.length} className="h-24 text-center">
-								No results.
+								<NoItemFound />
 							</TableCell>
 						</TableRow>
 					)}

@@ -1,5 +1,5 @@
 import PageTitle, { PageLink } from '@/components/custom/PageTitle';
-import { Details, Store } from '@/lib/features/customer';
+import { Details, Edit, Store } from '@/lib/features/customer';
 
 export default function Page({ params }: { params: { slug: string } }) {
 	const { slug } = params;
@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 		// if edit
 		case slug.startsWith('edit-'):
-			return <EditComponent slug={slug} />;
+			return <EditComponent />;
 
 		// default all
 		default:
@@ -28,12 +28,12 @@ const CreateComponent = () => (
 	</>
 );
 
-const EditComponent = ({ slug }: { slug: string }) => (
+const EditComponent = () => (
 	<>
 		<PageTitle title="Edit Customer">
 			<PageLink href="/peoples/customers" text="All Customer" icon="Anchor" />
 		</PageTitle>
-		<Store slug={slug} />
+		<Edit />
 	</>
 );
 

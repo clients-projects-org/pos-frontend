@@ -16,7 +16,7 @@ export default function RootLayout({
 	const router = useRouter();
 	const pathname = usePathname(); // Get the current path
 	const { data, isLoading, isError } = useGetSidebarPrivetQuery();
-	console.log(pathname, 'index');
+	// console.log(pathname, 'index');
 	useEffect(() => {
 		if (!session?.isLoggedIn && status !== 'loading') {
 			router.push('/login');

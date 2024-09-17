@@ -7,5 +7,12 @@ const userStoreImageInfo: IImageSizeInfoType = {
 	viewWidth: 'w-[70px]',
 	viewHeight: 'h-[70px]',
 };
+const customerStoreImageInfo: IImageSizeInfoType = {
+	size: 500,
+	height: 1000,
+	width: 1000,
+	viewWidth: 'w-[70px]',
+	viewHeight: 'h-[70px]',
+};
 
-export { userStoreImageInfo };
+export { userStoreImageInfo, customerStoreImageInfo };

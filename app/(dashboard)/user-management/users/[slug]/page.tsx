@@ -23,7 +23,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 const CreateComponent = () => (
 	<>
-		<PageTitle title="Create">
+		<PageTitle title="Create User">
 			<Link href="/user-management/users" className="gap-1 flex items-center">
 				<DynamicIcon icon="Users" className="h-4 w-4 ml-0" />
 				<span className="sr-only sm:not-sr-only !whitespace-nowrap">
