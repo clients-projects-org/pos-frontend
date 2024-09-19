@@ -23,12 +23,10 @@ import { showToast, ToastOptions } from '@/lib/actions/tost';
 
 const Column: ColumnDef<UnitType>[] = [
 	TableItem.SelectBox(),
-	TableItem.ImageIcon(),
 	TableItem.Text('name', 'Name'),
-	TableItem.Status(),
-	TableItem.Text('code', 'Code'),
-	TableItem.Text('created_by', 'Created by'),
+	TableItem.CreatedBy(),
 	TableItem.Date('createdAt', 'Created at'),
+	TableItem.Status(),
 
 	{
 		id: 'actions',
@@ -84,7 +82,7 @@ const Filter = ({
 					</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<DropdownMenu>
+			{/* <DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="outline" className=" ">
 						<DynamicIcon icon="File" className="h-4 w-4 sm:mr-2" />
@@ -98,7 +96,7 @@ const Filter = ({
 					<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
 					<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
-			</DropdownMenu>
+			</DropdownMenu> */}
 		</>
 	);
 };
@@ -165,7 +163,7 @@ const Actions = ({ data }: { data: UnitType }) => {
 				icon="SquarePen"
 				name="Edit"
 				onChange={() => {
-					router.push(`/inventory/category/edit-${data._id}`);
+					router.push(`/inventory/units/edit-${data._id}`);
 				}}
 				disabled={loading}
 			/>
@@ -173,7 +171,7 @@ const Actions = ({ data }: { data: UnitType }) => {
 				icon="ScanEye"
 				name="View"
 				onChange={() => {
-					router.push(`/inventory/category/${data._id}`);
+					router.push(`/inventory/units/${data._id}`);
 				}}
 				disabled={loading}
 			/>

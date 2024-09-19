@@ -111,13 +111,15 @@ export function RFStatus({
 			render={({ field }) => {
 				return (
 					<div className="space-y-2">
-						<Label className="capitalize">{label}</Label>
+						<FormLabel>{label}</FormLabel>
 						<SelectStatus
 							placeholder={placeholder}
 							items={items}
 							defaultValue={field.value}
 							onChange={(e) => field.onChange(e)}
 						/>
+
+						<FormMessage />
 					</div>
 				);
 			}}

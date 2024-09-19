@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getWarehouse: builder.query<any, void>({
+		getWarehouse: builder.query<any, string>({
 			query: (payload): string => `warehouse?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Warehouse'];
@@ -17,11 +17,34 @@ export const api = apiSlice.injectEndpoints({
 		}),
 
 		storeWarehouse: builder.mutation<any, string>({
-			query: (payload) => ({
-				url: `/warehouse/store`,
-				method: 'POST',
-				body: payload,
-			}),
+			query: (payload) => {
+				const body = new FormData();
+				Object.entries(payload).forEach(([key, value]) => {
+					body.append(key, value);
+				});
+				return {
+					url: `/warehouse/store`,
+					method: 'POST',
+					body,
+					formData: true,
+				};
+			},
+
+			invalidatesTags: () => {
+				return ['Warehouse'];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+
+		updateWarehouse: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/warehouse/update/${payload._id}`,
+					method: 'PUT',
+					body: payload,
+				};
+			},
+
 			invalidatesTags: () => {
 				return ['Warehouse'];
 			},
@@ -51,9 +74,10 @@ export const api = apiSlice.injectEndpoints({
 });
 
 export const {
-	useDeleteWarehouseMutation,
 	useGetWarehouseQuery,
-	useStoreWarehouseMutation,
-	useUpdateWarehouseStatusMutation,
 	useGetWarehouseByIdQuery,
+	useStoreWarehouseMutation,
+	useUpdateWarehouseMutation,
+	useUpdateWarehouseStatusMutation,
+	useDeleteWarehouseMutation,
 } = api;

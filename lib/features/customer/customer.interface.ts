@@ -1,4 +1,4 @@
-import { ImageType, StatusType, UserType } from '@/lib/type';
+import { StatusType, UserType } from '@/lib/type';
 
 // category type
 export type CustomerType = {
@@ -8,14 +8,9 @@ export type CustomerType = {
 	phone: string;
 	status: StatusType;
 	description: string;
-	password?: string;
-	isPasswordChanged: boolean;
 	address: string;
 	image: string;
-	image_type: ImageType;
-	point: number;
-	balance: number;
-	created_by: UserType;
-	verify: string;
-	otp: string;
+	image_type: 'image' | 'icon';
+	created_by: number;
+	createdBy: UserType;
 };

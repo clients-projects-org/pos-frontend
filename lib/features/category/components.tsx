@@ -29,10 +29,9 @@ const categoryColumn: ColumnDef<CategoryType>[] = [
 	TableItem.SelectBox(),
 	TableItem.ImageIcon(),
 	TableItem.Text('name', 'Name'),
-	TableItem.Status(),
-	TableItem.Text('code', 'Code'),
-	TableItem.Text('created_by', 'Created by'),
+	TableItem.CreatedBy(),
 	TableItem.Date('createdAt', 'Created at'),
+	TableItem.Status(),
 
 	{
 		id: 'actions',

@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const categoryApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getCategory: builder.query<any, void>({
+		getCategory: builder.query<any, string>({
 			query: (payload): string => `category?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Category'];
@@ -17,11 +17,33 @@ export const categoryApi = apiSlice.injectEndpoints({
 		}),
 
 		storeCategory: builder.mutation<any, string>({
-			query: (payload) => ({
-				url: `/category/store`,
-				method: 'POST',
-				body: payload,
-			}),
+			query: (payload) => {
+				const body = new FormData();
+				Object.entries(payload).forEach(([key, value]) => {
+					body.append(key, value);
+				});
+				return {
+					url: `/category/store`,
+					method: 'POST',
+					body,
+					formData: true,
+				};
+			},
+			invalidatesTags: () => {
+				return ['Category'];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+
+		updateCategory: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/category/update/${payload._id}`,
+					method: 'PUT',
+					body: payload,
+				};
+			},
+
 			invalidatesTags: () => {
 				return ['Category'];
 			},
@@ -51,9 +73,10 @@ export const categoryApi = apiSlice.injectEndpoints({
 });
 
 export const {
-	useDeleteCategoryMutation,
 	useGetCategoryQuery,
-	useStoreCategoryMutation,
-	useUpdateCategoryStatusMutation,
 	useGetCategoryByIdQuery,
+	useStoreCategoryMutation,
+	useUpdateCategoryMutation,
+	useUpdateCategoryStatusMutation,
+	useDeleteCategoryMutation,
 } = categoryApi;

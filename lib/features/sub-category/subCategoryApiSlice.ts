@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const categoryApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getSubCategory: builder.query<any, void>({
+		getSubCategory: builder.query<any, string>({
 			query: (payload): string => `sub-category?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['SubCategory'];
@@ -20,6 +20,16 @@ export const categoryApi = apiSlice.injectEndpoints({
 			query: (payload) => ({
 				url: `/sub-category/store`,
 				method: 'POST',
+				body: payload,
+			}),
+			invalidatesTags: () => {
+				return ['SubCategory'];
+			},
+		}),
+		updateSubCategory: builder.mutation<any, any>({
+			query: (payload) => ({
+				url: `/sub-category/update${payload._id}`,
+				method: 'PUT',
 				body: payload,
 			}),
 			invalidatesTags: () => {
@@ -55,4 +65,5 @@ export const {
 	useStoreSubCategoryMutation,
 	useUpdateSubCategoryStatusMutation,
 	useGetSubCategoryByIdQuery,
+	useUpdateSubCategoryMutation,
 } = categoryApi;

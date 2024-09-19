@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getSupplier: builder.query<any, void>({
+		getSupplier: builder.query<any, string>({
 			query: (payload): string => `supplier?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Supplier'];
@@ -17,11 +17,34 @@ export const api = apiSlice.injectEndpoints({
 		}),
 
 		storeSupplier: builder.mutation<any, string>({
-			query: (payload) => ({
-				url: `/supplier/store`,
-				method: 'POST',
-				body: payload,
-			}),
+			query: (payload) => {
+				const body = new FormData();
+				Object.entries(payload).forEach(([key, value]) => {
+					body.append(key, value);
+				});
+				return {
+					url: `/supplier/store`,
+					method: 'POST',
+					body,
+					formData: true,
+				};
+			},
+
+			invalidatesTags: () => {
+				return ['Supplier'];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+
+		updateSupplier: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/supplier/update/${payload._id}`,
+					method: 'PUT',
+					body: payload,
+				};
+			},
+
 			invalidatesTags: () => {
 				return ['Supplier'];
 			},
@@ -51,9 +74,10 @@ export const api = apiSlice.injectEndpoints({
 });
 
 export const {
-	useDeleteSupplierMutation,
 	useGetSupplierQuery,
-	useStoreSupplierMutation,
-	useUpdateSupplierStatusMutation,
 	useGetSupplierByIdQuery,
+	useStoreSupplierMutation,
+	useUpdateSupplierMutation,
+	useUpdateSupplierStatusMutation,
+	useDeleteSupplierMutation,
 } = api;

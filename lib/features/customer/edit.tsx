@@ -3,11 +3,7 @@ import { FormProvider } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { RFrom } from '@/components/custom/form';
 import { useParams, useRouter } from 'next/navigation';
-import {
-	useGetCustomerByIdQuery,
-	useStoreCustomerMutation,
-	useUpdateCustomerMutation,
-} from './apiSlice';
+import { useGetCustomerByIdQuery, useUpdateCustomerMutation } from './apiSlice';
 import { editZodFrom, FormSchemaEdit, FormValuesEdit } from './customer.zod';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import Link from 'next/link';

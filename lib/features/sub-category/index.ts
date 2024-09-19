@@ -1,4 +1,5 @@
 export * from './subCategoryApiSlice';
-export * from './SubCategoryStore';
 export * from './components';
+export * from './store';
+export * from './edit';
 export * from './SubCategoryDetails';

@@ -21,17 +21,50 @@ import {
 	useDeleteSupplierMutation,
 	useUpdateSupplierStatusMutation,
 } from './apiSlice';
-import { confirm } from '@/lib/actions';
-import { showToast, ToastOptions } from '@/lib/actions/tost';
+import { handleDelete, handleStatusChange } from '@/lib/actions';
+import { ArrowUpDown } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const Column: ColumnDef<SupplierType>[] = [
 	TableItem.SelectBox(),
 	TableItem.ImageIcon(),
 	TableItem.Text('name', 'Name'),
-	TableItem.Status(),
-	TableItem.Text('code', 'Code'),
-	TableItem.Text('created_by', 'Created by'),
+	TableItem.Text('email', 'Email'),
+	TableItem.Text('phone', 'Phone'),
+	{
+		accessorKey: 'created_by',
+		header: ({ column }) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Created By
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
+		cell: ({ row }) => {
+			console.log(row);
+			return (
+				<div className="capitalize whitespace-nowrap">
+					{row.original.createdBy?.name ? (
+						<>
+							{row.original.createdBy?.name && (
+								<Badge className="capitalize" variant="outline">
+									{row.original.createdBy.name}
+								</Badge>
+							)}
+						</>
+					) : (
+						'N/A'
+					)}
+				</div>
+			);
+		},
+	},
 	TableItem.Date('createdAt', 'Created at'),
+	TableItem.Status(),
 
 	{
 		id: 'actions',
@@ -87,7 +120,7 @@ const Filter = ({
 					</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<DropdownMenu>
+			{/* <DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="outline" className=" ">
 						<DynamicIcon icon="File" className="h-4 w-4 sm:mr-2" />
@@ -101,7 +134,7 @@ const Filter = ({
 					<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
 					<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
-			</DropdownMenu>
+			</DropdownMenu> */}
 		</>
 	);
 };
@@ -116,49 +149,15 @@ const Actions = ({ data }: { data: SupplierType }) => {
 
 	const loading = isLoading || updateStatusLoading;
 
-	const handleDelete = async (id: string) => {
-		try {
-			const confirmed = await confirm({
-				message:
-					'This action cannot be undone. This will permanently delete your account and remove your data from our servers.',
-				title: 'Delete Account',
-			});
-
-			if (confirmed) {
-				// Perform the delete action here
-				await deleting({ id }).unwrap();
-				const options: ToastOptions = {
-					title: 'Successfully Deleted',
-					description: 'Item delete is done, You can not find it, Thanks',
-					autoClose: true,
-					autoCloseDelay: 5000,
-				};
-				showToast(options);
-				if (params.slug.startsWith('permission')) {
-					console.log('first');
-					router.push('/user-management/roles-permissions');
-				}
-			} else {
-				console.log('Delete action cancelled');
-			}
-		} catch (err) {
-			console.error('Failed to delete the permission: ', err);
-		}
-	};
-
 	/*
 		if main id ok fine only [main id] 
 		if routes need [main id] and [routes id] 
 		if actions need [main id] and [routes id] and [actions id]
 	*/
-
-	const handleStatusChange = async (status: StatusType) => {
-		try {
-			await updateStatus({ id: data._id, status }).unwrap();
-		} catch (err) {
-			console.error('Failed to update the status: ', err);
-		}
+	const statusHandler = async (id: string, status: StatusType) => {
+		handleStatusChange(id, status, updateStatus);
 	};
+
 	return (
 		<DropDownThreeDot
 			isLoading={isLoading || updateStatusLoading}
@@ -168,7 +167,7 @@ const Actions = ({ data }: { data: SupplierType }) => {
 				icon="SquarePen"
 				name="Edit"
 				onChange={() => {
-					router.push(`/inventory/category/edit-${data._id}`);
+					router.push(`/peoples/suppliers/edit-${data._id}`);
 				}}
 				disabled={loading}
 			/>
@@ -176,7 +175,7 @@ const Actions = ({ data }: { data: SupplierType }) => {
 				icon="ScanEye"
 				name="View"
 				onChange={() => {
-					router.push(`/inventory/category/${data._id}`);
+					router.push(`/peoples/suppliers/${data._id}`);
 				}}
 				disabled={loading}
 			/>
@@ -185,7 +184,7 @@ const Actions = ({ data }: { data: SupplierType }) => {
 				<DropDownDotItem
 					icon="CircleCheckBig"
 					name="Active"
-					onChange={() => data._id && handleStatusChange('active')}
+					onChange={() => data._id && statusHandler(data._id, 'active')}
 					disabled={loading}
 				/>
 			)}
@@ -194,7 +193,7 @@ const Actions = ({ data }: { data: SupplierType }) => {
 				<DropDownDotItem
 					icon="CircleSlash2"
 					name="Deactivated"
-					onChange={() => data._id && handleStatusChange('deactivated')}
+					onChange={() => data._id && statusHandler(data._id, 'deactivated')}
 					disabled={loading}
 				/>
 			)}
@@ -203,7 +202,7 @@ const Actions = ({ data }: { data: SupplierType }) => {
 				<DropDownDotItem
 					icon="PackageX"
 					name="Draft"
-					onChange={() => data._id && handleStatusChange('draft')}
+					onChange={() => data._id && statusHandler(data._id, 'draft')}
 					disabled={loading}
 				/>
 			)}
@@ -211,7 +210,7 @@ const Actions = ({ data }: { data: SupplierType }) => {
 				<DropDownDotItem
 					icon="Trash2"
 					name="Delete"
-					onChange={() => data._id && handleDelete(data._id)}
+					onChange={() => data._id && handleDelete(data._id, deleting)}
 					disabled={loading}
 				/>
 			)}

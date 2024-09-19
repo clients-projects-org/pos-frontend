@@ -19,6 +19,12 @@ const StatusOptions = {
 		{ value: 'flat', label: 'Flat' },
 		{ value: 'percentage', label: 'Percentage' },
 	],
+	periods: [
+		{ value: 'day', label: 'Day' },
+		{ value: 'week', label: 'Week' },
+		{ value: 'month', label: 'Month' },
+		{ value: 'year', label: 'Year' },
+	],
 };
 
 const SelectStatus = ({

@@ -1,35 +1,53 @@
+'use client';
 import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getBrand: builder.query<any, void>({
+		getBrand: builder.query<any, string>({
 			query: (payload): string => `brand?status=${payload}`,
-			providesTags: (_result, _error, arg) => {
-				return ['Brand', { type: 'Brand', status: arg }];
+			providesTags: (result, error, arg) => {
+				return ['Brand'];
 			},
 		}),
 
 		getBrandById: builder.query<any, string>({
 			query: (id) => `brand/${id}`,
-			providesTags: (_result, _error, id) => {
+			providesTags: (result, error, id) => {
 				return [{ type: 'Brand', id: id }];
 			},
 		}),
 
 		storeBrand: builder.mutation<any, string>({
-			query: (payload) => ({
-				url: `/brand/store`,
-				method: 'POST',
-				body: payload,
-			}),
+			query: (payload) => {
+				const body = new FormData();
+				Object.entries(payload).forEach(([key, value]) => {
+					body.append(key, value);
+				});
+				return {
+					url: `/brand/store`,
+					method: 'POST',
+					body,
+					formData: true,
+				};
+			},
+
 			invalidatesTags: () => {
-				return [
-					'Brand',
-					{ type: 'Brand', status: 'all' },
-					{ type: 'Brand', status: 'active' },
-					{ type: 'Brand', status: 'deactivated' },
-					{ type: 'Brand', status: 'draft' },
-				];
+				return ['Brand'];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+
+		updateBrand: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/brand/update/${payload._id}`,
+					method: 'PUT',
+					body: payload,
+				};
+			},
+
+			invalidatesTags: () => {
+				return ['Brand'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -49,7 +67,7 @@ export const api = apiSlice.injectEndpoints({
 				body: { status },
 			}),
 
-			invalidatesTags: (_result, _error, arg) => {
+			invalidatesTags: (result, error, arg) => {
 				return ['Brand', { type: 'Brand', id: arg.id }];
 			},
 		}),
@@ -57,9 +75,10 @@ export const api = apiSlice.injectEndpoints({
 });
 
 export const {
-	useDeleteBrandMutation,
 	useGetBrandQuery,
-	useStoreBrandMutation,
-	useUpdateBrandStatusMutation,
 	useGetBrandByIdQuery,
+	useStoreBrandMutation,
+	useUpdateBrandMutation,
+	useUpdateBrandStatusMutation,
+	useDeleteBrandMutation,
 } = api;

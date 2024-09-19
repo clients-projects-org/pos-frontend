@@ -108,19 +108,18 @@ export type RoleType = {
 };
 
 export type SupplierType = {
+	sr: number;
 	_id: string;
-	code?: string;
-	name?: string;
-	slug?: string;
-	email?: string;
+	name: string;
+	email: string;
 	phone: string;
-	address: string;
-	image?: string;
-	image_type: ImageType;
-	description: string;
 	status: StatusType;
-	createdAt?: string;
-	created_by?: UserType;
+	description: string;
+	address: string;
+	image: string;
+	image_type: ImageType;
+	created_by?: string;
+	createdBy: UserType;
 };
 
 export type CustomerType = {
@@ -140,14 +139,16 @@ export type CustomerType = {
 };
 
 export type WarehouseType = {
+	name: string;
+	description?: string;
+	image: string;
+	image_type: 'image' | 'icon';
+	status?: StatusType;
+	created_by?: string;
+	sr: number;
 	_id: string;
-	code?: string;
-	name?: string;
-	slug?: string;
-	status: StatusType;
-	description: string;
 	createdAt?: string;
-	created_by?: UserType;
+	createdBy?: UserType;
 };
 export type StoreType = {
 	_id: string;
@@ -217,13 +218,9 @@ export type UnitType = {
 
 export type VariantType = {
 	_id: string;
-	code?: string;
 	description?: string;
 	name?: string;
-	value?: string[];
-	slug?: string;
-	image?: string;
-	image_type: ImageType;
+	short_name?: string;
 	createdAt?: string;
 	created_by?: UserType;
 	status?: StatusType;

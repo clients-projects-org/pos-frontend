@@ -14,7 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableItem } from '@/lib/table/table-items/t-item';
-import { CategoryType, StatusType } from '@/lib/type';
+import { CategoryType, StatusType, SubCategoryType } from '@/lib/type';
 import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,14 +25,14 @@ import {
 import { confirm } from '@/lib/actions';
 import { showToast } from '@/lib/actions/tost';
 
-const categoryColumn: ColumnDef<CategoryType>[] = [
+const categoryColumn: ColumnDef<SubCategoryType>[] = [
 	TableItem.SelectBox(),
 	TableItem.ImageIcon(),
 	TableItem.Text('name', 'Name'),
-	TableItem.Status(),
-	TableItem.Text('code', 'Code'),
-	TableItem.Text('created_by', 'Created by'),
+	TableItem.Category(),
+	TableItem.CreatedBy(),
 	TableItem.Date('createdAt', 'Created at'),
+	TableItem.Status(),
 
 	{
 		id: 'actions',
@@ -88,7 +88,7 @@ const Filter = ({
 					</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<DropdownMenu>
+			{/* <DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="outline" className=" ">
 						<DynamicIcon icon="File" className="h-4 w-4 sm:mr-2" />
@@ -102,7 +102,7 @@ const Filter = ({
 					<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
 					<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
-			</DropdownMenu>
+			</DropdownMenu> */}
 		</>
 	);
 };

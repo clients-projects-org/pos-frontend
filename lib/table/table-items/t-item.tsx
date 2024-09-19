@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { badge } from '@/lib/actions';
 import { format } from 'date-fns';
+import { ArrowUpDown } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 /*
@@ -32,7 +33,7 @@ const ImageIcon = () => {
 	return {
 		accessorKey: 'image',
 		header: () => 'Image',
-		cell: ({ row }) => (
+		cell: ({ row }: any) => (
 			<div>
 				{row.original.image && row.original.image_type === 'image' ? (
 					<Image
@@ -65,7 +66,7 @@ const ImageIcon = () => {
 const Status = () => {
 	return {
 		accessorKey: 'status',
-		header: ({ column }) => {
+		header: ({ column }: any) => {
 			return (
 				<Button
 					variant="ghost"
@@ -77,7 +78,7 @@ const Status = () => {
 			);
 		},
 
-		cell: ({ row }) => (
+		cell: ({ row }: any) => (
 			<div className="capitalize">
 				<Badge variant={badge(row.getValue('status'))}>
 					{row.getValue('status')}
@@ -86,28 +87,80 @@ const Status = () => {
 		),
 	};
 };
-
-const Text = (name, label) => {
+const CreatedBy = () => {
 	return {
-		accessorKey: name,
-		header: ({ column }) => {
+		accessorKey: 'createdBy',
+		header: ({ column }: any) => {
 			return (
 				<Button
 					variant="ghost"
 					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
 				>
-					{label}
-					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+					Created By
+					<ArrowUpDown className="ml-2 h-4 w-4" />
 				</Button>
 			);
 		},
-		cell: ({ row }) => <div className="lowercase">{row.getValue(name)}</div>,
+
+		cell: ({ row }: any) => {
+			return (
+				<div className="capitalize whitespace-nowrap">
+					{row.original.createdBy?.name ? (
+						<>
+							{row.original.createdBy?.name && (
+								<Badge className="capitalize" variant="outline">
+									{row.original.createdBy.name}
+								</Badge>
+							)}
+						</>
+					) : (
+						'N/A'
+					)}
+				</div>
+			);
+		},
 	};
 };
-const Date = (name, label) => {
+
+const Category = () => {
+	return {
+		accessorKey: 'categoryData',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Category
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
+
+		cell: ({ row }: any) => {
+			return (
+				<div className="capitalize whitespace-nowrap">
+					{row.original.categoryData?.name ? (
+						<>
+							{row.original.categoryData?.name && (
+								<Badge className="capitalize" variant="secondary">
+									{row.original.categoryData.name}
+								</Badge>
+							)}
+						</>
+					) : (
+						'N/A'
+					)}
+				</div>
+			);
+		},
+	};
+};
+
+const Text = (name: any, label: any) => {
 	return {
 		accessorKey: name,
-		header: ({ column }) => {
+		header: ({ column }: any) => {
 			return (
 				<Button
 					variant="ghost"
@@ -118,8 +171,29 @@ const Date = (name, label) => {
 				</Button>
 			);
 		},
-		cell: ({ row }) => (
-			<div className="lowercase">{format(row.getValue(name), 'PPP')}</div>
+		cell: ({ row }: any) => (
+			<div className="lowercase">{row.getValue(name)}</div>
+		),
+	};
+};
+const Date = (name: any, label: any) => {
+	return {
+		accessorKey: name,
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					{label}
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }: any) => (
+			<div className="lowercase">
+				{row.original[name] && format(row.getValue(name), 'PPP')}
+			</div>
 		),
 	};
 };
@@ -127,7 +201,7 @@ const Date = (name, label) => {
 const SelectBox = () => {
 	return {
 		id: 'select',
-		header: ({ table }) => {
+		header: ({ table }: any) => {
 			return (
 				<Checkbox
 					checked={
@@ -139,7 +213,7 @@ const SelectBox = () => {
 				/>
 			);
 		},
-		cell: ({ row }) => {
+		cell: ({ row }: any) => {
 			return (
 				<Checkbox
 					checked={row.getIsSelected()}
@@ -153,7 +227,7 @@ const SelectBox = () => {
 	};
 };
 
-const Action = ({ children }) => {
+const Action = ({ children }: any) => {
 	return {
 		id: 'actions',
 		header: () => 'Actions',
@@ -204,4 +278,6 @@ export const TableItem = {
 	SelectBox,
 	AddLink,
 	Date,
+	CreatedBy,
+	Category,
 };

@@ -1,68 +1,31 @@
 'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { toast } from '@/components/ui/use-toast';
+import { FormProvider } from 'react-hook-form';
 
 import { Form } from '@/components/ui/form';
-import {
-	RFIcon,
-	RFImage,
-	RFInput,
-	RFStatus,
-	RFSubmit,
-	RFTextarea,
-} from '@/components/custom/form';
-import { zod } from '@/lib/zod';
+import { RFrom } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
 import { useStoreUnitMutation } from './apiSlice';
-import { useEffect } from 'react';
-export function Store({ slug }: { slug?: string }) {
+import { createZodFrom, FormSchema, FormValues } from './variant.zod';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+export function Store() {
 	const router = useRouter();
-	const FormSchema = z.object({
-		name: zod.name,
-		code: zod.name,
-		description: zod.description,
-		status: zod.status,
-		image: zod.image,
-		image_type: zod.image_type,
-	});
 
-	const methods = useForm<z.infer<typeof FormSchema>>({
-		resolver: zodResolver(FormSchema),
-		defaultValues: {
-			name: '',
-			status: 'active',
-			code: '',
-			image: 'Aperture',
-			image_type: 'icon',
-			description: '',
-		},
-	});
-	useEffect(() => {
-		if (slug) {
-			// methods.setValue(,true, true);
-		}
-	}, [slug]);
+	const { methods } = createZodFrom();
+
 	const [store, { isLoading }] = useStoreUnitMutation();
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
-		store({ ...data, created_by: 'admin' } as any).then((e) => {
-			console.log(e);
-			router.push('/inventory/units', { scroll: false });
-
-			// router.push('/user-management/roles-permissions', { scroll: false });
-			toast({
-				title: 'You submitted the following values:',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-					</pre>
-				),
-			});
-		});
+	async function onSubmit(data: FormValues) {
+		try {
+			const response = await store(data as any).unwrap();
+			apiReqResponse(response);
+			methods.reset();
+			router.push('/inventory/units');
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
 	}
-	const watching = methods.watch();
 	// const methods = useForm();
 	// const onSubmit = (data) => console.log(data);
 	return (
@@ -70,58 +33,38 @@ export function Store({ slug }: { slug?: string }) {
 			<FormProvider {...methods}>
 				<Form {...methods}>
 					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
-						{/* <FormField
-							control={methods.control}
-							name="image_type"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Image or Icon</FormLabel>
-									<FormControl>
-										<ImageIcoRadio {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/> */}
-						{watching.image_type === 'image' ? (
-							<RFImage methods={methods} />
-						) : (
-							<div className="space-y-2   ">
-								<RFIcon methods={methods} label={false} />
-							</div>
-						)}
 						<div className="grid grid-cols-12 gap-3">
 							{/* Name */}
 							<div className="col-span-8">
-								<RFInput
-									label="Unit Name "
+								<RFrom.RFInput
+									label="Unit Name"
 									methods={methods}
 									name="name"
-									placeholder="Type Name"
 								/>
 							</div>
 
 							{/* Status */}
 							<div className="col-span-4">
-								<RFStatus methods={methods} name="status" />
+								<RFrom.RFStatus methods={methods} name="status" />
 							</div>
 						</div>
 
-						<div className="grid grid-cols-12 gap-3">
-							{/* code  */}
-							<div className="col-span-6">
-								<RFInput
-									label="Code"
-									methods={methods}
-									name="code"
-									placeholder="Code"
-								/>
-							</div>
+						<RFrom.RFTextarea methods={methods} />
+
+						<div className="flex justify-end gap-3">
+							<Link href="/peoples/customers">
+								<Button
+									disabled={isLoading}
+									variant="destructive"
+									type="button"
+								>
+									Cancel
+								</Button>
+							</Link>
+							<Button disabled={isLoading} variant="default" type="submit">
+								{isLoading ? 'Creating...' : 'Create Unit'}
+							</Button>
 						</div>
-
-						<RFTextarea methods={methods} />
-
-						<RFSubmit text="Create Unit" />
 					</form>
 				</Form>
 			</FormProvider>

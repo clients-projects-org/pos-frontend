@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getUnit: builder.query<any, void>({
+		getUnit: builder.query<any, string>({
 			query: (payload): string => `unit?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Unit'];
@@ -22,6 +22,21 @@ export const api = apiSlice.injectEndpoints({
 				method: 'POST',
 				body: payload,
 			}),
+			invalidatesTags: () => {
+				return ['Unit'];
+			},
+			// invalidatesTags: ['DevPermission'],
+		}),
+
+		updateUnit: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/unit/update/${payload._id}`,
+					method: 'PUT',
+					body: payload,
+				};
+			},
+
 			invalidatesTags: () => {
 				return ['Unit'];
 			},
@@ -51,9 +66,10 @@ export const api = apiSlice.injectEndpoints({
 });
 
 export const {
-	useDeleteUnitMutation,
 	useGetUnitQuery,
-	useStoreUnitMutation,
-	useUpdateUnitStatusMutation,
 	useGetUnitByIdQuery,
+	useStoreUnitMutation,
+	useUpdateUnitMutation,
+	useUpdateUnitStatusMutation,
+	useDeleteUnitMutation,
 } = api;

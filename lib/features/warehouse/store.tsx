@@ -1,66 +1,38 @@
 'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { toast } from '@/components/ui/use-toast';
+import { FormProvider } from 'react-hook-form';
 
-import { Form } from '@/components/ui/form';
 import {
-	RFIcon,
-	RFImage,
-	RFInput,
-	RFStatus,
-	RFSubmit,
-	RFTextarea,
-} from '@/components/custom/form';
-import { zod } from '@/lib/zod';
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
+import { ImageIcoRadio, RFrom } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
 import { useStoreWarehouseMutation } from './apiSlice';
-import { useEffect } from 'react';
-export function Warehouse({ slug }: { slug?: string }) {
+import { customerStoreImageInfo } from '@/lib/image-size';
+import { createZodFrom, FormSchema, FormValues } from './warehouse.zod';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+export function Store() {
 	const router = useRouter();
-	const FormSchema = z.object({
-		name: zod.name,
-		code: zod.name,
-		description: zod.description,
-		status: zod.status,
-		image: zod.image,
-		image_type: zod.image_type,
-	});
 
-	const methods = useForm<z.infer<typeof FormSchema>>({
-		resolver: zodResolver(FormSchema),
-		defaultValues: {
-			name: '',
-			status: 'active',
-			code: '',
-			image: 'Aperture',
-			image_type: 'icon',
-			description: '',
-		},
-	});
-	useEffect(() => {
-		if (slug) {
-			// methods.setValue(,true, true);
-		}
-	}, [slug]);
+	const { methods } = createZodFrom();
+
 	const [store, { isLoading }] = useStoreWarehouseMutation();
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
-		store({ ...data, created_by: 'admin' } as any).then((e) => {
-			console.log(e);
-			router.push('/peoples/warehouses', { scroll: false });
-
-			// router.push('/user-management/roles-permissions', { scroll: false });
-			toast({
-				title: 'You submitted the following values:',
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(e, null, 2)}</code>
-					</pre>
-				),
-			});
-		});
+	async function onSubmit(data: FormValues) {
+		try {
+			const response = await store(data as any).unwrap();
+			apiReqResponse(response);
+			methods.reset();
+			router.push('/peoples/warehouses');
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
 	}
 	const watching = methods.watch();
 	// const methods = useForm();
@@ -70,7 +42,7 @@ export function Warehouse({ slug }: { slug?: string }) {
 			<FormProvider {...methods}>
 				<Form {...methods}>
 					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
-						{/* <FormField
+						<FormField
 							control={methods.control}
 							name="image_type"
 							render={({ field }) => (
@@ -82,36 +54,49 @@ export function Warehouse({ slug }: { slug?: string }) {
 									<FormMessage />
 								</FormItem>
 							)}
-						/> */}
+						/>
 						{watching.image_type === 'image' ? (
-							<RFImage methods={methods} />
+							<RFrom.RFImage<FormValues>
+								methods={methods}
+								imageInfo={customerStoreImageInfo}
+							/>
 						) : (
 							<div className="space-y-2   ">
-								<RFIcon methods={methods} label={false} />
+								<RFrom.RFIcon methods={methods} label={false} />
 							</div>
 						)}
 						<div className="grid grid-cols-12 gap-3">
 							{/* Name */}
 							<div className="col-span-8">
-								<RFInput label="Warehouse Name" methods={methods} name="name" />
+								<RFrom.RFInput
+									label="Warehouse Name"
+									methods={methods}
+									name="name"
+								/>
 							</div>
 
 							{/* Status */}
 							<div className="col-span-4">
-								<RFStatus methods={methods} name="status" />
+								<RFrom.RFStatus methods={methods} name="status" />
 							</div>
 						</div>
 
-						<div className="grid grid-cols-12 gap-3">
-							{/* code  */}
-							<div className="col-span-6">
-								<RFInput label="Code" methods={methods} name="code" />
-							</div>
+						<RFrom.RFTextarea methods={methods} />
+
+						<div className="flex justify-end gap-3">
+							<Link href="/peoples/customers">
+								<Button
+									disabled={isLoading}
+									variant="destructive"
+									type="button"
+								>
+									Cancel
+								</Button>
+							</Link>
+							<Button disabled={isLoading} variant="default" type="submit">
+								{isLoading ? 'Creating...' : 'Create Warehouse'}
+							</Button>
 						</div>
-
-						<RFTextarea methods={methods} />
-
-						<RFSubmit text="Create Warehouse" />
 					</form>
 				</Form>
 			</FormProvider>

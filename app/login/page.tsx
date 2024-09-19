@@ -26,8 +26,6 @@ import Session from '@/lib/session';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { apiSlice } from '@/lib/features/api/apiSlice';
-import { useAppDispatch } from '@/lib/hooks';
 
 const FormSchema = z.object({
 	email: z.string().min(2, {
@@ -41,7 +39,6 @@ const FormSchema = z.object({
 export default function InputForm() {
 	const { session, signIn, status } = Session();
 	const router = useRouter();
-	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (session?.isLoggedIn) {
@@ -58,7 +55,6 @@ export default function InputForm() {
 	});
 
 	const [store, { isLoading }] = useAuthLoginMutation();
-	console.log(status);
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		// const result = await signIn('credentials', {
 		// 	email: data.email,
@@ -76,8 +72,6 @@ export default function InputForm() {
 
 				if (result?.ok) {
 					router.push('/');
-
-					dispatch(apiSlice.endpoints.allSettings.initiate());
 				}
 			}
 		} catch (error) {

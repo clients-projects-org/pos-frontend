@@ -29,7 +29,7 @@ export default function RootLayout({
 	}
 
 	if (isError) {
-		return <div>Error</div>;
+		return <div>...</div>;
 	}
 
 	// Check if the current path (pathname) is in the allowed paths in data

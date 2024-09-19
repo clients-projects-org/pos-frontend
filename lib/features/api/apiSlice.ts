@@ -32,6 +32,7 @@ export const apiSlice = createApi({
 		'SubCategory',
 		'Brand',
 		'Unit',
+		'Variant',
 		'Warranty',
 		'Customer',
 		'Supplier',

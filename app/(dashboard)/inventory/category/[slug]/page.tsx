@@ -1,5 +1,5 @@
 import PageTitle, { PageLink } from '@/components/custom/PageTitle';
-import { CategoryStore, CategoryDetails } from '@/lib/features/category';
+import { Store, Edit, CategoryDetails } from '@/lib/features/category';
 
 export default function Page({ params }: { params: { slug: string } }) {
 	const { slug } = params;
@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 		// if edit
 		case slug.startsWith('edit-'):
-			return <EditComponent slug={slug} />;
+			return <EditComponent />;
 
 		// default all
 		default:
@@ -21,25 +21,25 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 const CreateComponent = () => (
 	<>
-		<PageTitle title="Create">
+		<PageTitle title="Create Category">
 			<PageLink href="/inventory/category" text="All Category" icon="Grid" />
 		</PageTitle>
-		<CategoryStore />
+		<Store />
 	</>
 );
 
-const EditComponent = ({ slug }: { slug: string }) => (
+const EditComponent = () => (
 	<>
-		<PageTitle title="Edit User">
+		<PageTitle title="Edit Category">
 			<PageLink href="/inventory/category" text="All Category" icon="Grid" />
 		</PageTitle>
-		<CategoryStore slug={slug} />
+		<Edit />
 	</>
 );
 
 const DefaultComponent = ({ slug }: { slug: string }) => (
 	<>
-		<PageTitle title="User Details">
+		<PageTitle title="Category Details">
 			<PageLink
 				href={`/inventory/category/edit-${slug}`}
 				text="Edit Category"

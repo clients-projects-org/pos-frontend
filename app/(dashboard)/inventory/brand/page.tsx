@@ -3,13 +3,15 @@ import PageTitle from '@/components/custom/PageTitle';
 import { TableBox } from '@/lib/table';
 import { BrandType, StatusType } from '@/lib/type';
 import { useState } from 'react';
+import { useGetBrandQuery, BrandComponents } from '@/lib/features/brand';
 import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
 import { Row } from '@tanstack/react-table';
-import { Components, useGetBrandQuery } from '@/lib/features/brand';
 export default function Brand() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
+
 	const { data, isLoading, isFetching, isError } = useGetBrandQuery(value);
+
 	const getSelectedRow = (e: Row<BrandType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
 		console.log(ids);
@@ -25,10 +27,12 @@ export default function Brand() {
 			>
 				<Motion>
 					<TableBox<BrandType>
-						TFilters={<Components.Filter value={value} setValue={setValue} />}
-						columns={Components.Column}
+						columns={BrandComponents.Column}
 						data={data?.data}
-						TEndChild={<Components.Add />}
+						TFilters={
+							<BrandComponents.Filter value={value} setValue={setValue} />
+						}
+						TEndChild={<BrandComponents.Add />}
 						getSelectedRow={getSelectedRow}
 					/>
 				</Motion>

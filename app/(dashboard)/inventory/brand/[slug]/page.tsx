@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 		// if edit
 		case slug.startsWith('edit-'):
-			return <EditComponent slug={slug} />;
+			return <EditComponent />;
 
 		// default all
 		default:
@@ -21,19 +21,19 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 const CreateComponent = () => (
 	<>
-		<PageTitle title="Create">
+		<PageTitle title="Create Brand">
 			<PageLink href="/inventory/brand" text="All Brand" icon="Anchor" />
 		</PageTitle>
 		<Store />
 	</>
 );
 
-const EditComponent = ({ slug }: { slug: string }) => (
+const EditComponent = () => (
 	<>
 		<PageTitle title="Edit Brand">
 			<PageLink href="/inventory/brand" text="All Brand" icon="Anchor" />
 		</PageTitle>
-		<Store slug={slug} />
+		<Store />
 	</>
 );
 

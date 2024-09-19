@@ -1,7 +1,7 @@
 'use client';
 import PageTitle from '@/components/custom/PageTitle';
 import { TableBox } from '@/lib/table';
-import { SupplierType, StatusType } from '@/lib/type';
+import { StatusType, SupplierType } from '@/lib/type';
 import { useState } from 'react';
 import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
