@@ -11,6 +11,9 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		getSidebarPrivet: builder.query<apiPrivetResponse, void>({
 			query: (): string => `sidebar/privet`,
+			providesTags: (_result, _error, arg) => {
+				return ['Sidebar'];
+			},
 		}),
 
 		getSidebarById: builder.query<any, string>({

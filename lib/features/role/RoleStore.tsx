@@ -89,6 +89,7 @@ export function RoleStore() {
 			apiReqResponse(response);
 			methods.reset();
 			router.push('/user-management/roles-permissions');
+			router.refresh();
 		} catch (error: unknown) {
 			apiErrorResponse(error, methods, FormSchema);
 		}

@@ -15,6 +15,7 @@ import { isEmptyArray } from '@/lib/actions';
 import {
 	Select,
 	SelectContent,
+	SelectItem,
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
@@ -30,6 +31,8 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { IImageSizeInfoType } from '@/lib/image-size';
+import { Bird, Rabbit, Turtle } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export function FInput({
 	label,
@@ -295,6 +298,100 @@ export function RFCalender({ methods, label, name }) {
 	);
 }
 
+const RFISelectHasIcon = ({ form, label }: { form: any; label: string }) => {
+	return (
+		<FormField
+			control={form.control}
+			name="username"
+			render={() => (
+				<FormItem>
+					<FormLabel>{label}</FormLabel>
+					<FormControl>
+						<Select>
+							<SelectTrigger
+								id="model"
+								className="items-start [&_[data-description]]:hidden"
+							>
+								<SelectValue placeholder="Select a model" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="genesis">
+									<div className="flex items-start gap-3 text-muted-foreground">
+										<Rabbit className="size-5" />
+										<div className="grid gap-0.5">
+											<p>
+												Neural{' '}
+												<span className="font-medium text-foreground">
+													Genesis
+												</span>
+											</p>
+											<p className="text-xs" data-description>
+												Our fastest model for general use cases.
+											</p>
+										</div>
+									</div>
+								</SelectItem>
+								<SelectItem value="explorer">
+									<div className="flex items-start gap-3 text-muted-foreground">
+										<Bird className="size-5" />
+										<div className="grid gap-0.5">
+											<p>
+												Neural{' '}
+												<span className="font-medium text-foreground">
+													Explorer
+												</span>
+											</p>
+											<p className="text-xs" data-description>
+												Performance and speed for efficiency.
+											</p>
+										</div>
+									</div>
+								</SelectItem>
+								<SelectItem value="quantum">
+									<div className="flex items-start gap-3 text-muted-foreground">
+										<Turtle className="size-5" />
+										<div className="grid gap-0.5">
+											<p>
+												Neural{' '}
+												<span className="font-medium text-foreground">
+													Quantum
+												</span>
+											</p>
+											<p className="text-xs" data-description>
+												The most powerful model for complex computations.
+											</p>
+										</div>
+									</div>
+								</SelectItem>
+							</SelectContent>
+						</Select>
+					</FormControl>
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
+	);
+};
+
+const RFCheck = () => {
+	return (
+		<div className="items-top flex space-x-2">
+			<Checkbox id="terms1" />
+			<div className="grid gap-1.5 leading-none">
+				<label
+					htmlFor="terms1"
+					className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+				>
+					Accept terms and conditions
+				</label>
+				<p className="text-sm text-muted-foreground">
+					You agree to our Terms of Service and Privacy Policy.
+				</p>
+			</div>
+		</div>
+	);
+};
+
 export const RFrom = {
 	RFInput,
 	RFSelect,
@@ -304,4 +401,6 @@ export const RFrom = {
 	RFImage,
 	RFTextarea,
 	RFStatus,
+	RFISelectHasIcon,
+	RFCheck,
 };

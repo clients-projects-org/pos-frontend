@@ -165,3 +165,7 @@
 	}
 }
 /* loader animation  end*/
+
+.create_product_overflow_problem_select .overflow-hidden {
+	overflow: inherit;
+}

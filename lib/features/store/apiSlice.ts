@@ -17,15 +17,35 @@ export const api = apiSlice.injectEndpoints({
 		}),
 
 		storeStore: builder.mutation<any, string>({
-			query: (payload) => ({
-				url: `/store/store`,
-				method: 'POST',
-				body: payload,
-			}),
+			query: (payload) => {
+				const body = new FormData();
+				Object.entries(payload).forEach(([key, value]) => {
+					body.append(key, value);
+				});
+				return {
+					url: `/store/store`,
+					method: 'POST',
+					body,
+					formData: true,
+				};
+			},
 			invalidatesTags: () => {
 				return ['Store'];
 			},
-			// invalidatesTags: ['DevPermission'],
+		}),
+
+		updateStore: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/store/update/${payload._id}`,
+					method: 'PUT',
+					body: payload,
+				};
+			},
+
+			invalidatesTags: () => {
+				return ['Customer'];
+			},
 		}),
 
 		deleteStore: builder.mutation<any, string>({
@@ -51,9 +71,10 @@ export const api = apiSlice.injectEndpoints({
 });
 
 export const {
-	useDeleteStoreMutation,
 	useGetStoreQuery,
-	useStoreStoreMutation,
-	useUpdateStoreStatusMutation,
 	useGetStoreByIdQuery,
+	useStoreStoreMutation,
+	useUpdateStoreMutation,
+	useUpdateStoreStatusMutation,
+	useDeleteStoreMutation,
 } = api;

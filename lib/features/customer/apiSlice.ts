@@ -34,7 +34,6 @@ export const api = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return ['Customer'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 		updateCustomer: builder.mutation<any, any>({
 			query: (payload) => {
@@ -48,7 +47,6 @@ export const api = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return ['Customer'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		deleteCustomer: builder.mutation<any, string>({

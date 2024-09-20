@@ -9,12 +9,12 @@ export default function Products() {
 	return (
 		<>
 			<PageTitle title="Products" />
-			<TableBox<ProductType>
+			{/* <TableBox<ProductType>
 				columns={ProductColumns}
 				data={ProductData}
 				TFilters={CategoryComponents.Filter}
 				TEndChild={CategoryComponents.AddCategory}
-			/>
+			/> */}
 		</>
 	);
 }

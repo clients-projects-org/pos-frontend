@@ -40,6 +40,7 @@ export const apiSlice = createApi({
 		'Warehouse',
 		'Coupon',
 		'Sidebar',
+		'Products',
 	],
 	keepUnusedDataFor: 50000,
 });

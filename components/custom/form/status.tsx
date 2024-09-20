@@ -16,6 +16,7 @@ const StatusOptions = {
 		{ value: 'draft', label: 'Draft' },
 	],
 	flatPercent: [
+		{ value: 'none', label: 'None' },
 		{ value: 'flat', label: 'Flat' },
 		{ value: 'percentage', label: 'Percentage' },
 	],

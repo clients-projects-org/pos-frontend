@@ -28,10 +28,10 @@ const Column: ColumnDef<StoreType>[] = [
 	TableItem.SelectBox(),
 	TableItem.ImageIcon(),
 	TableItem.Text('name', 'Name'),
-	TableItem.Status(),
-	TableItem.Text('code', 'Code'),
-	TableItem.Text('created_by', 'Created by'),
+	TableItem.Text('email', 'Email'),
+	TableItem.CreatedBy(),
 	TableItem.Date('createdAt', 'Created at'),
+	TableItem.Status(),
 
 	{
 		id: 'actions',
@@ -85,21 +85,6 @@ const Filter = ({
 					>
 						Draft
 					</DropdownMenuCheckboxItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="outline" className=" ">
-						<DynamicIcon icon="File" className="h-4 w-4 sm:mr-2" />
-						<span className="sr-only sm:not-sr-only">Export</span>
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuLabel>Filter by</DropdownMenuLabel>
-					<DropdownMenuSeparator />
-					<DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
-					<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-					<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</>
