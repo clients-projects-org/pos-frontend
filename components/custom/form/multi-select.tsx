@@ -2,26 +2,14 @@ import React, { useState } from 'react';
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { FormLabel } from '@/components/ui/form';
 
-const OPTIONS: Option[] = [
-	{ label: 'nextjs', value: 'nextjs' },
-	{ label: 'React', value: 'react' },
-	{ label: 'Remix', value: 'remix' },
-	{ label: 'Vite', value: 'vite' },
-	{ label: 'Nuxt', value: 'nuxt' },
-	{ label: 'Vue', value: 'vue' },
-	{ label: 'Svelte', value: 'svelte' },
-	{ label: 'Angular', value: 'angular' },
-	{ label: 'Ember', value: 'ember', disable: true },
-	{ label: 'Gatsby', value: 'gatsby', disable: true },
-	{ label: 'Astro', value: 'astro' },
-];
-
 export const MultiSelector = ({
 	creatable,
 	label,
+	OPTIONS,
 }: {
 	creatable?: boolean;
 	label: string;
+	OPTIONS?: Option[];
 }) => {
 	return (
 		<div className="w-full space-y-2">

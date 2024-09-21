@@ -9,6 +9,10 @@ export const productApi = apiSlice.injectEndpoints({
 			},
 		}),
 
+		getStoreProduct: builder.query<any, string>({
+			query: (): string => `product/store-data`,
+		}),
+
 		getProductsById: builder.query<any, string>({
 			query: (id) => `product/${id}`,
 			providesTags: (result, error, id) => {
@@ -74,6 +78,7 @@ export const productApi = apiSlice.injectEndpoints({
 
 export const {
 	useGetProductsQuery,
+	useGetStoreProductQuery,
 	useGetProductsByIdQuery,
 	useStoreProductsMutation,
 	useUpdateProductsMutation,

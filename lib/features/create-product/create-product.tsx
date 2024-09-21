@@ -10,19 +10,31 @@ import { Upload } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { MultiSelector, RFrom } from '@/components/custom/form';
+import { MultiSelector, RFrom, RFSelect } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
 import { createZodFrom, FormSchema, FormValues } from './product.zod';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
-import { useStoreProductsMutation } from './productCreateApiSlice';
+import {
+	useGetStoreProductQuery,
+	useStoreProductsMutation,
+} from './productCreateApiSlice';
 import React from 'react';
 import { userStoreImageInfo } from '@/lib/image-size';
+import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
+import { StoreType, SupplierType } from '@/lib/type';
 export function CreateProduct() {
 	const router = useRouter();
 	const [img, setImg] = React.useState('');
 	console.log(img, 'img');
 	const { methods } = createZodFrom();
 
+	const {
+		data,
+		isLoading: isloadingData,
+		isError,
+		isSuccess,
+	} = useGetStoreProductQuery('all');
+	console.log(data, 'sdfasdfasdfasd');
 	const [store, { isLoading }] = useStoreProductsMutation();
 
 	async function onSubmit(data: FormValues) {
@@ -54,6 +66,9 @@ export function CreateProduct() {
 			? URL.createObjectURL(uploadedImage[0]) // Generate image preview URL
 			: 'https://ui.shadcn.com/placeholder.svg';
 
+	if (isloadingData) {
+		return <div>Loading</div>;
+	}
 	return (
 		<Form {...methods}>
 			<form className="mb-44" onSubmit={methods.handleSubmit(onSubmit)}>
@@ -61,12 +76,12 @@ export function CreateProduct() {
 					<div className="grid gap-6 rounded-lg border p-4 grid-cols-12">
 						<div className="col-span-5 rounded-lg border p-4">
 							<div className="grid gap-2">
-								<label htmlFor="imageUpload">ImageUP</label>
-								<RFrom.RFImage
+								<RFrom.RFProductImage
 									methods={methods}
 									imageInfo={userStoreImageInfo}
 								/>
-								<Image
+
+								{/* <Image
 									alt="Product image"
 									className="aspect-square w-full rounded-md object-cover"
 									height="300"
@@ -78,33 +93,12 @@ export function CreateProduct() {
 									// 		: 'https://ui.shadcn.com/placeholder.svg'
 									// }
 									width="300"
-								/>
-								<div className="grid grid-cols-3 gap-2">
-									<button type="button">
-										<Image
-											alt="Product image"
-											className="aspect-square w-full rounded-md object-cover"
-											height="84"
-											src="https://ui.shadcn.com/placeholder.svg"
-											width="84"
-										/>
-									</button>
-									<button type="button">
-										<Image
-											alt="Product image"
-											className="aspect-square w-full rounded-md object-cover"
-											height="84"
-											src="https://ui.shadcn.com/placeholder.svg"
-											width="84"
-										/>
-									</button>
-									<button
-										type="button"
-										className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed"
-									>
-										<Upload className="h-4 w-4 text-muted-foreground" />
-										<span className="sr-only">Upload</span>
-									</button>
+								/> */}
+								<div className="grid grid-cols-2 gap-2">
+									<RFrom.RFProductGalleryImage
+										methods={methods}
+										imageInfo={userStoreImageInfo}
+									/>
 								</div>
 							</div>
 						</div>
@@ -130,20 +124,56 @@ export function CreateProduct() {
 									<AccordionContent className="p-5">
 										<div className=" grid grid-cols-12 gap-x-4 gap-y-6">
 											<div className="col-span-4">
-												<RFrom.RFISelectHasIcon
-													form={methods}
-													label={'Supplier'}
-												/>
+												<RFrom.RFSelect
+													methods={methods}
+													data={data?.data?.supplier}
+													label="Supplier"
+													name="supplier_id"
+												>
+													<SelectGroup>
+														<SelectLabel>Supplier All List</SelectLabel>
+														{data?.data?.supplier?.map((dev: SupplierType) => (
+															<SelectItem
+																key={dev._id}
+																className="capitalize"
+																value={dev.name}
+															>
+																{dev.name}
+															</SelectItem>
+														))}
+													</SelectGroup>
+												</RFrom.RFSelect>
 											</div>
 											<div className="col-span-4">
-												<RFrom.RFISelectHasIcon
-													form={methods}
-													label={'Warehouse'}
-												/>
+												<RFrom.RFSelect
+													methods={methods}
+													data={data?.data?.supplier}
+													label="Warehouse"
+													name="warehouse_id"
+												>
+													<SelectGroup>
+														<SelectLabel>Warehouse All List</SelectLabel>
+														{data?.data?.warehouse?.map((dev: SupplierType) => (
+															<SelectItem
+																key={dev._id}
+																className="capitalize"
+																value={dev.name}
+															>
+																{dev.name}
+															</SelectItem>
+														))}
+													</SelectGroup>
+												</RFrom.RFSelect>
 											</div>
 
 											<div className="col-span-4">
-												<MultiSelector label="Store" />
+												<MultiSelector
+													label="Store"
+													OPTIONS={data?.data?.store?.map((e: StoreType) => ({
+														label: e.name,
+														value: e._id,
+													}))}
+												/>
 											</div>
 										</div>
 									</AccordionContent>
@@ -165,24 +195,69 @@ export function CreateProduct() {
 												/>
 											</div>
 											<div className="col-span-4">
-												<RFrom.RFISelectHasIcon
-													form={methods}
-													label={'Category'}
-												/>
-											</div>
-											<div className="col-span-4">
-												<RFrom.RFStatus
+												<RFrom.RFSelect
 													methods={methods}
-													name="Sub Category"
-													placeholder="Select"
-													label="Sub Category"
-												/>
+													data={data?.data?.supplier}
+													label="Category"
+													name="category_id"
+												>
+													<SelectGroup>
+														<SelectLabel>Category All List</SelectLabel>
+														{data?.data?.category?.map((dev: SupplierType) => (
+															<SelectItem
+																key={dev._id}
+																className="capitalize"
+																value={dev.name}
+															>
+																{dev.name}
+															</SelectItem>
+														))}
+													</SelectGroup>
+												</RFrom.RFSelect>
 											</div>
 											<div className="col-span-4">
-												<RFrom.RFISelectHasIcon
-													form={methods}
-													label={'Brand'}
-												/>
+												<RFrom.RFSelect
+													methods={methods}
+													data={data?.data?.subCategory}
+													label="Sub Category"
+													name="sub_category_id"
+												>
+													<SelectGroup>
+														<SelectLabel>Sub Category All List</SelectLabel>
+														{data?.data?.subCategory?.map(
+															(dev: SupplierType) => (
+																<SelectItem
+																	key={dev._id}
+																	className="capitalize"
+																	value={dev.name}
+																>
+																	{dev.name}
+																</SelectItem>
+															)
+														)}
+													</SelectGroup>
+												</RFrom.RFSelect>
+											</div>
+											<div className="col-span-4">
+												<RFrom.RFSelect
+													methods={methods}
+													data={data?.data?.Brand}
+													label="Brand"
+													name="brand"
+												>
+													<SelectGroup>
+														<SelectLabel>Brand All List</SelectLabel>
+														{data?.data?.brand?.map((dev: SupplierType) => (
+															<SelectItem
+																key={dev._id}
+																className="capitalize"
+																value={dev.name}
+															>
+																{dev.name}
+															</SelectItem>
+														))}
+													</SelectGroup>
+												</RFrom.RFSelect>
 											</div>
 
 											<div className="col-span-12">

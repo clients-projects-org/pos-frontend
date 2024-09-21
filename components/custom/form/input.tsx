@@ -19,7 +19,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { ImageSelect } from './ImageIcoSelect';
+import {
+	ImageSelect,
+	ProductImageSelect,
+	ProductMultiImageSelect,
+} from './ImageIcoSelect';
 import {
 	Popover,
 	PopoverContent,
@@ -33,6 +37,8 @@ import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { IImageSizeInfoType } from '@/lib/image-size';
 import { Bird, Rabbit, Turtle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import Image from 'next/image';
+import { image } from '@/assets/image';
 
 export function FInput({
 	label,
@@ -206,7 +212,59 @@ export function RFImage<T extends FieldValues>({
 	);
 }
 
+function RFProductImage<T extends FieldValues>({
+	methods,
+	imageInfo,
+}: RFImageProps<T>) {
+	return (
+		<FormField
+			control={methods.control}
+			name={'image' as Path<T>}
+			render={({ field }) => (
+				<FormItem>
+					<FormControl>
+						<ProductImageSelect
+							onChange={(value: File) => {
+								field.onChange(value);
+							}}
+							defaultValue={field.value}
+							imageInfo={imageInfo}
+						/>
+					</FormControl>
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
+	);
+}
+function RFProductGalleryImage<T extends FieldValues>({
+	methods,
+	imageInfo,
+}: RFImageProps<T>) {
+	return (
+		<FormField
+			control={methods.control}
+			name={'gallery_images' as Path<T>}
+			render={({ field }) => (
+				<FormItem>
+					<FormControl>
+						<ProductMultiImageSelect
+							onChange={(value: File) => {
+								field.onChange(value);
+							}}
+							defaultValue={field.value}
+							imageInfo={imageInfo}
+						/>
+					</FormControl>
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
+	);
+}
+
 export function RFSelect({ methods, label, data, children, name }) {
+	console.log(data);
 	return (
 		<FormField
 			control={methods.control}
@@ -318,6 +376,7 @@ const RFISelectHasIcon = ({ form, label }: { form: any; label: string }) => {
 								<SelectItem value="genesis">
 									<div className="flex items-start gap-3 text-muted-foreground">
 										<Rabbit className="size-5" />
+
 										<div className="grid gap-0.5">
 											<p>
 												Neural{' '}
@@ -382,10 +441,10 @@ const RFCheck = () => {
 					htmlFor="terms1"
 					className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 				>
-					Accept terms and conditions
+					Is Feature Product
 				</label>
 				<p className="text-sm text-muted-foreground">
-					You agree to our Terms of Service and Privacy Policy.
+					This is a feature product that can be added to your store.
 				</p>
 			</div>
 		</div>
@@ -403,4 +462,6 @@ export const RFrom = {
 	RFStatus,
 	RFISelectHasIcon,
 	RFCheck,
+	RFProductImage,
+	RFProductGalleryImage,
 };

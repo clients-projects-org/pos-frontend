@@ -544,3 +544,22 @@ const FormMutation = ({
 <!-- bottom  -->
 @@include('../partials/_templateBottom.html')
 ```
+
+
+Product Get All
+product-get-all
+
+Product Store
+product-store
+
+Product Update
+product-update
+
+Product Get Single
+product-single
+
+Product Delete
+product-delete
+
+Product Status Change
+product-status-change
