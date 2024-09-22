@@ -39,6 +39,7 @@ import { Bird, Rabbit, Turtle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 import { image } from '@/assets/image';
+import { HTMLInputTypeAttribute } from 'react';
 
 export function FInput({
 	label,
@@ -78,11 +79,13 @@ export function RFInput({
 	name,
 	label,
 	placeholder = 'type...',
+	type = 'text',
 }: {
 	methods: any;
 	name: any;
 	label?: string;
 	placeholder?: string;
+	type?: HTMLInputTypeAttribute | undefined;
 }) {
 	return (
 		<FormField
@@ -92,7 +95,12 @@ export function RFInput({
 				<FormItem>
 					<FormLabel>{label}</FormLabel>
 					<FormControl>
-						<Input placeholder={placeholder} {...field} />
+						<Input
+							placeholder={placeholder}
+							onWheel={(event) => event.currentTarget.blur()}
+							type={type}
+							{...field}
+						/>
 					</FormControl>
 					<FormMessage />
 				</FormItem>
@@ -237,6 +245,7 @@ function RFProductImage<T extends FieldValues>({
 		/>
 	);
 }
+
 function RFProductGalleryImage<T extends FieldValues>({
 	methods,
 	imageInfo,
@@ -264,7 +273,6 @@ function RFProductGalleryImage<T extends FieldValues>({
 }
 
 export function RFSelect({ methods, label, data, children, name }) {
-	console.log(data);
 	return (
 		<FormField
 			control={methods.control}
@@ -432,7 +440,7 @@ const RFISelectHasIcon = ({ form, label }: { form: any; label: string }) => {
 	);
 };
 
-const RFCheck = () => {
+const RFCheck2 = () => {
 	return (
 		<div className="items-top flex space-x-2">
 			<Checkbox id="terms1" />
@@ -450,6 +458,49 @@ const RFCheck = () => {
 		</div>
 	);
 };
+export function RFCheck({
+	methods,
+	name,
+	label,
+}: {
+	methods: any;
+	name: any;
+	label?: string;
+	placeholder?: string;
+}) {
+	return (
+		<FormField
+			control={methods.control}
+			name={name}
+			render={({ field }) => (
+				<FormItem>
+					<FormLabel>{label}</FormLabel>
+					<FormControl>
+						<div className="items-top flex space-x-2">
+							<Checkbox
+								id="terms1"
+								checked={field.value}
+								onCheckedChange={field.onChange}
+							/>
+							<div className="grid gap-1.5 leading-none">
+								<label
+									htmlFor="terms1"
+									className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								>
+									Is Feature Product
+								</label>
+								<p className="text-sm text-muted-foreground">
+									This is a feature product that can be added to your store.
+								</p>
+							</div>
+						</div>
+					</FormControl>
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
+	);
+}
 
 export const RFrom = {
 	RFInput,

@@ -9,7 +9,7 @@ export const productApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getStoreProduct: builder.query<any, string>({
+		getStoreProduct: builder.query<any, void>({
 			query: (): string => `product/store-data`,
 
 			providesTags: (result, error, arg) => {
@@ -24,11 +24,21 @@ export const productApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeProducts: builder.mutation<any, string>({
+		storeProducts: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					if (key === 'store_id') {
+						value?.forEach((item: any) => {
+							body.append('store_id[]', item);
+						});
+					} else if (key === 'gallery_images') {
+						value?.forEach((item: any) => {
+							body.append('gallery_images[]', item);
+						});
+					} else {
+						body.append(key, value);
+					}
 				});
 				return {
 					url: `/product/store`,

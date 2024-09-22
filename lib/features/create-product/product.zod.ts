@@ -10,13 +10,13 @@ export type FormValues = z.infer<typeof FormSchema>;
 // schema
 export const FormSchema = z.object({
 	// product from
-	supplier: z.string().min(2, {
+	supplier_id: z.string().min(2, {
 		message: `Supplier is Required`,
 	}),
-	warehouse: z.string().min(2, {
+	warehouse_id: z.string().min(2, {
 		message: `Warehouse is Required`,
 	}),
-	store: z.array(
+	store_id: z.array(
 		z.string().min(2, {
 			message: `Store is Required`,
 		})
@@ -38,7 +38,7 @@ export const FormSchema = z.object({
 		message: `Sub Category is Required`,
 	}),
 
-	brand: z.string().min(2, {
+	brand_id: z.string().min(2, {
 		message: `Brand is Required`,
 	}),
 
@@ -59,6 +59,38 @@ export const FormSchema = z.object({
 	tags: z.array(z.string()).optional(),
 	isFeature: z.boolean(),
 
+	quantity: z
+		.string()
+		.transform((val) => Number(val))
+		.refine((val) => !isNaN(val) && val > 0, {
+			message: 'Quantity must be a number greater than 0',
+		}),
+
+	buy_price: z
+		.string()
+		.transform((val) => Number(val))
+		.refine((val) => !isNaN(val) && val > 0, {
+			message: 'buy price must be a number greater than 0',
+		}),
+
+	sell_price: z
+		.string()
+		.transform((val) => Number(val))
+		.refine((val) => !isNaN(val) && val > 0, {
+			message: 'sell price must be a number greater than 0',
+		}),
+
+	discount_value: z
+		.string()
+		.transform((val) => Number(val))
+		.refine((val) => !isNaN(val), {
+			message: 'discount value must be a number',
+		}),
+
+	discount_type: z.enum(['flat', 'percentage', 'none'], {
+		message: 'Discount Type is Required',
+	}),
+
 	// status
 	status: zod.status,
 
@@ -72,18 +104,25 @@ export const createZodFrom = () => {
 	const methods = useForm<FormValues>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
+			brand_id: '',
+			isFeature: false,
+			store_id: [],
+			supplier_id: '',
+			warehouse_id: '',
 			name: '',
-			status: 'active',
-			brand: '',
+			status: 'deactivated',
 			category_id: '',
 			gallery_images: undefined,
 			image: undefined,
 			long_description: '',
 			sort_description: '',
 			sub_category_id: '',
-			supplier: '',
-			warehouse: '',
-			store: undefined,
+			tags: [],
+			buy_price: 0,
+			sell_price: 0,
+			discount_type: 'none',
+			discount_value: 0,
+			quantity: 0,
 		},
 	});
 

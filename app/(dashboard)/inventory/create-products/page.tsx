@@ -7,6 +7,7 @@ export default function CreateProducts() {
 	return (
 		<>
 			<PageTitle title="Create Product" />
+
 			<CreateProduct />
 		</>
 	);

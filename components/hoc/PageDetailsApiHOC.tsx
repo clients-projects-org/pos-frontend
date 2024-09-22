@@ -31,7 +31,7 @@ export function PageDetailsApiHOC({
 		return <ApiError data={data} />;
 	}
 
-	if (data.success && data.data !== null) {
+	if (data?.success && data?.data !== null) {
 		return (
 			<>
 				{isFetching && <BarLoader />}

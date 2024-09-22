@@ -356,7 +356,6 @@ export function ProductMultiImageSelect({
 	const [images, setImages] = React.useState<
 		{ src: string; warning: string; file: File | null }[]
 	>([]);
-	console.log(images, 'images');
 	const [loading, setLoading] = React.useState<boolean>(false);
 
 	const handleImageUpload = async (
