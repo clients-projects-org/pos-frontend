@@ -23,7 +23,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return ['SubCategory'];
+				return ['SubCategory', 'ProductsStoreData'];
 			},
 		}),
 		updateSubCategory: builder.mutation<any, any>({
@@ -33,7 +33,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return ['SubCategory'];
+				return ['SubCategory', 'ProductsStoreData'];
 			},
 		}),
 
@@ -42,7 +42,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 				url: `sub-category/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['SubCategory'],
+			invalidatesTags: ['SubCategory', 'ProductsStoreData'],
 		}),
 
 		updateSubCategoryStatus: builder.mutation<any, any>({
@@ -53,7 +53,11 @@ export const categoryApi = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['SubCategory', { type: 'SubCategory', id: arg.id }];
+				return [
+					'SubCategory',
+					'ProductsStoreData',
+					{ type: 'SubCategory', id: arg.id },
+				];
 			},
 		}),
 	}),

@@ -30,7 +30,7 @@ export const api = apiSlice.injectEndpoints({
 				};
 			},
 			invalidatesTags: () => {
-				return ['Store'];
+				return ['Store', 'ProductsStoreData'];
 			},
 		}),
 
@@ -42,9 +42,8 @@ export const api = apiSlice.injectEndpoints({
 					body: payload,
 				};
 			},
-
 			invalidatesTags: () => {
-				return ['Customer'];
+				return ['Store', 'ProductsStoreData'];
 			},
 		}),
 
@@ -53,7 +52,9 @@ export const api = apiSlice.injectEndpoints({
 				url: `store/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Store'],
+			invalidatesTags: () => {
+				return ['Store', 'ProductsStoreData'];
+			},
 		}),
 
 		updateStoreStatus: builder.mutation<any, any>({
@@ -64,7 +65,7 @@ export const api = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Store', { type: 'Store', id: arg.id }];
+				return ['Store', 'ProductsStoreData', { type: 'Store', id: arg.id }];
 			},
 		}),
 	}),

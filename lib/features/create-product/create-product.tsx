@@ -6,11 +6,9 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Upload } from 'lucide-react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { MultiSelector, RFrom, RFSelect } from '@/components/custom/form';
+import { MultiSelector, RFrom } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
 import { createZodFrom, FormSchema, FormValues } from './product.zod';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
@@ -18,7 +16,7 @@ import {
 	useGetStoreProductQuery,
 	useStoreProductsMutation,
 } from './productCreateApiSlice';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { userStoreImageInfo } from '@/lib/image-size';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { StoreType, SupplierType } from '@/lib/type';
@@ -34,6 +32,7 @@ export function CreateProduct() {
 		isError,
 		isSuccess,
 	} = useGetStoreProductQuery('all');
+
 	console.log(data, 'sdfasdfasdfasd');
 	const [store, { isLoading }] = useStoreProductsMutation();
 
@@ -49,23 +48,15 @@ export function CreateProduct() {
 		}
 	}
 	const uploadedImage = methods.watch('image');
-	console.log(uploadedImage, 'uploadedImage');
+	const category = methods.watch('category_id');
+	console.log(category, 'categroy');
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		console.log(e.target.files, 'log');
-		const fileList = e.target.files;
-		if (fileList && fileList.length > 0) {
-			// Set the value of the file in the form
-			methods.setValue('image', fileList);
+	useEffect(() => {
+		// Whenever category_id changes, clear the sub_category_id
+		if (category) {
+			methods.resetField('sub_category_id'); // Clear sub_category_id field
 		}
-	};
-
-	// Use uploadedImage as FileList to generate URL
-	const imageSrc =
-		uploadedImage && uploadedImage.length > 0
-			? URL.createObjectURL(uploadedImage[0]) // Generate image preview URL
-			: 'https://ui.shadcn.com/placeholder.svg';
-
+	}, [category, methods.resetField]);
 	if (isloadingData) {
 		return <div>Loading</div>;
 	}
@@ -136,7 +127,7 @@ export function CreateProduct() {
 															<SelectItem
 																key={dev._id}
 																className="capitalize"
-																value={dev.name}
+																value={dev._id}
 															>
 																{dev.name}
 															</SelectItem>
@@ -157,7 +148,7 @@ export function CreateProduct() {
 															<SelectItem
 																key={dev._id}
 																className="capitalize"
-																value={dev.name}
+																value={dev._id}
 															>
 																{dev.name}
 															</SelectItem>
@@ -207,7 +198,7 @@ export function CreateProduct() {
 															<SelectItem
 																key={dev._id}
 																className="capitalize"
-																value={dev.name}
+																value={dev._id}
 															>
 																{dev.name}
 															</SelectItem>
@@ -224,17 +215,17 @@ export function CreateProduct() {
 												>
 													<SelectGroup>
 														<SelectLabel>Sub Category All List</SelectLabel>
-														{data?.data?.subCategory?.map(
-															(dev: SupplierType) => (
+														{data?.data?.subCategory
+															?.filter((e) => e.category_id === category)
+															?.map((dev: SupplierType) => (
 																<SelectItem
 																	key={dev._id}
 																	className="capitalize"
-																	value={dev.name}
+																	value={dev._id}
 																>
 																	{dev.name}
 																</SelectItem>
-															)
-														)}
+															))}
 													</SelectGroup>
 												</RFrom.RFSelect>
 											</div>
@@ -251,7 +242,7 @@ export function CreateProduct() {
 															<SelectItem
 																key={dev._id}
 																className="capitalize"
-																value={dev.name}
+																value={dev._id}
 															>
 																{dev.name}
 															</SelectItem>

@@ -32,9 +32,8 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Brand'];
+				return ['Brand', 'ProductsStoreData'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		updateBrand: builder.mutation<any, any>({
@@ -47,9 +46,8 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Brand'];
+				return ['Brand', 'ProductsStoreData'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		deleteBrand: builder.mutation<any, string>({
@@ -57,7 +55,7 @@ export const api = apiSlice.injectEndpoints({
 				url: `brand/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Brand'],
+			invalidatesTags: ['Brand', 'ProductsStoreData'],
 		}),
 
 		updateBrandStatus: builder.mutation<any, any>({
@@ -68,7 +66,7 @@ export const api = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Brand', { type: 'Brand', id: arg.id }];
+				return ['Brand', 'ProductsStoreData', { type: 'Brand', id: arg.id }];
 			},
 		}),
 	}),

@@ -31,7 +31,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Supplier'];
+				return ['Supplier', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -46,7 +46,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Supplier'];
+				return ['Supplier', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -56,7 +56,7 @@ export const api = apiSlice.injectEndpoints({
 				url: `supplier/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Supplier'],
+			invalidatesTags: ['Supplier', 'ProductsStoreData'],
 		}),
 
 		updateSupplierStatus: builder.mutation<any, any>({
@@ -67,7 +67,11 @@ export const api = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Supplier', { type: 'Supplier', id: arg.id }];
+				return [
+					'Supplier',
+					'ProductsStoreData',
+					{ type: 'Supplier', id: arg.id },
+				];
 			},
 		}),
 	}),

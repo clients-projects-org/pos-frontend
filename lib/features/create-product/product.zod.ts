@@ -30,11 +30,11 @@ export const FormSchema = z.object({
 		})
 		.max(100, 'Product Name maximum 100 characters'),
 
-	category: z.string().min(2, {
+	category_id: z.string().min(2, {
 		message: `Category is Required`,
 	}),
 
-	sub_category: z.string().min(2, {
+	sub_category_id: z.string().min(2, {
 		message: `Sub Category is Required`,
 	}),
 
@@ -75,12 +75,12 @@ export const createZodFrom = () => {
 			name: '',
 			status: 'active',
 			brand: '',
-			category: '',
+			category_id: '',
 			gallery_images: undefined,
 			image: undefined,
 			long_description: '',
 			sort_description: '',
-			sub_category: '',
+			sub_category_id: '',
 			supplier: '',
 			warehouse: '',
 			store: undefined,

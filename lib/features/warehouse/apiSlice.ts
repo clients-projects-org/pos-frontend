@@ -31,7 +31,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Warehouse'];
+				return ['Warehouse', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -46,7 +46,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Warehouse'];
+				return ['Warehouse', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -56,7 +56,7 @@ export const api = apiSlice.injectEndpoints({
 				url: `warehouse/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Warehouse'],
+			invalidatesTags: ['Warehouse', 'ProductsStoreData'],
 		}),
 
 		updateWarehouseStatus: builder.mutation<any, any>({
@@ -67,7 +67,11 @@ export const api = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Warehouse', { type: 'Warehouse', id: arg.id }];
+				return [
+					'Warehouse',
+					'ProductsStoreData',
+					{ type: 'Warehouse', id: arg.id },
+				];
 			},
 		}),
 	}),

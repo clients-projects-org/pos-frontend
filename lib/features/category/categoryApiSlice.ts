@@ -30,7 +30,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 				};
 			},
 			invalidatesTags: () => {
-				return ['Category'];
+				return ['Category', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -45,7 +45,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Category'];
+				return ['Category', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -55,7 +55,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 				url: `category/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Category'],
+			invalidatesTags: ['Category', 'ProductsStoreData'],
 		}),
 
 		updateCategoryStatus: builder.mutation<any, any>({
@@ -66,7 +66,11 @@ export const categoryApi = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Category', { type: 'Category', id: arg.id }];
+				return [
+					'Category',
+					'ProductsStoreData',
+					{ type: 'Category', id: arg.id },
+				];
 			},
 		}),
 	}),

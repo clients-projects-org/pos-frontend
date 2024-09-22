@@ -11,6 +11,10 @@ export const productApi = apiSlice.injectEndpoints({
 
 		getStoreProduct: builder.query<any, string>({
 			query: (): string => `product/store-data`,
+
+			providesTags: (result, error, arg) => {
+				return ['ProductsStoreData'];
+			},
 		}),
 
 		getProductsById: builder.query<any, string>({
