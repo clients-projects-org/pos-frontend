@@ -35,7 +35,7 @@ export const roleApi = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return ['Role'];
+				return ['Role', 'Sidebar'];
 			},
 		}),
 

@@ -26,6 +26,8 @@ import Session from '@/lib/session';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import { showToast } from '@/lib/actions/tost';
 
 const FormSchema = z.object({
 	email: z.string().min(2, {
@@ -64,7 +66,18 @@ export default function InputForm() {
 		try {
 			const res: any = await store({ ...data } as any);
 			console.log(res as any, 'res');
-			if (res.data.success) {
+
+			if (res?.error) {
+				console.log(res?.error);
+				showToast({
+					title: 'Wait!',
+					variant: 'destructive',
+					description: res?.error?.data?.message,
+				});
+			}
+			apiReqResponse(res);
+
+			if (res?.data?.success) {
 				const result = await signIn('credentials', {
 					token: JSON.stringify(res.data),
 					redirect: false,
@@ -75,7 +88,8 @@ export default function InputForm() {
 				}
 			}
 		} catch (error) {
-			console.log(error);
+			console.log(error, 'err');
+			apiErrorResponse(error, form, FormSchema);
 		}
 	}
 

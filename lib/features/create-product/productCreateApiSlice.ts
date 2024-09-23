@@ -34,7 +34,7 @@ export const productApi = apiSlice.injectEndpoints({
 						});
 					} else if (key === 'gallery_images') {
 						value?.forEach((item: any) => {
-							body.append('gallery_images[]', item);
+							body.append('gallery_images', item);
 						});
 					} else {
 						body.append(key, value);

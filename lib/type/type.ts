@@ -48,32 +48,49 @@ export interface MenuTypeRoleState extends MenuType {
 
 // product type
 export type ProductType = {
+	sr: number;
 	_id: string;
-	code?: string;
-	image?: string;
-	name?: string;
-	slug?: string;
-	short_description?: string;
-	long_description?: string;
-	status?: ProductStatusType;
-	original_price?: number;
-	selling_price?: number;
-	qty?: number;
-	alert_qty?: number;
-	total_sells?: number;
-	createdAt?: string;
-	sku?: string;
-	created_by?: UserType;
-	brand?: BrandType;
-	category?: CategoryType;
-	subcategory?: SubCategoryType;
-	discount_type?: DiscountType;
-	discount_rate: string;
-	supplier?: SupplierType;
-	warehouse?: WarehouseType;
-	exp_date?: string;
-	warranty?: WarrantyType;
-	variants?: VariantType[];
+
+	// from
+	supplier_id: string;
+	warehouse_id: string;
+	store_id: string[];
+
+	// info
+	name: string;
+	slug: string;
+	category_id: string;
+	sub_category_id: string;
+	brand_id: string;
+	sort_description: string;
+	long_description: string;
+
+	// price and stock
+	quantity: number;
+	buy_price: number;
+	sell_price: number;
+	discount: number;
+	discount_type: DiscountType;
+	discount_value: number; // this will calculate from sell price and discount type
+
+	// custom field
+	alert_quantity?: number;
+	manufacture_date: Date;
+	expire_date: Date;
+	warranty_id: string;
+
+	variant: string;
+	unit: string;
+
+	status: StatusType | 'new';
+
+	image: string;
+	image_type: 'image' | 'icon';
+	gallery_images: string[];
+
+	tags?: string[];
+	isFeature?: 'true' | 'false';
+	sku: string;
 };
 
 export type UserType = {

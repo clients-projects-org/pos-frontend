@@ -63,6 +63,31 @@ const ImageIcon = () => {
 		enableHiding: false,
 	};
 };
+const OnlyImage = () => {
+	return {
+		accessorKey: 'image',
+		header: () => 'Image',
+		cell: ({ row }: any) => (
+			<div>
+				{row.original.image && (
+					<Image
+						alt="Product image"
+						className="aspect-square rounded-md object-cover"
+						height="40"
+						src={
+							isValidCloudImageUrl(row.original.image as string)
+								? (row.original.image as string)
+								: 'https://ui.shadcn.com/placeholder.svg'
+						}
+						width="40"
+					/>
+				)}
+			</div>
+		),
+		enableSorting: false,
+		enableHiding: false,
+	};
+};
 const Status = () => {
 	return {
 		accessorKey: 'status',
@@ -172,7 +197,7 @@ const Text = (name: any, label: any) => {
 			);
 		},
 		cell: ({ row }: any) => (
-			<div className="lowercase">{row.getValue(name)}</div>
+			<div className="lowercase ">{row.getValue(name)}</div>
 		),
 	};
 };
@@ -280,4 +305,5 @@ export const TableItem = {
 	Date,
 	CreatedBy,
 	Category,
+	OnlyImage,
 };

@@ -194,11 +194,18 @@ export function CreateProduct() {
 											</AccordionTrigger>
 											<AccordionContent className="p-5">
 												<div className=" grid grid-cols-12 gap-x-4 gap-y-6">
-													<div className="col-span-12">
+													<div className="col-span-8">
 														<RFrom.RFInput
 															label="Product Name"
 															methods={methods}
 															name="name"
+														/>
+													</div>
+													<div className="col-span-4">
+														<RFrom.RFInput
+															label="Product SKU"
+															methods={methods}
+															name="sku"
 														/>
 													</div>
 													<div className="col-span-4">
@@ -334,6 +341,13 @@ export function CreateProduct() {
 														name="discount_value"
 														type="number"
 													/>
+
+													<RFrom.RFInput
+														label="Alert Quantity"
+														methods={methods}
+														name="alert_quantity"
+														type="number"
+													/>
 												</div>
 											</AccordionContent>
 										</AccordionItem>
@@ -347,52 +361,54 @@ export function CreateProduct() {
 											</AccordionTrigger>
 											<AccordionContent className="p-5">
 												<div className=" grid grid-cols-12 gap-x-4 gap-y-6">
-													{/* <div className="col-span-4">
-							<RFrom.RFInput
-								label="Alert Quantity"
-								methods={methods}
-								name="name"
-							/>
-						</div> */}
+													<div className="col-span-4">
+														<RFrom.RFCalender
+															label="Manufacture Date"
+															methods={methods}
+															name="manufacture_date"
+														/>
+													</div>
+													<div className="col-span-4">
+														<RFrom.RFCalender
+															label="Expire Date"
+															methods={methods}
+															name="expire_date"
+														/>
+													</div>
 
-													{/* <div className="col-span-4">
-							<RFrom.RFCalender
-								label="Manufacture Date"
-								methods={methods}
-								name="expire_date"
-							/>
-						</div>
-						<div className="col-span-4">
-							<RFrom.RFCalender
-								label="Expire Date"
-								methods={methods}
-								name="expire_date"
-							/>
-						</div> */}
-													{/* <div className="col-span-4">
-							<RFrom.RFStatus
-								methods={methods}
-								name="Discount Type"
-								placeholder="Select"
-								items="flatPercent"
-								label="Tags"
-							/>
-						</div>
-						<div className="col-span-4">
-							<RFrom.RFISelectHasIcon form={form} label={'Warranty'} />
-						</div>
-						<div className="col-span-4">
-							<RFrom.RFStatus
-								methods={methods}
-								name="Discount Type"
-								placeholder="Select"
-								items="flatPercent"
-								label="status"
-							/>
-						</div> */}
+													<div className="col-span-4">
+														<RFrom.RFSelect
+															methods={methods}
+															data={data?.data?.supplier}
+															label="Warranty"
+															name="warranty_id"
+														>
+															<SelectGroup>
+																<SelectLabel>Warranty All List</SelectLabel>
+																{data?.data?.warranty?.map(
+																	(dev: SupplierType) => (
+																		<SelectItem
+																			key={dev._id}
+																			className="capitalize"
+																			value={dev._id}
+																		>
+																			{dev.name}
+																		</SelectItem>
+																	)
+																)}
+															</SelectGroup>
+														</RFrom.RFSelect>
+													</div>
+
 													<div className="col-span-6">
 														{/* <FancyMultiSelect label="Tags" /> */}
-														<MultiSelector label="Tags" creatable />
+														{/* <MultiSelector label="Tags" creatable /> */}
+														<MultiSelector2
+															label="Tags"
+															methods={methods}
+															name="tags"
+															creatable
+														/>
 													</div>
 													<div className="col-span-4">
 														<RFrom.RFCheck methods={methods} name="isFeature" />
@@ -403,7 +419,9 @@ export function CreateProduct() {
 									</Accordion>
 								</div>
 								<div className="col-span-12 flex justify-end">
-									<Button type="submit">Create Product</Button>
+									<Button disabled={isLoading} type="submit">
+										Create Product
+									</Button>
 								</div>
 							</div>
 						</div>

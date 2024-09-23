@@ -44,6 +44,11 @@ export function CheckNecessaryData({ data }: { data: DataProps }) {
 			message: 'You need to add a store',
 			link: '/peoples/stores',
 		},
+		{
+			key: 'warranty',
+			message: 'You need to add a warranties',
+			link: '/inventory/warranties',
+		},
 	];
 
 	const missingData = requiredData.filter(

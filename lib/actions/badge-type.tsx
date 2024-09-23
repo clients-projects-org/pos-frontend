@@ -1,7 +1,7 @@
 import { BadgeVariantType, StatusType } from '../type';
 
 // badge type
-export const badge = (badge: StatusType): BadgeVariantType => {
+export const badge = (badge: StatusType | 'new'): BadgeVariantType => {
 	switch (badge) {
 		case 'active':
 			return 'default';
@@ -9,6 +9,7 @@ export const badge = (badge: StatusType): BadgeVariantType => {
 		case 'deactivated':
 			return 'secondary';
 
+		case 'new':
 		case 'draft':
 			return 'destructive';
 
