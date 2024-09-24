@@ -19,7 +19,7 @@ import {
 	useUpdateDevPermissionMutation,
 } from './devPermissionSlice';
 import { DynamicIcon } from '@/components/actions';
-import { DevNameType } from '@/lib/type';
+import { DevNameType, StatusType, StatusTypeApi } from '@/lib/type';
 import { devZodFrom, devZodFromEdit, FormSchema } from './dev-permission.zod';
 import { UseFormReturn } from 'react-hook-form';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
@@ -190,7 +190,9 @@ const FormMutation: React.FC<FormProps> = ({
 							placeholder="Select a status"
 							items="actDeDraft"
 							defaultValue={methods.getValues('status')}
-							onChange={(value) => methods.setValue('status', value)}
+							onChange={(value) =>
+								methods.setValue('status', value as StatusType)
+							}
 						/>
 					</div>
 

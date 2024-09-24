@@ -80,19 +80,6 @@ export function CreateProduct() {
 											imageInfo={userStoreImageInfo}
 										/>
 
-										{/* <Image
-									alt="Product image"
-									className="aspect-square w-full rounded-md object-cover"
-									height="300"
-									src={imageSrc}
-									// src={'https://ui.shadcn.com/placeholder.svg'}
-									// src={
-									// 	uploadedImage && uploadedImage.length > 0
-									// 		? URL.createObjectURL(uploadedImage[0])
-									// 		: 'https://ui.shadcn.com/placeholder.svg'
-									// }
-									width="300"
-								/> */}
 										<div className="grid grid-cols-2 gap-2">
 											<RFrom.RFProductGalleryImage
 												methods={methods}
@@ -290,6 +277,7 @@ export function CreateProduct() {
 														<RFrom.RFTextarea
 															methods={methods}
 															label="Long Description"
+															j
 															name="long_description"
 														/>
 													</div>
