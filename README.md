@@ -1,5 +1,6 @@
 [ http://localhost:8080](http://localhost:8080)
 https://dreamspos.dreamstechnologies.com/html/template/blank-page.html
+https://pos27.skymoonlabs.com/product/create
 
 multi select page
 https://shadcnui-expansions.typeart.cc/docs/multiple-selector

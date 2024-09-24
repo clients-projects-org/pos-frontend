@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { MultiSelector, MultiSelector2, RFrom } from '@/components/custom/form';
+import { MultiSelector2, RFrom } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
 import { createZodFrom, FormSchema, FormValues } from './product.zod';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
@@ -22,10 +22,24 @@ import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { StoreType, SupplierType } from '@/lib/type';
 import { PageDetailsApiHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
-import { CheckNecessaryData } from './check-necessary-data';
+import {
+	CheckNecessaryData,
+	CloseAlert,
+	CustomAlert,
+} from './check-necessary-data';
+import { DynamicIcon } from '@/components/actions';
+import { useFieldArray } from 'react-hook-form';
+
 export function CreateProduct() {
 	const router = useRouter();
 	const { methods } = createZodFrom();
+	const { fields, append, remove } = useFieldArray({
+		control: methods.control,
+		name: 'variants',
+	});
+	const addVariant = () => {
+		append({ unit_id: '', variant_id: '', quantity: 0 });
+	};
 
 	const {
 		data,
@@ -47,6 +61,7 @@ export function CreateProduct() {
 		}
 	}
 	const category = methods.watch('category_id');
+	const product_type = methods.watch('product_type');
 	const checkError = methods.formState.errors;
 	const testWatch = methods.watch();
 	console.log(testWatch, 'firstName');
@@ -70,7 +85,10 @@ export function CreateProduct() {
 			<Motion>
 				<CheckNecessaryData data={data?.data} />
 				<Form {...methods}>
-					<form className="mb-44 " onSubmit={methods.handleSubmit(onSubmit)}>
+					<form
+						className="mb-44 select-none"
+						onSubmit={methods.handleSubmit(onSubmit)}
+					>
 						<div className="grid w-full items-start gap-6">
 							<div className="grid gap-6 rounded-lg border p-4 grid-cols-12">
 								<div className="col-span-5 rounded-lg border p-4">
@@ -277,7 +295,6 @@ export function CreateProduct() {
 														<RFrom.RFTextarea
 															methods={methods}
 															label="Long Description"
-															j
 															name="long_description"
 														/>
 													</div>
@@ -293,50 +310,164 @@ export function CreateProduct() {
 												Pricing & Stocks
 											</AccordionTrigger>
 											<AccordionContent className="p-5">
-												<div className=" grid grid-cols-3 gap-x-4 gap-y-6">
-													<RFrom.RFInput
-														label="Quantity"
-														methods={methods}
-														name="quantity"
-														type="number"
-													/>
-
-													<RFrom.RFInput
-														label="Buy Price"
-														methods={methods}
-														name="buy_price"
-														type="number"
-													/>
-
-													<RFrom.RFInput
-														label="Sell Price"
-														methods={methods}
-														name="sell_price"
-														type="number"
-													/>
-
-													<RFrom.RFStatus
-														methods={methods}
-														name="discount_type"
-														placeholder="Select"
-														items="flatPercent"
-														label="Discount Type"
-													/>
-
-													<RFrom.RFInput
-														label="Discount Value"
-														methods={methods}
-														name="discount_value"
-														type="number"
-													/>
-
-													<RFrom.RFInput
-														label="Alert Quantity"
-														methods={methods}
-														name="alert_quantity"
-														type="number"
-													/>
+												<div className="mb-5 ">
+													<RFrom.RadioVariantType methods={methods} />
 												</div>
+
+												{/* single product section  */}
+												{product_type === 'single' && (
+													<div className=" grid grid-cols-3 gap-x-4 gap-y-6">
+														<RFrom.RFInput
+															label="Quantity"
+															methods={methods}
+															name="quantity"
+															type="number"
+														/>
+
+														<RFrom.RFInput
+															label="Buy Price"
+															methods={methods}
+															name="buy_price"
+															type="number"
+														/>
+
+														<RFrom.RFInput
+															label="Sell Price"
+															methods={methods}
+															name="sell_price"
+															type="number"
+														/>
+
+														<RFrom.RFStatus
+															methods={methods}
+															name="discount_type"
+															placeholder="Select"
+															items="flatPercent"
+															label="Discount Type"
+														/>
+
+														<RFrom.RFInput
+															label="Discount Value"
+															methods={methods}
+															name="discount_value"
+															type="number"
+														/>
+
+														<RFrom.RFInput
+															label="Alert Quantity"
+															methods={methods}
+															name="alert_quantity"
+															type="number"
+														/>
+													</div>
+												)}
+												{product_type === 'variant' && (
+													<div className="space-y-4 relative pb-4">
+														{data?.data?.unit.length === 0 && (
+															<CustomAlert
+																item={{
+																	link: '/inventory/units',
+																	message: 'Please add a unit',
+																}}
+															/>
+														)}
+														{data?.data?.variant.length === 0 && (
+															<CustomAlert
+																item={{
+																	link: '/inventory/variant-attributes',
+																	message: 'Please add a variant',
+																}}
+															/>
+														)}
+
+														{fields.map((field, index) => (
+															<div
+																key={field.id}
+																className="grid grid-cols-3 gap-x-4 gap-y-6 border p-2 rounded relative"
+															>
+																{/* Unit Selection */}
+																<RFrom.RFSelect
+																	methods={methods}
+																	data={data?.data?.unit}
+																	label="Unit"
+																	name={`variants[${index}].unit_id`}
+																>
+																	<SelectGroup>
+																		<SelectLabel>Unit All List</SelectLabel>
+																		{data?.data?.unit?.map(
+																			(dev: SupplierType) => (
+																				<SelectItem
+																					key={dev._id}
+																					className="capitalize"
+																					value={dev._id}
+																				>
+																					{dev.name}
+																				</SelectItem>
+																			)
+																		)}
+																	</SelectGroup>
+																</RFrom.RFSelect>
+
+																{/* Variant Selection */}
+																<RFrom.RFSelect
+																	methods={methods}
+																	data={data?.data?.variant}
+																	label="Variant"
+																	name={`variants[${index}].variant_id`}
+																>
+																	<SelectGroup>
+																		<SelectLabel>Variant All List</SelectLabel>
+																		{data?.data?.variant?.map(
+																			(dev: SupplierType) => (
+																				<SelectItem
+																					key={dev._id}
+																					className="capitalize"
+																					value={dev._id}
+																				>
+																					{dev.name}
+																				</SelectItem>
+																			)
+																		)}
+																	</SelectGroup>
+																</RFrom.RFSelect>
+
+																{/* Quantity Input */}
+																<RFrom.RFInput
+																	label="Sell Price"
+																	methods={methods}
+																	name={`variants[${index}].quantity`}
+																	type="number"
+																/>
+
+																{/* Remove Variant Button */}
+																{fields.length > 1 && (
+																	<Button
+																		variant="destructive"
+																		size="icon"
+																		className="absolute top-0 right-0 h-6 w-6"
+																		onClick={() => remove(index)}
+																		type="button"
+																	>
+																		<DynamicIcon icon="Minus" className="" />
+																	</Button>
+																)}
+															</div>
+														))}
+
+														{/* Add Variant Button */}
+														{fields.length < 5 && (
+															<Button
+																variant="secondary"
+																size="icon"
+																className="absolute -bottom-4 right-0 h-6 w-6"
+																onClick={addVariant}
+																type="button"
+															>
+																<DynamicIcon icon="Plus" className="" />
+															</Button>
+														)}
+													</div>
+												)}
 											</AccordionContent>
 										</AccordionItem>
 

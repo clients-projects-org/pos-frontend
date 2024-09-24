@@ -96,6 +96,21 @@ export const FormSchema = z
 				message: 'sell price must be a number greater than 0',
 			}),
 
+		variants: z
+			.array(
+				z.object({
+					unit_id: z.string(),
+					variant_id: z.string(),
+					quantity: z
+						.string()
+						.transform((val) => Number(val))
+						.refine((val) => !isNaN(val) && val > 0, {
+							message: 'quantity must be a number greater than 0',
+						}),
+				})
+			)
+			.optional(),
+
 		warranty_id: z.string().optional(),
 
 		discount_value: z
@@ -109,6 +124,9 @@ export const FormSchema = z
 			message: 'Discount Type is Required',
 		}),
 
+		product_type: z.enum(['single', 'variant'], {
+			message: 'Product Type is Required',
+		}),
 		// image
 		image: z.instanceof(File),
 		gallery_images: z.array(z.instanceof(File)),
@@ -166,6 +184,8 @@ export const createZodFrom = () => {
 			warranty_id: '',
 			expire_date: new Date(),
 			manufacture_date: new Date(),
+			product_type: 'single',
+			variants: [{ unit_id: '', variant_id: '', quantity: 0 }],
 		},
 	});
 

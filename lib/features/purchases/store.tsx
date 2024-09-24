@@ -23,6 +23,7 @@ import { useStoreProductsMutation } from './purchaseApiSlice';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { useGetStoreProductQuery } from '../create-product';
 import { Form } from '@/components/ui/form';
+import Image from 'next/image';
 type FormValues = z.infer<typeof FormSchema>;
 
 interface FormProps {
@@ -150,63 +151,89 @@ const FormMutation: React.FC<FormProps> = ({
 					<RFrom.RFInput label="Chalan Number" methods={methods} name="name" />
 				</div>
 				{/* product  */}
-				<div>
-					<RFrom.RFInput label="Product Name" methods={methods} name="name" />
-				</div>
 
-				{/* purchase  */}
 				<div>
 					<div className="relative overflow-x-auto">
+						<h4 className=" text-gray-700 text-lg px-3  py-1 -mb-2 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 ">
+							Product Info
+						</h4>
 						<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
 								<tr>
-									<th scope="col" className="px-6 py-3">
-										Product
+									<th scope="col" className="px-6 py-2">
+										Image
 									</th>
-									<th scope="col" className="px-6 py-3">
-										Quantity
+									<th scope="col" className="px-6 py-2">
+										Name
 									</th>
-									<th scope="col" className="px-6 py-3">
+									<th scope="col" className="px-6 py-2">
 										Purchase Price
 									</th>
-									<th scope="col" className="px-6 py-3">
-										Discount Tax Tax Amount Unit Cost Total Cost
+									<th scope="col" className="px-6 py-2">
+										Sell Price
+									</th>
+									<th scope="col" className="px-6 py-2">
+										Quantity
 									</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+								<tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
 									<th
 										scope="row"
-										className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+										className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 									>
-										Apple MacBook Pro 17"
+										<Image
+											className="rounded-md"
+											alt="Product image"
+											src={'https://ui.shadcn.com/placeholder.svg'}
+											width={60}
+											height={60}
+										/>
 									</th>
-									<td className="px-6 py-4">Silver</td>
-									<td className="px-6 py-4">Laptop</td>
-									<td className="px-6 py-4">$2999</td>
+									<td className="px-6 py-2">Apple MacBook Pro 17</td>
+									<td className="px-6 py-2">Laptop</td>
+									<td className="px-6 py-2">$2999</td>
+									<td className="px-6 py-2">$2999</td>
 								</tr>
-								<tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-									<th
-										scope="row"
-										className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-									>
-										Microsoft Surface Pro
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				{/* Purchase Info */}
+				<div>
+					<div className="relative overflow-x-auto">
+						<h4 className=" text-gray-700 text-lg px-3  py-1 -mb-2 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 ">
+							Purchase Info
+						</h4>
+						<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+								<tr>
+									<th scope="col" className="px-6 py-2">
+										Image
 									</th>
-									<td className="px-6 py-4">White</td>
-									<td className="px-6 py-4">Laptop PC</td>
-									<td className="px-6 py-4">$1999</td>
+									<th scope="col" className="px-6 py-2">
+										Name
+									</th>
+									<th scope="col" className="px-6 py-2">
+										Purchase Price
+									</th>
+									<th scope="col" className="px-6 py-2">
+										Sell Price
+									</th>
+									<th scope="col" className="px-6 py-2">
+										Quantity
+									</th>
 								</tr>
-								<tr className="bg-white dark:bg-gray-800">
-									<th
-										scope="row"
-										className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-									>
-										Magic Mouse 2
-									</th>
-									<td className="px-6 py-4">Black</td>
-									<td className="px-6 py-4">Accessories</td>
-									<td className="px-6 py-4">$99</td>
+							</thead>
+							<tbody>
+								<tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+									<td className="px-6 py-3">Apple MacBook Pro 17</td>
+									<td className="px-6 py-3">Laptop</td>
+									<td className="px-6 py-3">$2999</td>
+									<td className="px-6 py-3">$2999</td>
+									<td className="px-6 py-3">$2999</td>
 								</tr>
 							</tbody>
 						</table>

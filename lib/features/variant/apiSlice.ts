@@ -23,7 +23,7 @@ export const api = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return ['Variant'];
+				return ['Variant', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -38,7 +38,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Variant'];
+				return ['Variant', 'ProductsStoreData'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -48,7 +48,7 @@ export const api = apiSlice.injectEndpoints({
 				url: `variant/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Variant'],
+			invalidatesTags: ['Variant', 'ProductsStoreData'],
 		}),
 
 		updateVariantStatus: builder.mutation<any, any>({
@@ -62,7 +62,11 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Variant', { type: 'Variant', id: arg.id }];
+				return [
+					'Variant',
+					'ProductsStoreData',
+					{ type: 'Variant', id: arg.id },
+				];
 			},
 		}),
 	}),

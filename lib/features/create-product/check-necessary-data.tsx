@@ -2,6 +2,7 @@ import React from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { DynamicIcon } from '@/components/actions';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 type DataProps = {
 	category: Array<any>;
@@ -10,6 +11,9 @@ type DataProps = {
 	supplier: Array<any>;
 	warehouse: Array<any>;
 	store: Array<any>;
+	warranty: Array<any>;
+	unit: Array<any>;
+	variant: Array<any>;
 };
 
 export function CheckNecessaryData({ data }: { data: DataProps }) {
@@ -58,33 +62,68 @@ export function CheckNecessaryData({ data }: { data: DataProps }) {
 	return (
 		<div>
 			{missingData.map((item, index) => (
-				<Alert key={index} variant="destructive" className="mb-4">
-					<DynamicIcon icon="ExclamationTriangleIcon" className="h-4 w-4" />
-					<AlertTitle>Error</AlertTitle>
-					<AlertDescription>
-						<Link href={item.link}>{item.message}</Link>
-					</AlertDescription>
-				</Alert>
+				<CustomAlert item={item} key={index} />
 			))}
+
+			{data?.unit.length === 0 && (
+				<CloseAlert
+					item={{
+						message: 'For Variant Product, You need to add a unit',
+						link: '/inventory/units',
+					}}
+				/>
+			)}
+			{data?.variant.length === 0 && (
+				<CloseAlert
+					item={{
+						message: 'For Variant Product, You need to add a variant',
+						link: '/inventory/variant-attributes',
+					}}
+				/>
+			)}
 		</div>
 	);
 }
 
-// Example usage
-// const testData = {
-//   category: [
-//     { _id: '1', name: 'Category 1' },
-//     { _id: '2', name: 'Category 2' },
-//   ],
-//   subCategory: [],
-//   brand: [
-//     { _id: '1', name: 'Brand 1' },
-//   ],
-//   supplier: [],
-//   warehouse: [],
-//   store: [{ _id: '1', name: 'Store 1' }],
-// };
+export const CustomAlert = ({
+	item,
+}: {
+	item: { message: string; link: string };
+}) => {
+	return (
+		<Alert variant="destructive" className="mb-4">
+			<DynamicIcon icon="ExclamationTriangleIcon" className="h-4 w-4" />
+			<AlertTitle>Error</AlertTitle>
+			<AlertDescription>
+				<Link href={item.link}>{item.message}</Link>
+			</AlertDescription>
+		</Alert>
+	);
+};
 
-// export default function App() {
-//   return <CheckNecessaryData data={testData} />;
-// }
+export const CloseAlert = ({
+	item,
+}: {
+	item: { message: string; link: string };
+}) => {
+	const [open, setOpen] = React.useState(true);
+	if (!open) return null;
+	return (
+		<Alert variant="destructive" className="mb-4">
+			<DynamicIcon icon="ExclamationTriangleIcon" className="h-4 w-4" />
+			<AlertTitle>Error</AlertTitle>
+			<AlertDescription>
+				<Link href={item.link}>{item.message}</Link>
+			</AlertDescription>
+			<Button
+				type="button"
+				onClick={() => setOpen(false)}
+				variant="destructive"
+				size="icon"
+				className="h-8 w-8 absolute top-2 right-2"
+			>
+				<DynamicIcon icon="X" />
+			</Button>
+		</Alert>
+	);
+};

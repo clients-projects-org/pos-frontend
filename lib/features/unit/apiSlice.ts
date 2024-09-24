@@ -23,9 +23,8 @@ export const api = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return ['Unit'];
+				return ['Unit', 'ProductsStoreData'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		updateUnit: builder.mutation<any, any>({
@@ -38,9 +37,8 @@ export const api = apiSlice.injectEndpoints({
 			},
 
 			invalidatesTags: () => {
-				return ['Unit'];
+				return ['Unit', 'ProductsStoreData'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		deleteUnit: builder.mutation<any, string>({
@@ -48,7 +46,7 @@ export const api = apiSlice.injectEndpoints({
 				url: `unit/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Unit'],
+			invalidatesTags: ['Unit', 'ProductsStoreData'],
 		}),
 
 		updateUnitStatus: builder.mutation<any, any>({
@@ -59,7 +57,7 @@ export const api = apiSlice.injectEndpoints({
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Unit', { type: 'Unit', id: arg.id }];
+				return ['Unit', { type: 'Unit', id: arg.id }, 'ProductsStoreData'];
 			},
 		}),
 	}),

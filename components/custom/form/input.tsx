@@ -40,6 +40,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 import { image } from '@/assets/image';
 import { HTMLInputTypeAttribute } from 'react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export function FInput({
 	label,
@@ -502,6 +503,40 @@ export function RFCheck({
 	);
 }
 
+function RadioVariantType({ methods }: any) {
+	return (
+		<FormField
+			control={methods.control}
+			name="product_type"
+			render={({ field }) => (
+				<FormItem className="space-y-3">
+					<FormLabel>Product Type</FormLabel>
+					<FormControl>
+						<RadioGroup
+							onValueChange={field.onChange}
+							defaultValue={field.value}
+							className="flex items-center gap-3"
+						>
+							<FormItem className="flex items-center space-x-3 space-y-0">
+								<FormControl>
+									<RadioGroupItem value="single" />
+								</FormControl>
+								<FormLabel className="font-normal">Single</FormLabel>
+							</FormItem>
+							<FormItem className="flex items-center space-x-3 space-y-0">
+								<FormControl>
+									<RadioGroupItem value="variant" />
+								</FormControl>
+								<FormLabel className="font-normal">Variant</FormLabel>
+							</FormItem>
+						</RadioGroup>
+					</FormControl>
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
+	);
+}
 export const RFrom = {
 	RFInput,
 	RFSelect,
@@ -514,5 +549,6 @@ export const RFrom = {
 	RFISelectHasIcon,
 	RFCheck,
 	RFProductImage,
+	RadioVariantType,
 	RFProductGalleryImage,
 };
