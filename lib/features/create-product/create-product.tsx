@@ -10,7 +10,14 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { MultiSelector2, RFrom } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
-import { createZodFrom, FormSchema, FormValues } from './product.zod';
+import {
+	createZodForm2,
+	createZodFrom,
+	FormSchema,
+	FormValues,
+	productSchema,
+	ProductValues,
+} from './product.zod';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import {
 	useGetStoreProductQuery,
@@ -32,7 +39,7 @@ import { useFieldArray } from 'react-hook-form';
 
 export function CreateProduct() {
 	const router = useRouter();
-	const { methods } = createZodFrom();
+	const { methods } = createZodForm2();
 	const { fields, append, remove } = useFieldArray({
 		control: methods.control,
 		name: 'variants',
@@ -50,14 +57,14 @@ export function CreateProduct() {
 
 	const [store, { isLoading }] = useStoreProductsMutation();
 
-	async function onSubmit(eventData: FormValues) {
+	async function onSubmit(eventData: ProductValues) {
 		try {
 			const response = await store(eventData as any).unwrap();
 			apiReqResponse(response);
 			methods.reset();
 			router.push('/inventory/products');
 		} catch (error: unknown) {
-			apiErrorResponse(error, methods, FormSchema);
+			apiErrorResponse(error, methods, productSchema);
 		}
 	}
 	const category = methods.watch('category_id');
@@ -352,13 +359,6 @@ export function CreateProduct() {
 															name="discount_value"
 															type="number"
 														/>
-
-														<RFrom.RFInput
-															label="Alert Quantity"
-															methods={methods}
-															name="alert_quantity"
-															type="number"
-														/>
 													</div>
 												)}
 												{product_type === 'variant' && (
@@ -433,7 +433,7 @@ export function CreateProduct() {
 
 																{/* Quantity Input */}
 																<RFrom.RFInput
-																	label="Sell Price"
+																	label="Quantity"
 																	methods={methods}
 																	name={`variants[${index}].quantity`}
 																	type="number"
@@ -468,6 +468,15 @@ export function CreateProduct() {
 														)}
 													</div>
 												)}
+
+												<div className="grid grid-cols-3">
+													<RFrom.RFInput
+														label="Alert Quantity"
+														methods={methods}
+														name="alert_quantity"
+														type="number"
+													/>
+												</div>
 											</AccordionContent>
 										</AccordionItem>
 
