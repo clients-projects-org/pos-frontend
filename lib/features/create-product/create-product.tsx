@@ -58,11 +58,12 @@ export function CreateProduct() {
 	const [store, { isLoading }] = useStoreProductsMutation();
 
 	async function onSubmit(eventData: ProductValues) {
+		console.log(eventData, 'eventData');
 		try {
 			const response = await store(eventData as any).unwrap();
 			apiReqResponse(response);
 			methods.reset();
-			router.push('/inventory/products');
+			// router.push('/inventory/products');
 		} catch (error: unknown) {
 			apiErrorResponse(error, methods, productSchema);
 		}

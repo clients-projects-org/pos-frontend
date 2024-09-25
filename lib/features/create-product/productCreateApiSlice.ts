@@ -36,6 +36,12 @@ export const productApi = apiSlice.injectEndpoints({
 						value?.forEach((item: any) => {
 							body.append('gallery_images', item);
 						});
+					} else if (key === 'tags') {
+						value?.forEach((item: any) => {
+							body.append('tags[]', item);
+						});
+					} else if (key === 'variants') {
+						body.append('variants', JSON.stringify(value));
 					} else {
 						body.append(key, value);
 					}

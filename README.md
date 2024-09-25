@@ -2,11 +2,14 @@
 https://dreamspos.dreamstechnologies.com/html/template/blank-page.html
 https://pos27.skymoonlabs.com/product/create
 
+https://v0.dev/r/qeiIKxe0hwn 
+
 multi select page
 https://shadcnui-expansions.typeart.cc/docs/multiple-selector
 https://zod.dev/
 https://www.npmjs.com/package/@hookform/resolvers
 https://react-hook-form.com/get-started
+https://v0.dev/t/8f9c1eZPrb5
 
 ```html
 <!-- template top -->

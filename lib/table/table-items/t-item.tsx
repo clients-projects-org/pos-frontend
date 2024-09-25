@@ -181,6 +181,47 @@ const Category = () => {
 		},
 	};
 };
+const ProductType = () => {
+	return {
+		accessorKey: 'product_type',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Type
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
+
+		cell: ({ row }: any) => {
+			return (
+				<div className="capitalize whitespace-nowrap">
+					{row.original.product_type ? (
+						<>
+							{row.original.product_type && (
+								<Badge
+									className="capitalize"
+									variant={
+										row.original.product_type === 'single'
+											? 'outline'
+											: 'secondary'
+									}
+								>
+									{row.original.product_type}
+								</Badge>
+							)}
+						</>
+					) : (
+						'N/A'
+					)}
+				</div>
+			);
+		},
+	};
+};
 
 const Text = (name: any, label: any) => {
 	return {
@@ -306,4 +347,5 @@ export const TableItem = {
 	CreatedBy,
 	Category,
 	OnlyImage,
+	ProductType,
 };

@@ -29,6 +29,7 @@ const categoryColumn: ColumnDef<ProductType>[] = [
 	TableItem.SelectBox(),
 	TableItem.OnlyImage(),
 	TableItem.Text('name', 'Name'),
+	TableItem.ProductType(),
 	TableItem.Text('quantity', 'Quantity'),
 	TableItem.Text('buy_price', 'Buy Price'),
 	TableItem.Text('sell_price', 'Sell Price'),
@@ -88,21 +89,6 @@ const Filter = ({
 					>
 						Draft
 					</DropdownMenuCheckboxItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="outline" className=" ">
-						<DynamicIcon icon="File" className="h-4 w-4 sm:mr-2" />
-						<span className="sr-only sm:not-sr-only">Export</span>
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuLabel>Filter by</DropdownMenuLabel>
-					<DropdownMenuSeparator />
-					<DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
-					<DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-					<DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</>
