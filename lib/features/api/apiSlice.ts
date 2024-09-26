@@ -42,6 +42,7 @@ export const apiSlice = createApi({
 		'Sidebar',
 		'Products',
 		'ProductsStoreData',
+		'PaymentMethod',
 	],
 	keepUnusedDataFor: 50000,
 });

@@ -8,7 +8,7 @@ export const statusData = [
 export type StatusTypeApi = StatusType | 'all';
 export type PeriodsType = 'day' | 'week' | 'month' | 'year';
 export type UseRole = 'admin' | 'supper admin' | 'staff' | 'user';
-export type DiscountType = 'flat' | 'percentage' | 'none';
+export type DiscountType = 'fixed' | 'percentage' | 'none';
 export type ImageType = 'image' | 'icon';
 export type ProductStatusType =
 	| 'draft'
@@ -262,7 +262,7 @@ export type CouponType = {
 	name?: string;
 	image: string;
 	image_type: 'image' | 'icon';
-	coupon_type: 'flat' | 'percentage';
+	coupon_type: 'fixed' | 'percentage';
 	status?: StatusType;
 	amount: number;
 	limitation: number;

@@ -17,7 +17,7 @@ const StatusOptions = {
 	],
 	flatPercent: [
 		{ value: 'none', label: 'None' },
-		{ value: 'flat', label: 'Flat' },
+		{ value: 'fixed', label: 'Fixed' },
 		{ value: 'percentage', label: 'Percentage' },
 	],
 	periods: [

@@ -4,7 +4,7 @@ const status = z.enum(['draft', 'active', 'deactivated'], {
 	message: 'Status is Required',
 });
 
-const coupon_type = z.enum(['flat', 'percentage'], {
+const coupon_type = z.enum(['fixed', 'percentage'], {
 	message: 'Coupon Type is Required',
 });
 

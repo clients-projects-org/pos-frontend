@@ -43,7 +43,7 @@ export function Store({ slug }: { slug?: string }) {
 			image_type: 'icon',
 			description: '',
 			amount: '',
-			coupon_type: 'flat',
+			coupon_type: 'fixed',
 			expire_date: new Date(),
 			limitation: '',
 		},

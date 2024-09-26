@@ -83,7 +83,7 @@ export const FormSchema = z
 			.refine((val) => val === null || !isNaN(val), {
 				message: 'Discount value must be a number',
 			}),
-		discount_type: z.enum(['flat', 'percentage', 'none']).optional(),
+		discount_type: z.enum(['fixed', 'percentage', 'none']).optional(),
 
 		// variant product fields
 		variants: z
@@ -311,7 +311,7 @@ const singleProductFields = z.object({
 		.refine((val) => !isNaN(val), {
 			message: 'Discount value must be a number',
 		}),
-	discount_type: z.enum(['flat', 'percentage', 'none'], {
+	discount_type: z.enum(['fixed', 'percentage', 'none'], {
 		message: 'Discount Type is Required',
 	}),
 });

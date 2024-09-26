@@ -6,3 +6,4 @@ export * from './apiError';
 export * from './apiResponse';
 export * from './apiDeleteAction';
 export * from './apiStatusAction';
+export * from './generate-number';

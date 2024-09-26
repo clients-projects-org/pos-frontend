@@ -24,6 +24,7 @@ import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { useGetStoreProductQuery } from '../create-product';
 import { Form } from '@/components/ui/form';
 import Image from 'next/image';
+import { PurchaseSelectProduct } from './purchase.select-product';
 type FormValues = z.infer<typeof FormSchema>;
 
 interface FormProps {
@@ -123,25 +124,10 @@ const FormMutation: React.FC<FormProps> = ({
 						</SelectGroup>
 					</RFrom.RFSelect>
 
-					<RFrom.RFSelect
-						methods={methods}
-						data={data?.data?.supplier}
-						label="Product"
-						name="warehouse_id"
-					>
-						<SelectGroup>
-							<SelectLabel>Warehouse All List</SelectLabel>
-							{data?.data?.warehouse?.map((dev: SupplierType) => (
-								<SelectItem
-									key={dev._id}
-									className="capitalize"
-									value={dev._id}
-								>
-									{dev.name}
-								</SelectItem>
-							))}
-						</SelectGroup>
-					</RFrom.RFSelect>
+					<div className="flex flex-col gap-3">
+						<Label className="mt-1.5">Product Select</Label>
+						<PurchaseSelectProduct />
+					</div>
 
 					<RFrom.RFCalender
 						label="Purchase Date"
