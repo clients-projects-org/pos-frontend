@@ -43,6 +43,7 @@ export const apiSlice = createApi({
 		'Products',
 		'ProductsStoreData',
 		'PaymentMethod',
+		'PurchasesCreateData',
 	],
 	keepUnusedDataFor: 50000,
 });

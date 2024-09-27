@@ -9,11 +9,11 @@ export const productApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getStoreProduct: builder.query<any, void>({
-			query: (): string => `product/store-data`,
+		getCreateDataPurchase: builder.query<any, void>({
+			query: (): string => `purchase/create-data`,
 
 			providesTags: (result, error, arg) => {
-				return ['ProductsStoreData'];
+				return ['PurchasesCreateData'];
 			},
 		}),
 
@@ -92,7 +92,7 @@ export const productApi = apiSlice.injectEndpoints({
 
 export const {
 	useGetProductsQuery,
-	useGetStoreProductQuery,
+	useGetCreateDataPurchaseQuery,
 	useGetProductsByIdQuery,
 	useStoreProductsMutation,
 	useUpdateProductsMutation,

@@ -19,12 +19,14 @@ import { DevNameType, StatusType, SupplierType } from '@/lib/type';
 import { devZodFrom, FormSchema } from './purchase.zod';
 import { UseFormReturn } from 'react-hook-form';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
-import { useStoreProductsMutation } from './purchaseApiSlice';
+import {
+	useGetCreateDataPurchaseQuery,
+	useStoreProductsMutation,
+} from './purchaseApiSlice';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
-import { useGetStoreProductQuery } from '../create-product';
 import { Form } from '@/components/ui/form';
 import Image from 'next/image';
-import { PurchaseSelectProduct } from './purchase.select-product';
+import { SearchAbleProductSelect } from './purchase.select-product';
 type FormValues = z.infer<typeof FormSchema>;
 
 interface FormProps {
@@ -35,7 +37,6 @@ interface FormProps {
 }
 export function PurchaseStoreModal() {
 	const [open, setOpen] = React.useState(false);
-
 	const { methods } = devZodFrom();
 	const [store, { isLoading }] = useStoreProductsMutation();
 
@@ -93,18 +94,22 @@ const FormMutation: React.FC<FormProps> = ({
 	methods,
 	onSubmit,
 }: FormProps) => {
-	const { data, isLoading } = useGetStoreProductQuery();
+	const { data, isSuccess, isLoading } = useGetCreateDataPurchaseQuery();
 
 	if (isLoading) {
 		return <div>Loading...</div>;
 	}
-
+	const supplier_id = methods.watch('supplier_id');
+	console.log(methods.watch());
+	const getTargetValue = (e) => {
+		console.log(e);
+	};
 	return (
 		<Form {...methods}>
 			<form onSubmit={methods.handleSubmit(onSubmit)} className="grid gap-4">
 				{/* options  */}
 				<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-					<RFrom.RFSelect
+					{/* <RFrom.RFSelect
 						methods={methods}
 						data={data?.data?.supplier}
 						label="Supplier Name"
@@ -122,12 +127,24 @@ const FormMutation: React.FC<FormProps> = ({
 								</SelectItem>
 							))}
 						</SelectGroup>
-					</RFrom.RFSelect>
+					</RFrom.RFSelect> */}
 
-					<div className="flex flex-col gap-3">
-						<Label className="mt-1.5">Product Select</Label>
-						<PurchaseSelectProduct />
-					</div>
+					<RFrom.SearchAbleSelect
+						methods={methods}
+						label="Supplier Select"
+						name="supplier_id"
+						OPTIONS={data?.data?.supplier}
+					/>
+
+					<RFrom.SearchSelectMultiple
+						methods={methods}
+						label="Product Select"
+						name="product_ids"
+						OPTIONS={data?.data?.product?.filter(
+							(e: any) => e.supplier_id === supplier_id
+						)}
+						getTargetValue={getTargetValue}
+					/>
 
 					<RFrom.RFCalender
 						label="Purchase Date"
@@ -136,93 +153,95 @@ const FormMutation: React.FC<FormProps> = ({
 					/>
 					<RFrom.RFInput label="Chalan Number" methods={methods} name="name" />
 				</div>
-				{/* product  */}
-
 				<div>
-					<div className="relative overflow-x-auto">
-						<h4 className=" text-gray-700 text-lg px-3  py-1 -mb-2 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 ">
-							Product Info
-						</h4>
-						<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
-								<tr>
-									<th scope="col" className="px-6 py-2">
-										Image
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Name
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Purchase Price
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Sell Price
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Quantity
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-									<th
-										scope="row"
-										className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-									>
-										<Image
-											className="rounded-md"
-											alt="Product image"
-											src={'https://ui.shadcn.com/placeholder.svg'}
-											width={60}
-											height={60}
-										/>
-									</th>
-									<td className="px-6 py-2">Apple MacBook Pro 17</td>
-									<td className="px-6 py-2">Laptop</td>
-									<td className="px-6 py-2">$2999</td>
-									<td className="px-6 py-2">$2999</td>
-								</tr>
-							</tbody>
-						</table>
+					{/* product  */}
+
+					<div>
+						<div className="relative overflow-x-auto">
+							<h4 className=" text-gray-700 text-lg px-3  py-1 -mb-2 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 ">
+								Product Info
+							</h4>
+							<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+								<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+									<tr>
+										<th scope="col" className="px-6 py-2">
+											Image
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Name
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Purchase Price
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Sell Price
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Quantity
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+										<th
+											scope="row"
+											className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+										>
+											<Image
+												className="rounded-md"
+												alt="Product image"
+												src={'https://ui.shadcn.com/placeholder.svg'}
+												width={60}
+												height={60}
+											/>
+										</th>
+										<td className="px-6 py-2">Apple MacBook Pro 17</td>
+										<td className="px-6 py-2">Laptop</td>
+										<td className="px-6 py-2">$2999</td>
+										<td className="px-6 py-2">$2999</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
-				</div>
 
-				{/* Purchase Info */}
-				<div>
-					<div className="relative overflow-x-auto">
-						<h4 className=" text-gray-700 text-lg px-3  py-1 -mb-2 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 ">
-							Purchase Info
-						</h4>
-						<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
-								<tr>
-									<th scope="col" className="px-6 py-2">
-										Image
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Name
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Purchase Price
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Sell Price
-									</th>
-									<th scope="col" className="px-6 py-2">
-										Quantity
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-									<td className="px-6 py-3">Apple MacBook Pro 17</td>
-									<td className="px-6 py-3">Laptop</td>
-									<td className="px-6 py-3">$2999</td>
-									<td className="px-6 py-3">$2999</td>
-									<td className="px-6 py-3">$2999</td>
-								</tr>
-							</tbody>
-						</table>
+					{/* Purchase Info */}
+					<div>
+						<div className="relative overflow-x-auto">
+							<h4 className=" text-gray-700 text-lg px-3  py-1 -mb-2 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 ">
+								Purchase Info
+							</h4>
+							<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+								<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+									<tr>
+										<th scope="col" className="px-6 py-2">
+											Image
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Name
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Purchase Price
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Sell Price
+										</th>
+										<th scope="col" className="px-6 py-2">
+											Quantity
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+										<td className="px-6 py-3">Apple MacBook Pro 17</td>
+										<td className="px-6 py-3">Laptop</td>
+										<td className="px-6 py-3">$2999</td>
+										<td className="px-6 py-3">$2999</td>
+										<td className="px-6 py-3">$2999</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 

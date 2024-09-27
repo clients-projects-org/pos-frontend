@@ -13,6 +13,14 @@ import { Button } from '@/components/ui/button';
 import { IconModal } from './icon-modal';
 import { isEmptyArray } from '@/lib/actions';
 import {
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from '@/components/ui/command';
+import {
 	Select,
 	SelectContent,
 	SelectItem,
@@ -35,12 +43,13 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { IImageSizeInfoType } from '@/lib/image-size';
-import { Bird, Rabbit, Turtle } from 'lucide-react';
+import { Bird, Check, ChevronsUpDown, Rabbit, Turtle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 import { image } from '@/assets/image';
-import { HTMLInputTypeAttribute } from 'react';
+import React, { HTMLInputTypeAttribute } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { get } from 'http';
 
 export function FInput({
 	label,
@@ -537,6 +546,220 @@ function RadioVariantType({ methods }: any) {
 		/>
 	);
 }
+
+export function SelectSearch({
+	frameworks,
+	onChange,
+	value,
+}: {
+	frameworks: { _id: string; name: string }[];
+	value: string;
+	onChange: (value: string) => void;
+}) {
+	const [open, setOpen] = React.useState(false);
+
+	return (
+		<Popover open={open} onOpenChange={setOpen}>
+			<PopoverTrigger asChild>
+				<Button
+					variant="outline"
+					role="combobox"
+					aria-expanded={open}
+					className="w-full justify-between capitalize"
+				>
+					{value
+						? frameworks?.find((framework) => framework._id === value)?.name
+						: 'Select Item...'}
+					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+				</Button>
+			</PopoverTrigger>
+			<PopoverContent className="p-0">
+				<Command>
+					<CommandInput placeholder="Search item..." />
+					<CommandList>
+						<CommandEmpty className="p-4">No item found.</CommandEmpty>
+						<CommandGroup>
+							{frameworks?.map((framework) => (
+								<CommandItem
+									className="capitalize"
+									key={framework._id}
+									value={framework.name}
+									onSelect={() => {
+										onChange(framework._id === value ? '' : framework._id);
+										setOpen(false);
+									}}
+								>
+									<Check
+										className={cn(
+											'mr-2 h-4 w-4',
+											value === framework._id ? 'opacity-100' : 'opacity-0'
+										)}
+									/>
+									{framework.name}
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</CommandList>
+				</Command>
+			</PopoverContent>
+		</Popover>
+	);
+}
+
+type RFISearchAbleProps<T extends FieldValues> = {
+	methods: UseFormReturn<T>;
+	getTargetValue?: any;
+	label: string;
+	OPTIONS?: any[];
+	name: Path<T>;
+};
+
+function SearchAbleSelect<T extends FieldValues>({
+	methods,
+	label,
+	OPTIONS,
+	name,
+}: RFISearchAbleProps<T>) {
+	return (
+		<FormField
+			control={methods.control}
+			name={name}
+			render={({ field }) => (
+				<FormItem className="space-y-3">
+					<FormLabel className="block">{label}</FormLabel>
+					<FormControl>
+						{OPTIONS && (
+							<SelectSearch
+								frameworks={OPTIONS}
+								value={field.value}
+								onChange={field.onChange}
+							/>
+						)}
+					</FormControl>
+
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
+	);
+}
+
+function SearchSelectMultiple<T extends FieldValues>({
+	methods,
+	label,
+	OPTIONS,
+	name,
+	getTargetValue,
+}: RFISearchAbleProps<T>) {
+	return (
+		<FormField
+			control={methods.control}
+			name={name}
+			render={({ field }) => (
+				<FormItem className="space-y-3">
+					<FormLabel className="block">{label}</FormLabel>
+					<FormControl>
+						{OPTIONS && (
+							<SelectSearchMultiple
+								frameworks={OPTIONS}
+								value={field.value || []} // Ensure the value is an array
+								onChange={field.onChange} // Pass the onChange handler
+								getTargetValue={getTargetValue}
+							/>
+						)}
+					</FormControl>
+
+					<FormMessage />
+				</FormItem>
+			)}
+		/>
+	);
+}
+
+function SelectSearchMultiple({
+	frameworks,
+	onChange,
+	value, // value will now be an array of selected ids
+	getTargetValue,
+}: {
+	frameworks: { _id: string; name: string }[];
+	value: string[]; // Array of selected values
+	onChange: (value: string[]) => void; // Update onChange to accept an array
+	getTargetValue?: (id: string) => void;
+}) {
+	const [open, setOpen] = React.useState(false);
+
+	// Check if an item is selected
+	const isSelected = (id: string) => value.includes(id);
+
+	// Toggle the selection of an item
+	const handleSelect = (id: string) => {
+		if (getTargetValue) {
+			getTargetValue(id);
+		}
+		console.log(id, 'click id ');
+		if (isSelected(id)) {
+			// Remove the item from the selected list if already selected
+			onChange(value.filter((selectedId) => selectedId !== id));
+		} else {
+			// Add the item to the selected list if not already selected
+			onChange([...value, id]);
+		}
+	};
+
+	return (
+		<Popover open={open} onOpenChange={setOpen}>
+			<PopoverTrigger asChild>
+				<Button
+					variant="outline"
+					role="combobox"
+					aria-expanded={open}
+					className="w-full justify-between capitalize"
+				>
+					{/* Display selected items, or placeholder if none selected */}
+					{value.length > 0
+						? value
+								.map(
+									(id) =>
+										frameworks.find((framework) => framework._id === id)?.name
+								)
+								.join(', ')
+						: 'Select Items...'}
+					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+				</Button>
+			</PopoverTrigger>
+			<PopoverContent className="p-0">
+				<Command>
+					<CommandInput placeholder="Search items..." />
+					<CommandList>
+						<CommandEmpty className="p-4">No item found.</CommandEmpty>
+						<CommandGroup>
+							{frameworks?.map((framework) => (
+								<CommandItem
+									className="capitalize"
+									key={framework._id}
+									value={framework.name}
+									onSelect={() => {
+										handleSelect(framework._id); // Toggle selection on click
+									}}
+								>
+									<Check
+										className={cn(
+											'mr-2 h-4 w-4',
+											isSelected(framework._id) ? 'opacity-100' : 'opacity-0'
+										)}
+									/>
+									{framework.name}
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</CommandList>
+				</Command>
+			</PopoverContent>
+		</Popover>
+	);
+}
+
 export const RFrom = {
 	RFInput,
 	RFSelect,
@@ -551,4 +774,6 @@ export const RFrom = {
 	RFProductImage,
 	RadioVariantType,
 	RFProductGalleryImage,
+	SearchAbleSelect,
+	SearchSelectMultiple,
 };
