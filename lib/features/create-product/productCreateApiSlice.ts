@@ -1,5 +1,14 @@
 import { apiSlice } from '../api/apiSlice';
-
+import { ProductTypeView, ProductVariant } from './product.type';
+type ResponseByIdType = {
+	message: string;
+	statusCode: number;
+	success: boolean;
+	data: {
+		product: ProductTypeView;
+		variants: ProductVariant[] | null;
+	};
+};
 export const productApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getProducts: builder.query<any, string>({
@@ -17,8 +26,15 @@ export const productApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getProductsById: builder.query<any, string>({
+		getProductsById: builder.query<ResponseByIdType, string>({
 			query: (id) => `product/${id}`,
+			providesTags: (result, error, id) => {
+				return [{ type: 'Products', id: id }];
+			},
+		}),
+
+		getProductsSupplierById: builder.query<any, string>({
+			query: (id) => `product/by-supplier/${id}`,
 			providesTags: (result, error, id) => {
 				return [{ type: 'Products', id: id }];
 			},
@@ -104,4 +120,5 @@ export const {
 	useUpdateProductsMutation,
 	useUpdateProductsStatusMutation,
 	useDeleteProductsMutation,
+	useGetProductsSupplierByIdQuery,
 } = productApi;

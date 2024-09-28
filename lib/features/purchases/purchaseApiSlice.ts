@@ -17,13 +17,6 @@ export const productApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getProductsById: builder.query<any, string>({
-			query: (id) => `product/${id}`,
-			providesTags: (result, error, id) => {
-				return [{ type: 'Products', id: id }];
-			},
-		}),
-
 		storeProducts: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
@@ -93,7 +86,6 @@ export const productApi = apiSlice.injectEndpoints({
 export const {
 	useGetProductsQuery,
 	useGetCreateDataPurchaseQuery,
-	useGetProductsByIdQuery,
 	useStoreProductsMutation,
 	useUpdateProductsMutation,
 	useUpdateProductsStatusMutation,

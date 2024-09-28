@@ -5,6 +5,7 @@ import { quotesApiSlice } from './features/quotes/quotesApiSlice';
 import { apiSlice } from './features/api/apiSlice';
 import createSlice from './features/dev-permission/createSlice';
 import roleSlice from './features/role/roleSlice';
+import purchaseSlice from './features/purchases/purchaseSlice';
 
 // const rootReducer = combineSlices(counterSlice, quotesApiSlice);
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
 	form: createSlice.reducer,
 	quotesApi: quotesApiSlice.reducer,
 	role: roleSlice.reducer,
+	purchaseProductsSelect: purchaseSlice.reducer,
 	[apiSlice.reducerPath]: apiSlice.reducer,
 });
 

@@ -282,14 +282,26 @@ function RFProductGalleryImage<T extends FieldValues>({
 	);
 }
 
-export function RFSelect({ methods, label, data, children, name }) {
+export function RFSelect({
+	methods,
+	label,
+	data,
+	children,
+	name,
+}: {
+	methods: any;
+	name: any;
+	label?: string | undefined;
+	children: React.ReactNode;
+	data: any[];
+}) {
 	return (
 		<FormField
 			control={methods.control}
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel>{label}</FormLabel>
+					{label && <FormLabel>{label}</FormLabel>}
 					{isEmptyArray(data) && (
 						<p className="text-sm  text-stone-500">No Item Found</p>
 					)}
@@ -297,7 +309,7 @@ export function RFSelect({ methods, label, data, children, name }) {
 						<FormControl>
 							<Select defaultValue={field.value} onValueChange={field.onChange}>
 								<SelectTrigger className="capitalize">
-									<SelectValue placeholder={`Select a ${label}`} />
+									<SelectValue placeholder={`Select ${label ? label : ''}`} />
 								</SelectTrigger>
 								<SelectContent>{children}</SelectContent>
 							</Select>
