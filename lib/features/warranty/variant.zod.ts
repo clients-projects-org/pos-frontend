@@ -21,7 +21,7 @@ export const FormSchema = z
 		// Duration
 		duration: z
 			.string()
-			.min(2, {
+			.min(1, {
 				message: `Duration is Required`,
 			})
 			.max(20, 'Duration must be a maximum 20 characters'),
@@ -84,7 +84,7 @@ export const FormSchemaEdit = z.object({
 	// Duration
 	duration: z
 		.string()
-		.min(2, {
+		.min(1, {
 			message: `Duration is Required`,
 		})
 		.max(20, 'Duration must be a maximum 20 characters'),

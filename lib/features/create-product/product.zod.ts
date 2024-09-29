@@ -51,28 +51,51 @@ export const FormSchema = z
 			.max(550, 'Long Description maximum 550 characters'),
 
 		// price and stock
-		alert_quantity: z
-			.string()
-			.transform((val) => Number(val))
-			.refine((val) => !isNaN(val) && val > 0, {
-				message: 'Alert quantity must be a number greater than 0',
-			}),
 
-		sell_price: z
-			.string()
-			.transform((val) => Number(val))
-			.refine((val) => !isNaN(val) && val > 0, {
-				message: 'Sell price must be a number greater than 0',
-			}),
-		discount_value: z
-			.string()
-			.transform((val) => Number(val))
-			.refine((val) => !isNaN(val), {
-				message: 'Discount value must be a number',
-			}),
+		sell_price: z.preprocess(
+			(val) => {
+				// If it's a string, convert it to a number
+				if (typeof val === 'string') {
+					const num = Number(val);
+					return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+				}
+				return val; // Otherwise return the value unchanged
+			},
+			z.number().min(0, {
+				message: 'Sell price is Required',
+			}) // Validate the number
+		),
+
+		discount_value: z.preprocess(
+			(val) => {
+				// If it's a string, convert it to a number
+				if (typeof val === 'string') {
+					const num = Number(val);
+					return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+				}
+				return val; // Otherwise return the value unchanged
+			},
+			z.number().min(0, {
+				message: 'Discount is Required',
+			}) // Validate the number
+		),
 		discount_type: z.enum(['fixed', 'percentage', 'none'], {
 			message: 'Discount Type is Required',
 		}),
+
+		alert_quantity: z.preprocess(
+			(val) => {
+				// If it's a string, convert it to a number
+				if (typeof val === 'string') {
+					const num = Number(val);
+					return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+				}
+				return val; // Otherwise return the value unchanged
+			},
+			z.number().min(0, {
+				message: 'Alert Quantity is Required',
+			}) // Validate the number
+		),
 
 		// others
 		tags: z.array(z.string()).optional(),
@@ -125,7 +148,7 @@ export const createZodFrom = () => {
 			sell_price: 0,
 			discount_type: 'none',
 			discount_value: 0,
-			alert_quantity: 1,
+			alert_quantity: 0,
 
 			// others
 			manufacture_date: new Date(),

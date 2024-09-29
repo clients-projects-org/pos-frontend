@@ -48,6 +48,10 @@ export const productApi = apiSlice.injectEndpoints({
 						value?.forEach((item: any) => {
 							body.append('store_id[]', item);
 						});
+					} else if (key === 'warehouse_id') {
+						value?.forEach((item: any) => {
+							body.append('warehouse_id[]', item);
+						});
 					} else if (key === 'gallery_images') {
 						value?.forEach((item: any) => {
 							body.append('gallery_images', item);

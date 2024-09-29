@@ -28,9 +28,9 @@ export const api = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		updateWarranty: builder.mutation<any, string>({
+		updateWarranty: builder.mutation<any, any>({
 			query: (payload) => ({
-				url: `/update/store`,
+				url: `warranty/update/${payload._id}`,
 				method: 'PUT',
 				body: payload,
 			}),
