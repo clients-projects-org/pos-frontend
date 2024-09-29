@@ -29,7 +29,7 @@ export type ProductTypeView = {
 	_id: string;
 	created_by: string;
 	supplier_id: string;
-	warehouse_id: string;
+	warehouse_id: string[];
 	store_id: string[];
 	name: string;
 	sku: string;
@@ -41,6 +41,7 @@ export type ProductTypeView = {
 	long_description: string;
 	isFeature: boolean;
 	quantity: number;
+	variant_max_min_qty: string; // "1-10"
 	status: StatusType | 'new';
 	image: string;
 	gallery_images: string[];

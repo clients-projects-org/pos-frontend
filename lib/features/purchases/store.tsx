@@ -13,7 +13,7 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { DynamicIcon } from '@/components/actions';
-import { devZodFrom, FormSchema } from './purchase.zod';
+import { createZodFrom, FormSchema } from './purchase.zod';
 import { UseFormReturn } from 'react-hook-form';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import {
@@ -38,7 +38,7 @@ interface FormProps {
 }
 export function PurchaseStoreModal() {
 	const [open, setOpen] = React.useState(false);
-	const { methods } = devZodFrom();
+	const { methods } = createZodFrom();
 	const [store, { isLoading }] = useStoreProductsMutation();
 
 	async function onSubmit(data: FormValues) {
@@ -72,7 +72,7 @@ export function PurchaseStoreModal() {
 					</span>
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="max-w-[1420px]">
+			<DialogContent className="max-w-full ">
 				<DialogHeader>
 					<DialogTitle className="text-center">Create Purchase</DialogTitle>
 					<DialogDescription className="text-center">
@@ -126,7 +126,7 @@ const FormMutation: React.FC<FormProps> = ({
 	return (
 		<Form {...methods}>
 			<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-				<div className="grid gap-4 max-h-[80vh] overflow-y-auto pr-4">
+				<div className="grid gap-4  max-h-[80vh] overflow-y-auto p-4">
 					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 ">
 						<RFrom.SearchAbleSelect
 							methods={methods}

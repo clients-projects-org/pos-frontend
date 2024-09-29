@@ -1,3 +1,5 @@
+
+```tsx
 'use client';
 
 import {
@@ -10,6 +12,14 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { MultiSelector2, RFrom } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
+import {
+	createZodForm2,
+	createZodFrom,
+	FormSchema,
+	FormValues,
+	productSchema,
+	ProductValues,
+} from './product.zod';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import {
 	useGetStoreProductQuery,
@@ -21,12 +31,24 @@ import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { StoreType, SupplierType } from '@/lib/type';
 import { PageDetailsApiHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
-import { CheckNecessaryData } from './check-necessary-data';
-import { createZodFrom, FormValues, FormSchema } from './product.zod';
+import {
+	CheckNecessaryData,
+	CloseAlert,
+	CustomAlert,
+} from './check-necessary-data';
+import { DynamicIcon } from '@/components/actions';
+import { useFieldArray } from 'react-hook-form';
 
 export function CreateProduct() {
 	const router = useRouter();
-	const { methods } = createZodFrom();
+	const { methods } = createZodForm2();
+	const { fields, append, remove } = useFieldArray({
+		control: methods.control,
+		name: 'variants',
+	});
+	const addVariant = () => {
+		append({ unit_id: '', variant_id: '', quantity: 0 });
+	};
 
 	const {
 		data,
@@ -37,7 +59,7 @@ export function CreateProduct() {
 
 	const [store, { isLoading }] = useStoreProductsMutation();
 
-	async function onSubmit(eventData: FormValues) {
+	async function onSubmit(eventData: ProductValues) {
 		console.log(eventData, 'eventData');
 		try {
 			const response = await store(eventData as any).unwrap();
@@ -45,10 +67,11 @@ export function CreateProduct() {
 			methods.reset();
 			// router.push('/inventory/products');
 		} catch (error: unknown) {
-			apiErrorResponse(error, methods, FormSchema);
+			apiErrorResponse(error, methods, productSchema);
 		}
 	}
 	const category = methods.watch('category_id');
+	const product_type = methods.watch('product_type');
 	const checkError = methods.formState.errors;
 	const testWatch = methods.watch();
 	console.log(testWatch, 'firstName');
@@ -137,20 +160,30 @@ export function CreateProduct() {
 															</SelectGroup>
 														</RFrom.RFSelect>
 													</div>
-
 													<div className="col-span-4">
-														<MultiSelector2
-															label="Warehouse"
+														<RFrom.RFSelect
 															methods={methods}
+															data={data?.data?.supplier}
+															label="Warehouse"
 															name="warehouse_id"
-															OPTIONS={data?.data?.warehouse?.map(
-																(e: StoreType) => ({
-																	label: e.name,
-																	value: e._id,
-																})
-															)}
-														/>
+														>
+															<SelectGroup>
+																<SelectLabel>Warehouse All List</SelectLabel>
+																{data?.data?.warehouse?.map(
+																	(dev: SupplierType) => (
+																		<SelectItem
+																			key={dev._id}
+																			className="capitalize"
+																			value={dev._id}
+																		>
+																			{dev.name}
+																		</SelectItem>
+																	)
+																)}
+															</SelectGroup>
+														</RFrom.RFSelect>
 													</div>
+
 													<div className="col-span-4">
 														<MultiSelector2
 															label="Store"
@@ -287,28 +320,159 @@ export function CreateProduct() {
 												Pricing & Stocks
 											</AccordionTrigger>
 											<AccordionContent className="p-5">
-												<div className=" grid grid-cols-3 gap-x-4 gap-y-6">
-													<RFrom.RFInput
-														label="Sell Price"
-														methods={methods}
-														name="sell_price"
-														type="number"
-													/>
-													<RFrom.RFStatus
-														methods={methods}
-														name="discount_type"
-														placeholder="Select"
-														items="flatPercent"
-														label="Discount Type"
-													/>
+												<div className="mb-5 ">
+													<RFrom.RadioVariantType methods={methods} />
+												</div>
 
-													<RFrom.RFInput
-														label="Discount Value"
-														methods={methods}
-														name="discount_value"
-														type="number"
-													/>
+												{/* single product section  */}
+												{product_type === 'single' && (
+													<div className=" grid grid-cols-3 gap-x-4 gap-y-6">
+														<RFrom.RFInput
+															label="Quantity"
+															methods={methods}
+															name="quantity"
+															type="number"
+														/>
 
+														<RFrom.RFInput
+															label="Buy Price"
+															methods={methods}
+															name="buy_price"
+															type="number"
+														/>
+
+														<RFrom.RFInput
+															label="Sell Price"
+															methods={methods}
+															name="sell_price"
+															type="number"
+														/>
+
+														<RFrom.RFStatus
+															methods={methods}
+															name="discount_type"
+															placeholder="Select"
+															items="flatPercent"
+															label="Discount Type"
+														/>
+
+														<RFrom.RFInput
+															label="Discount Value"
+															methods={methods}
+															name="discount_value"
+															type="number"
+														/>
+													</div>
+												)}
+												{product_type === 'variant' && (
+													<div className="space-y-4 relative pb-4">
+														{data?.data?.unit.length === 0 && (
+															<CustomAlert
+																item={{
+																	link: '/inventory/units',
+																	message: 'Please add a unit',
+																}}
+															/>
+														)}
+														{data?.data?.variant.length === 0 && (
+															<CustomAlert
+																item={{
+																	link: '/inventory/variant-attributes',
+																	message: 'Please add a variant',
+																}}
+															/>
+														)}
+
+														{fields.map((field, index) => (
+															<div
+																key={field.id}
+																className="grid grid-cols-3 gap-x-4 gap-y-6 border p-2 rounded relative"
+															>
+																{/* Unit Selection */}
+																<RFrom.RFSelect
+																	methods={methods}
+																	data={data?.data?.unit}
+																	label="Unit"
+																	name={`variants[${index}].unit_id`}
+																>
+																	<SelectGroup>
+																		<SelectLabel>Unit All List</SelectLabel>
+																		{data?.data?.unit?.map(
+																			(dev: SupplierType) => (
+																				<SelectItem
+																					key={dev._id}
+																					className="capitalize"
+																					value={dev._id}
+																				>
+																					{dev.name}
+																				</SelectItem>
+																			)
+																		)}
+																	</SelectGroup>
+																</RFrom.RFSelect>
+
+																{/* Variant Selection */}
+																<RFrom.RFSelect
+																	methods={methods}
+																	data={data?.data?.variant}
+																	label="Variant"
+																	name={`variants[${index}].variant_id`}
+																>
+																	<SelectGroup>
+																		<SelectLabel>Variant All List</SelectLabel>
+																		{data?.data?.variant?.map(
+																			(dev: SupplierType) => (
+																				<SelectItem
+																					key={dev._id}
+																					className="capitalize"
+																					value={dev._id}
+																				>
+																					{dev.name}
+																				</SelectItem>
+																			)
+																		)}
+																	</SelectGroup>
+																</RFrom.RFSelect>
+
+																{/* Quantity Input */}
+																<RFrom.RFInput
+																	label="Quantity"
+																	methods={methods}
+																	name={`variants[${index}].quantity`}
+																	type="number"
+																/>
+
+																{/* Remove Variant Button */}
+																{fields.length > 1 && (
+																	<Button
+																		variant="destructive"
+																		size="icon"
+																		className="absolute top-0 right-0 h-6 w-6"
+																		onClick={() => remove(index)}
+																		type="button"
+																	>
+																		<DynamicIcon icon="Minus" className="" />
+																	</Button>
+																)}
+															</div>
+														))}
+
+														{/* Add Variant Button */}
+														{fields.length < 5 && (
+															<Button
+																variant="secondary"
+																size="icon"
+																className="absolute -bottom-4 right-0 h-6 w-6"
+																onClick={addVariant}
+																type="button"
+															>
+																<DynamicIcon icon="Plus" className="" />
+															</Button>
+														)}
+													</div>
+												)}
+
+												<div className="grid grid-cols-3">
 													<RFrom.RFInput
 														label="Alert Quantity"
 														methods={methods}
@@ -343,7 +507,33 @@ export function CreateProduct() {
 														/>
 													</div>
 
+													<div className="col-span-4">
+														<RFrom.RFSelect
+															methods={methods}
+															data={data?.data?.supplier}
+															label="Warranty"
+															name="warranty_id"
+														>
+															<SelectGroup>
+																<SelectLabel>Warranty All List</SelectLabel>
+																{data?.data?.warranty?.map(
+																	(dev: SupplierType) => (
+																		<SelectItem
+																			key={dev._id}
+																			className="capitalize"
+																			value={dev._id}
+																		>
+																			{dev.name}
+																		</SelectItem>
+																	)
+																)}
+															</SelectGroup>
+														</RFrom.RFSelect>
+													</div>
+
 													<div className="col-span-6">
+														{/* <FancyMultiSelect label="Tags" /> */}
+														{/* <MultiSelector label="Tags" creatable /> */}
 														<MultiSelector2
 															label="Tags"
 															methods={methods}
