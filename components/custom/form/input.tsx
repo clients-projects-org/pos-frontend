@@ -90,12 +90,14 @@ export function RFInput({
 	label,
 	placeholder = 'type...',
 	type = 'text',
+	disabled,
 }: {
 	methods: any;
 	name: any;
 	label?: string;
 	placeholder?: string;
 	type?: HTMLInputTypeAttribute | undefined;
+	disabled?: boolean | undefined;
 }) {
 	return (
 		<FormField
@@ -109,6 +111,7 @@ export function RFInput({
 							placeholder={placeholder}
 							onWheel={(event) => event.currentTarget.blur()}
 							type={type}
+							disabled={disabled}
 							{...field}
 						/>
 					</FormControl>
@@ -129,7 +132,7 @@ export function RFStatus({
 	name: any;
 	label?: string | undefined;
 	placeholder?: string | undefined;
-	items?: string | undefined;
+	items?: 'periods' | 'actDeDraft' | 'flatPercent';
 }) {
 	return (
 		<FormField
@@ -138,7 +141,7 @@ export function RFStatus({
 			render={({ field }) => {
 				return (
 					<div className="space-y-2">
-						<FormLabel>{label}</FormLabel>
+						{label && <FormLabel>{label}</FormLabel>}
 						<SelectStatus
 							placeholder={placeholder}
 							items={items}
@@ -637,8 +640,8 @@ function SearchAbleSelect<T extends FieldValues>({
 			control={methods.control}
 			name={name}
 			render={({ field }) => (
-				<FormItem className="space-y-3">
-					<FormLabel className="block">{label}</FormLabel>
+				<FormItem className="space-y-2">
+					<FormLabel className="inline-block">{label}</FormLabel>
 					<FormControl>
 						{OPTIONS && (
 							<SelectSearch
@@ -668,8 +671,8 @@ function SearchSelectMultiple<T extends FieldValues>({
 			control={methods.control}
 			name={name}
 			render={({ field }) => (
-				<FormItem className="space-y-3">
-					<FormLabel className="block">{label}</FormLabel>
+				<FormItem className="space-y-2">
+					<FormLabel className="inline-block">{label}</FormLabel>
 					<FormControl>
 						{OPTIONS && (
 							<SelectSearchMultiple

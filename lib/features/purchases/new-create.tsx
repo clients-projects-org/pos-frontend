@@ -32,6 +32,7 @@ interface FormProps {
 	onSubmit: (data: FormValues) => void;
 	isLoading: boolean;
 	type: 'create' | 'edit';
+	setOpen: Function;
 }
 export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
@@ -82,6 +83,7 @@ export function PurchaseStoreModalNew() {
 					methods={methods}
 					onSubmit={onSubmit}
 					type="create"
+					setOpen={setOpen}
 				/>
 			</DialogContent>
 		</Dialog>
@@ -91,6 +93,7 @@ export function PurchaseStoreModalNew() {
 const FormMutation: React.FC<FormProps> = ({
 	methods,
 	onSubmit,
+	setOpen,
 }: FormProps) => {
 	const [id, setId] = useState<string | null>(null);
 
@@ -121,10 +124,9 @@ const FormMutation: React.FC<FormProps> = ({
 				],
 			};
 
-			// Append the new product data into the products array in the form
 			appendProduct(newProduct);
 		}
-	}, [product, id, appendProduct]);
+	}, [product, id]);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -193,7 +195,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 		<Form {...methods}>
 			<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
 				<div className="grid gap-4  max-h-[80vh] overflow-y-auto p-4">
-					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 ">
+					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-5 ">
 						<RFrom.SearchAbleSelect
 							methods={methods}
 							label="Supplier Select"
@@ -220,6 +222,11 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 							label="Chalan Number"
 							methods={methods}
 							name="name"
+						/>
+						<RFrom.RFStatus
+							methods={methods}
+							items="actDeDraft"
+							name="status"
 						/>
 					</div>
 					<div className="space-y-4">
@@ -334,106 +341,187 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 										</tbody>
 									</table>
 
-									{/* Variants for the product */}
-									{methods
-										.watch(`products.${productIndex}.variants`)
-										?.map((variant, variantIndex) => (
-											<div key={variantIndex} className="variant-section">
-												<RFrom.RFSelect
-													methods={methods}
-													data={data?.units}
-													label="Unit"
-													name={`products.${productIndex}.variants.${variantIndex}.unit_id`}
+									<div className="relative">
+										{/* Variants for the product */}
+										{methods
+											.watch(`products.${productIndex}.variants`)
+											?.map((variant, variantIndex) => (
+												<div
+													key={variantIndex}
+													className="grid grid-cols-5 gap-x-4 gap-y-6 border p-2 rounded relative bg-gray-50 dark:bg-gray-900"
 												>
-													<SelectGroup>
-														<SelectLabel>Units</SelectLabel>
-														{data?.units?.map((unit) => (
-															<SelectItem key={unit._id} value={unit._id}>
-																{unit.name}
-															</SelectItem>
-														))}
-													</SelectGroup>
-												</RFrom.RFSelect>
-
-												<RFrom.RFSelect
-													methods={methods}
-													data={data?.variants}
-													label="Variant"
-													name={`products.${productIndex}.variants.${variantIndex}.variant_id`}
-												>
-													<SelectGroup>
-														<SelectLabel>Variants</SelectLabel>
-														{data?.variants?.map((variant) => (
-															<SelectItem key={variant._id} value={variant._id}>
-																{variant.name}
-															</SelectItem>
-														))}
-													</SelectGroup>
-												</RFrom.RFSelect>
-
-												<RFrom.RFInput
-													label="Quantity"
-													methods={methods}
-													name={`products.${productIndex}.variants.${variantIndex}.quantity`}
-													type="number"
-												/>
-
-												{methods.watch(`products.${productIndex}.variants`)
-													.length > 1 && (
-													<Button
-														variant="destructive"
-														size="icon"
-														className="remove-variant"
-														type="button"
-														onClick={() =>
-															removeVariant(productIndex, variantIndex)
-														}
+													<RFrom.RFSelect
+														methods={methods}
+														data={data?.units}
+														label="Unit"
+														name={`products.${productIndex}.variants.${variantIndex}.unit_id`}
 													>
-														<DynamicIcon icon="Minus" />
-													</Button>
-												)}
-											</div>
-										))}
+														<SelectGroup>
+															<SelectLabel>Units</SelectLabel>
+															{data?.units?.map((unit) => (
+																<SelectItem key={unit._id} value={unit._id}>
+																	{unit.name}
+																</SelectItem>
+															))}
+														</SelectGroup>
+													</RFrom.RFSelect>
 
-									{/* Add Variant Button */}
-									<Button
-										variant="secondary"
-										size="icon"
-										onClick={() => addVariant(productIndex)}
-										type="button"
-									>
-										<DynamicIcon icon="Plus" />
-									</Button>
+													<RFrom.RFSelect
+														methods={methods}
+														data={data?.variants}
+														label="Variant"
+														name={`products.${productIndex}.variants.${variantIndex}.variant_id`}
+													>
+														<SelectGroup>
+															<SelectLabel>Variants</SelectLabel>
+															{data?.variants?.map((variant) => (
+																<SelectItem
+																	key={variant._id}
+																	value={variant._id}
+																>
+																	{variant.name}
+																</SelectItem>
+															))}
+														</SelectGroup>
+													</RFrom.RFSelect>
+
+													<RFrom.RFInput
+														label="Quantity"
+														methods={methods}
+														name={`products.${productIndex}.variants.${variantIndex}.quantity`}
+														type="number"
+													/>
+													<RFrom.RFInput
+														label="Rate"
+														methods={methods}
+														name={`products.${productIndex}.variants.${variantIndex}.rate`}
+														type="number"
+													/>
+
+													<RFrom.RFInput
+														label="Total"
+														methods={methods}
+														name={`products.${productIndex}.variants.${variantIndex}.total`}
+														type="number"
+														disabled
+														placeholder="0.00"
+													/>
+
+													{methods.watch(`products.${productIndex}.variants`)
+														.length > 1 && (
+														<Button
+															variant="destructive"
+															size="icon"
+															className="absolute -top-3 right-0 h-6 w-6"
+															type="button"
+															onClick={() =>
+																removeVariant(productIndex, variantIndex)
+															}
+														>
+															<DynamicIcon icon="Minus" />
+														</Button>
+													)}
+												</div>
+											))}
+
+										{/* Add Variant Button */}
+										{methods.watch(`products.${productIndex}.variants`).length <
+											7 && (
+											<Button
+												variant="secondary"
+												className="absolute bottom-0 right-0 h-6 w-6"
+												size="icon"
+												onClick={() => addVariant(productIndex)}
+												type="button"
+											>
+												<DynamicIcon icon="Plus" />
+											</Button>
+										)}
+									</div>
 								</div>
 							</div>
 						))}
 					</div>
 
-					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-end mt-8">
 						<RFrom.RFInput
-							label="Order Tax"
+							label="Tax"
 							methods={methods}
 							name="quantity"
 							type="number"
 						/>
-						<RFrom.RFInput
-							label="Discount"
-							methods={methods}
-							name="quantity"
-							type="number"
-						/>
+
 						<RFrom.RFInput
 							label="Shipping"
 							methods={methods}
 							name="quantity"
 							type="number"
 						/>
-
-						<RFrom.RFStatus
+						<RFrom.RFInput
+							label="Payment Method"
 							methods={methods}
-							items="actDeDraft"
-							name="status"
+							name="quantity"
+							type="number"
 						/>
+					</div>
+
+					<div className="flex justify-end mt-3">
+						<div className="max-w-xl  ">
+							<table>
+								<tr>
+									<td className="px-6 py-2">Sub Total</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-6 py-2">100</td>
+								</tr>
+								<tr>
+									<td className="px-6 py-2">Discount Type</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-6 py-2">
+										<RFrom.RFStatus
+											methods={methods}
+											items="flatPercent"
+											name={`products.discount_type`}
+											placeholder="Discount Type"
+											label=""
+										/>
+									</td>
+								</tr>
+								<tr>
+									<td className="px-6 py-2">Discount Value</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-6 py-2">
+										<RFrom.RFInput
+											methods={methods}
+											name={`products.discount_value`}
+											type="number"
+											placeholder="Discount Value"
+										/>
+									</td>
+								</tr>
+								<tr>
+									<td className="px-6 py-2">Paid</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-6 py-2">
+										<RFrom.RFInput
+											methods={methods}
+											name={`products.discount_value`}
+											type="number"
+											placeholder="Paid Value"
+										/>
+									</td>
+								</tr>
+								<tr>
+									<td className="px-6 py-4">Due</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-8 py-4">100</td>
+								</tr>
+								<tr className="border-t text-center font-bold">
+									<td className="px-6 py-2">Grand Total</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-6 py-2">100</td>
+								</tr>
+							</table>
+						</div>
 					</div>
 
 					<div>
@@ -446,6 +534,13 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 				</div>
 
 				<DialogFooter>
+					<Button
+						onClick={() => setOpen(false)}
+						type="button"
+						variant="destructive"
+					>
+						Cancel
+					</Button>
 					<Button type="submit" disabled={isLoading}>
 						{isLoading ? 'Creating...' : 'Create'}
 					</Button>
