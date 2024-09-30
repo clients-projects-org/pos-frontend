@@ -1,14 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-	ProductTypeView,
-	ProductVariant,
-} from '../create-product/product.type';
+import { ProductTypeView } from '../create-product/product.type';
 
 interface DataState {
 	selectedData: {
 		id: string;
 		data: {
-			variants: ProductVariant[] | null;
 			product: ProductTypeView;
 		};
 	}[];
@@ -27,7 +23,6 @@ const purchaseProductSlice = createSlice({
 			action: PayloadAction<{
 				id: string;
 				data: {
-					variants: ProductVariant[] | null;
 					product: ProductTypeView;
 				};
 			}>

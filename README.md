@@ -6,6 +6,10 @@ https://v0.dev/r/qeiIKxe0hwn
 
 multi select page
 https://shadcnui-expansions.typeart.cc/docs/multiple-selector
+
+nested hook form 
+https://codesandbox.io/p/sandbox/frosty-williams-h8cy4?file=%2Fsrc%2Findex.js
+
 https://zod.dev/
 https://www.npmjs.com/package/@hookform/resolvers
 https://react-hook-form.com/get-started

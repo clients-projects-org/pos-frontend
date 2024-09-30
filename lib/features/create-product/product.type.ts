@@ -54,6 +54,10 @@ export type ProductTypeView = {
 		_id: string;
 		name: string;
 	}[];
+	warehouse_data: {
+		_id: string;
+		name: string;
+	}[];
 
 	product_type: 'single' | 'variant';
 	buy_price: number;
@@ -64,10 +68,6 @@ export type ProductTypeView = {
 	manufacture_date: Date;
 	expire_date: Date;
 
-	warehouse_data: {
-		_id: string;
-		name: string;
-	};
 	supplier_data: {
 		_id: string;
 		name: string;

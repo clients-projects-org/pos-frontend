@@ -13,7 +13,6 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { DynamicIcon } from '@/components/actions';
-import { createZodFrom, FormSchema } from './purchase.zod';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import {
@@ -22,12 +21,10 @@ import {
 } from './purchaseApiSlice';
 import { Form } from '@/components/ui/form';
 import Image from 'next/image';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { saveProductData } from './purchaseSlice';
-import { RootState } from '@/lib/store';
 import { useGetProductsByIdQuery } from '../create-product';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { SupplierType } from '@/lib/type';
+import { createZodFromNew, FormSchema } from './new-zod';
 type FormValues = z.infer<typeof FormSchema>;
 
 interface FormProps {
@@ -36,9 +33,9 @@ interface FormProps {
 	isLoading: boolean;
 	type: 'create' | 'edit';
 }
-export function PurchaseStoreModal() {
+export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
-	const { methods } = createZodFrom();
+	const { methods } = createZodFromNew();
 	const [store, { isLoading }] = useStoreProductsMutation();
 
 	async function onSubmit(data: FormValues) {
@@ -74,7 +71,7 @@ export function PurchaseStoreModal() {
 			</DialogTrigger>
 			<DialogContent className="max-w-full ">
 				<DialogHeader>
-					<DialogTitle className="text-center">Create Purchase</DialogTitle>
+					<DialogTitle className="text-center">Create Purchase New</DialogTitle>
 					<DialogDescription className="text-center">
 						Purchase is a transaction of goods from supplier
 					</DialogDescription>
@@ -97,41 +94,101 @@ const FormMutation: React.FC<FormProps> = ({
 }: FormProps) => {
 	const [id, setId] = useState<string | null>(null);
 
-	const dispatch = useAppDispatch();
-	const selectedData = useAppSelector(
-		(state: RootState) => state.purchaseProductsSelect
-	);
-
-	const { fields, append, remove } = useFieldArray({
+	const {
+		fields: productFields,
+		append: appendProduct,
+		remove: removeProduct,
+	} = useFieldArray({
 		control: methods.control,
-		name: 'variants',
+		name: 'products',
 	});
-	const addVariant = () => {
-		append({ unit_id: '', variant_id: '', quantity: 0 });
-	};
 
-	console.log(selectedData.selectedData, 'selectedData');
 	const { data, isSuccess, isLoading } = useGetCreateDataPurchaseQuery();
-	const { data: products } = useGetProductsByIdQuery(id || '', {
+	const { data: product } = useGetProductsByIdQuery(id || '', {
 		skip: !id,
 	});
-	console.log(data, 'data');
 
 	useEffect(() => {
-		if (products && id) {
-			dispatch(saveProductData({ id, data: products?.data }));
+		if (product?.data && id) {
+			const newProduct = {
+				...product.data.product,
+				variants: [
+					{
+						unit: '',
+						variant_id: '',
+						quantity: '',
+					},
+				],
+			};
+
+			// Append the new product data into the products array in the form
+			appendProduct(newProduct);
 		}
-	}, [products, id, dispatch]);
+	}, [product, id, appendProduct]);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
 	}
 	const supplier_id = methods.watch('supplier_id');
-	console.log(methods.watch());
 	const getTargetValue = (e: string) => {
 		console.log(e);
 		setId(e);
 	};
+	const watch1 = methods.watch();
+	console.log(watch1, 'watch1');
+	// Add a new variant to a specific product by index
+	const addVariant = (productIndex: number) => {
+		methods.setValue(`products.${productIndex}.variants`, [
+			...methods.getValues(`products.${productIndex}.variants`),
+			{ unit_id: '', variant_id: '', quantity: 0 }, // New variant structure
+		]);
+	};
+
+	// Remove a variant from a specific product by index
+	const removeVariant = (productIndex: number, variantIndex: number) => {
+		// Get the current variants for the selected product
+		const currentVariants = methods.getValues(
+			`products.${productIndex}.variants`
+		);
+
+		// Filter out the variant by its index
+		const updatedVariants = currentVariants.filter(
+			(_, idx) => idx !== variantIndex
+		);
+
+		// Update the variants array for the specific product
+		methods.setValue(`products.${productIndex}.variants`, updatedVariants);
+	};
+
+	/* for remove can be helpful 
+    // Add variant to a product at a specific index
+const addVariant = (productIndex: number) => {
+  methods.setValue(`products.${productIndex}.variants`, [
+    ...methods.getValues(`products.${productIndex}.variants`),
+    { unit_id: '', variant_id: '', quantity: 0 },
+  ]);
+};
+
+// Remove variant at a specific index from the product's variants
+const removeVariant = (productIndex: number, variantIndex: number) => {
+  const currentVariants = methods.getValues(`products.${productIndex}.variants`);
+
+  // Remove the variant at the specified index
+  const updatedVariants = currentVariants.filter(
+    (variant: any, index: number) => index !== variantIndex
+  );
+
+  // Update the variants for the product at productIndex
+  methods.setValue(`products.${productIndex}.variants`, updatedVariants);
+};
+
+    */
+	const getVariantFieldArray = (productIndex: number) =>
+		useFieldArray({
+			control: methods.control,
+			name: `products.${productIndex}.variants`,
+		});
+
 	return (
 		<Form {...methods}>
 			<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
@@ -167,9 +224,9 @@ const FormMutation: React.FC<FormProps> = ({
 					</div>
 					<div className="space-y-4">
 						{/* product  */}
-						{selectedData.selectedData?.map((e) => (
-							<div key={e.id} className="">
-								<div className="relative overflow-x-auto ">
+						{productFields?.map((productField, productIndex) => (
+							<div key={productField.id} className="product-section">
+								<div className="relative overflow-x-auto">
 									<table className="w-full text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
 										<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
 											<tr>
@@ -205,24 +262,24 @@ const FormMutation: React.FC<FormProps> = ({
 													<Image
 														className="rounded-md h-10 w-10 object-cover mx-auto"
 														alt="Product image"
-														src={e?.data.product.image}
+														src={productField?.image}
 														width={40}
 														height={40}
 													/>
 												</th>
-												<td className="px-6 py-2 ">{e?.data.product.name}</td>
+												<td className="px-6 py-2 ">{productField?.name}</td>
 
 												<td className="px-6 py-2">
-													{e?.data.product.brand_data.name}
+													{productField?.brand_data.name}
 												</td>
 												<td className="px-6 py-2">
 													<RFrom.RFSelect
 														methods={methods}
-														data={e?.data.product.warehouse_data}
+														data={productField?.warehouse_data}
 														name="warehouse_id"
 													>
 														<SelectGroup>
-															{e?.data.product.warehouse_data?.map((dev) => (
+															{productField?.warehouse_data?.map((dev) => (
 																<SelectItem
 																	key={dev._id}
 																	className="capitalize"
@@ -237,11 +294,11 @@ const FormMutation: React.FC<FormProps> = ({
 												<td className="px-6 py-2">
 													<RFrom.RFSelect
 														methods={methods}
-														data={e?.data.product.warehouse_data}
+														data={productField?.warehouse_data}
 														name="warehouse_id"
 													>
 														<SelectGroup>
-															{e?.data.product.warehouse_data?.map((dev) => (
+															{productField?.warehouse_data?.map((dev) => (
 																<SelectItem
 																	key={dev._id}
 																	className="capitalize"
@@ -256,11 +313,11 @@ const FormMutation: React.FC<FormProps> = ({
 												<td className="px-6 py-2">
 													<RFrom.RFSelect
 														methods={methods}
-														data={e?.data.product.store_data}
+														data={productField?.store_data}
 														name="warehouse_id"
 													>
 														<SelectGroup>
-															{e?.data.product.store_data?.map((dev) => (
+															{productField?.store_data?.map((dev) => (
 																<SelectItem
 																	key={dev._id}
 																	className="capitalize"
@@ -272,98 +329,81 @@ const FormMutation: React.FC<FormProps> = ({
 														</SelectGroup>
 													</RFrom.RFSelect>
 												</td>
-												<td className="px-6 py-2">
-													{e?.data.product.quantity}
-												</td>
+												<td className="px-6 py-2">{productField?.quantity}</td>
 											</tr>
 										</tbody>
 									</table>
-								</div>
-								{/* Purchase Info */}
-								<div className="relative">
-									<div className="overflow-x-auto ">
-										{fields.map((field, index) => (
-											<div
-												key={field.id}
-												className="grid grid-cols-3 gap-x-4 gap-y-6 border p-2 rounded relative bg-gray-50 dark:bg-gray-900"
-											>
-												{/* Unit Selection */}
+
+									{/* Variants for the product */}
+									{methods
+										.watch(`products.${productIndex}.variants`)
+										?.map((variant, variantIndex) => (
+											<div key={variantIndex} className="variant-section">
 												<RFrom.RFSelect
 													methods={methods}
-													data={data?.data?.unit}
+													data={data?.units}
 													label="Unit"
-													name={`variants[${index}].unit_id`}
+													name={`products.${productIndex}.variants.${variantIndex}.unit_id`}
 												>
 													<SelectGroup>
-														<SelectLabel>Unit All List</SelectLabel>
-														{data?.data?.unit?.map((dev: SupplierType) => (
-															<SelectItem
-																key={dev._id}
-																className="capitalize"
-																value={dev._id}
-															>
-																{dev.name}
+														<SelectLabel>Units</SelectLabel>
+														{data?.units?.map((unit) => (
+															<SelectItem key={unit._id} value={unit._id}>
+																{unit.name}
 															</SelectItem>
 														))}
 													</SelectGroup>
 												</RFrom.RFSelect>
 
-												{/* Variant Selection */}
 												<RFrom.RFSelect
 													methods={methods}
-													data={data?.data?.variant}
+													data={data?.variants}
 													label="Variant"
-													name={`variants[${index}].variant_id`}
+													name={`products.${productIndex}.variants.${variantIndex}.variant_id`}
 												>
 													<SelectGroup>
-														<SelectLabel>Variant All List</SelectLabel>
-														{data?.data?.variant?.map((dev: SupplierType) => (
-															<SelectItem
-																key={dev._id}
-																className="capitalize"
-																value={dev._id}
-															>
-																{dev.name}
+														<SelectLabel>Variants</SelectLabel>
+														{data?.variants?.map((variant) => (
+															<SelectItem key={variant._id} value={variant._id}>
+																{variant.name}
 															</SelectItem>
 														))}
 													</SelectGroup>
 												</RFrom.RFSelect>
 
-												{/* Quantity Input */}
 												<RFrom.RFInput
 													label="Quantity"
 													methods={methods}
-													name={`variants[${index}].quantity`}
+													name={`products.${productIndex}.variants.${variantIndex}.quantity`}
 													type="number"
 												/>
 
-												{/* Remove Variant Button */}
-												{fields.length > 1 && (
+												{methods.watch(`products.${productIndex}.variants`)
+													.length > 1 && (
 													<Button
 														variant="destructive"
 														size="icon"
-														className="absolute top-0 right-0 h-6 w-6"
-														onClick={() => remove(index)}
+														className="remove-variant"
 														type="button"
+														onClick={() =>
+															removeVariant(productIndex, variantIndex)
+														}
 													>
-														<DynamicIcon icon="Minus" className="" />
+														<DynamicIcon icon="Minus" />
 													</Button>
 												)}
 											</div>
 										))}
-									</div>
+
 									{/* Add Variant Button */}
-									{fields.length < 5 && (
-										<Button
-											variant="secondary"
-											size="icon"
-											className="absolute -bottom-4 right-0 h-6 w-6"
-											onClick={addVariant}
-											type="button"
-										>
-											<DynamicIcon icon="Plus" className="" />
-										</Button>
-									)}
+									<Button
+										variant="secondary"
+										size="icon"
+										onClick={() => addVariant(productIndex)}
+										type="button"
+									>
+										<DynamicIcon icon="Plus" />
+									</Button>
 								</div>
 							</div>
 						))}

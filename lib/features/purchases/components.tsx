@@ -25,6 +25,7 @@ import {
 	useUpdateProductsStatusMutation,
 } from './purchaseApiSlice';
 import { PurchaseStoreModal } from './store';
+import { PurchaseStoreModalNew } from './new-create';
 
 const Column: ColumnDef<ProductType>[] = [
 	TableItem.SelectBox(),
@@ -209,7 +210,8 @@ const Actions = ({ data }: { data: ProductType }) => {
 };
 
 const Add = () => {
-	return <PurchaseStoreModal />;
+	return <PurchaseStoreModalNew />;
+	// return <PurchaseStoreModal />;
 };
 
 export const PurchaseComponents = { Filter, Add, Column };
