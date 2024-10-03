@@ -16,7 +16,14 @@ const productSchema = z.object({
 });
 
 export const FormSchema = z.object({
+	purchase_status: z.enum(['ordered', 'received']).default('ordered'),
+	reference_number: z
+		.string()
+		.min(1, 'Reference number is required')
+		.max(30, 'Reference number maximum 30 characters'),
+	product_ids: z.array(z.string()).min(1, 'At least one product is required'),
 	supplier_id: z.string().min(2, 'Supplier is required'),
+	payment_method: z.string().min(2, 'payment method is required'),
 	products: z.array(productSchema).min(1, 'At least one product is required'),
 });
 

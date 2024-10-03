@@ -26,6 +26,14 @@ const StatusOptions = {
 		{ value: 'month', label: 'Month' },
 		{ value: 'year', label: 'Year' },
 	],
+	singleVariant: [
+		{ value: 'single', label: 'Single' },
+		{ value: 'variant', label: 'Variant' },
+	],
+	orderReceived: [
+		{ value: 'ordered', label: 'Order' },
+		{ value: 'received', label: 'Received' },
+	],
 };
 
 const SelectStatus = ({

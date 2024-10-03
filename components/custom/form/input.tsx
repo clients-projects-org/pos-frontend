@@ -132,7 +132,12 @@ export function RFStatus({
 	name: any;
 	label?: string | undefined;
 	placeholder?: string | undefined;
-	items?: 'periods' | 'actDeDraft' | 'flatPercent';
+	items?:
+		| 'periods'
+		| 'actDeDraft'
+		| 'flatPercent'
+		| 'singleVariant'
+		| 'orderReceived';
 }) {
 	return (
 		<FormField

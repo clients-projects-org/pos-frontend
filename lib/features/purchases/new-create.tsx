@@ -23,7 +23,6 @@ import { Form } from '@/components/ui/form';
 import Image from 'next/image';
 import { useGetProductsByIdQuery } from '../create-product';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
-import { SupplierType } from '@/lib/type';
 import { createZodFromNew, FormSchema } from './new-zod';
 type FormValues = z.infer<typeof FormSchema>;
 
@@ -31,13 +30,13 @@ interface FormProps {
 	methods: UseFormReturn<FormValues>;
 	onSubmit: (data: FormValues) => void;
 	isLoading: boolean;
-	type: 'create' | 'edit';
 	setOpen: Function;
 }
 export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
 	const { methods } = createZodFromNew();
 	const [store, { isLoading }] = useStoreProductsMutation();
+	console.log(methods.watch(), 'watch');
 
 	async function onSubmit(data: FormValues) {
 		const storeData = {
@@ -105,8 +104,8 @@ const FormMutation: React.FC<FormProps> = ({
 		control: methods.control,
 		name: 'products',
 	});
-
-	const { data, isSuccess, isLoading } = useGetCreateDataPurchaseQuery();
+	console.log(productFields, 'fiels');
+	const { data, isLoading } = useGetCreateDataPurchaseQuery();
 	const { data: product } = useGetProductsByIdQuery(id || '', {
 		skip: !id,
 	});
@@ -124,9 +123,17 @@ const FormMutation: React.FC<FormProps> = ({
 				],
 			};
 
-			appendProduct(newProduct);
+			// Check if the product is already in the productFields array
+			const isProductAlreadyAdded = productFields.some(
+				(field) => field._id === newProduct._id
+			);
+
+			// Only append the product if it's not already in the fields array
+			if (!isProductAlreadyAdded) {
+				appendProduct(newProduct);
+			}
 		}
-	}, [product, id]);
+	}, [product]);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -216,17 +223,17 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 						<RFrom.RFCalender
 							label="Purchase Date"
 							methods={methods}
-							name="manufacture_date"
+							name="purchase_date"
 						/>
 						<RFrom.RFInput
-							label="Chalan Number"
+							label="Reference Number"
 							methods={methods}
-							name="name"
+							name="reference_number"
 						/>
 						<RFrom.RFStatus
 							methods={methods}
-							items="actDeDraft"
-							name="status"
+							items="orderReceived"
+							name="purchase_status"
 						/>
 					</div>
 					<div className="space-y-4">
@@ -280,23 +287,12 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													{productField?.brand_data.name}
 												</td>
 												<td className="px-6 py-2">
-													<RFrom.RFSelect
+													<RFrom.RFStatus
 														methods={methods}
-														data={productField?.warehouse_data}
-														name="warehouse_id"
-													>
-														<SelectGroup>
-															{productField?.warehouse_data?.map((dev) => (
-																<SelectItem
-																	key={dev._id}
-																	className="capitalize"
-																	value={dev._id}
-																>
-																	{dev.name}
-																</SelectItem>
-															))}
-														</SelectGroup>
-													</RFrom.RFSelect>
+														items="singleVariant"
+														name="status"
+														label=""
+													/>
 												</td>
 												<td className="px-6 py-2">
 													<RFrom.RFSelect
@@ -447,21 +443,21 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 						<RFrom.RFInput
 							label="Tax"
 							methods={methods}
-							name="quantity"
+							name="tax"
 							type="number"
 						/>
 
 						<RFrom.RFInput
-							label="Shipping"
+							label="Shipping Cost"
 							methods={methods}
-							name="quantity"
+							name="shipping_cost"
 							type="number"
 						/>
-						<RFrom.RFInput
-							label="Payment Method"
+						<RFrom.SearchAbleSelect
 							methods={methods}
-							name="quantity"
-							type="number"
+							label="Payment Method"
+							name="payment_method"
+							OPTIONS={data?.data?.paymentMethod}
 						/>
 					</div>
 
