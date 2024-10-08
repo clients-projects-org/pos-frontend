@@ -137,7 +137,8 @@ export function RFStatus({
 		| 'actDeDraft'
 		| 'flatPercent'
 		| 'singleVariant'
-		| 'orderReceived';
+		| 'orderReceived'
+		| 'saleRateType';
 }) {
 	return (
 		<FormField
@@ -714,19 +715,18 @@ function SelectSearchMultiple({
 
 	// Toggle the selection of an item
 	const handleSelect = (id: string) => {
-		if (getTargetValue) {
-			getTargetValue(id);
-		}
-		console.log(id, 'click id ');
 		if (isSelected(id)) {
 			// Remove the item from the selected list if already selected
 			onChange(value.filter((selectedId) => selectedId !== id));
 		} else {
 			// Add the item to the selected list if not already selected
 			onChange([...value, id]);
+			if (getTargetValue) {
+				getTargetValue(id);
+			}
 		}
 	};
-
+	console.log(value, 'value');
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>

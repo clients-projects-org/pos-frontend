@@ -30,6 +30,10 @@ const StatusOptions = {
 		{ value: 'single', label: 'Single' },
 		{ value: 'variant', label: 'Variant' },
 	],
+	saleRateType: [
+		{ value: 'individual', label: 'Individual' },
+		{ value: 'global', label: 'Global' },
+	],
 	orderReceived: [
 		{ value: 'ordered', label: 'Order' },
 		{ value: 'received', label: 'Received' },

@@ -12,11 +12,15 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const { session, status } = Session();
+	const { session, status, signOut } = Session();
 	const router = useRouter();
 	const pathname = usePathname(); // Get the current path
-	const { data, isLoading, isError } = useGetSidebarPrivetQuery();
-	// console.log(pathname, 'index');
+	const { data, isLoading, isError, error } = useGetSidebarPrivetQuery();
+	console.log(error, 'index');
+	if (error?.data?.message === 'Unauthorized') {
+		signOut({ redirect: true, callbackUrl: '/login' });
+		return notFound();
+	}
 	useEffect(() => {
 		if (!session?.isLoggedIn && status !== 'loading') {
 			router.push('/login');

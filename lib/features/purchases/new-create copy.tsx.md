@@ -24,8 +24,6 @@ import Image from 'next/image';
 import { useGetProductsByIdQuery } from '../create-product';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { createZodFromNew, FormSchema } from './new-zod';
-import { ProductType } from '@/lib/type';
-import { ProductTypeView } from '../create-product/product.type';
 type FormValues = z.infer<typeof FormSchema>;
 
 interface FormProps {
@@ -98,7 +96,7 @@ const FormMutation: React.FC<FormProps> = ({
 	const [id, setId] = useState<string | null>(null);
 	const supplier_id = methods.watch('supplier_id');
 	const product_ids = methods.watch('product_ids');
-	const [productState, setProductState] = useState<ProductTypeView[]>([]);
+	const [productState, setProductState] = useState([]);
 	const prevSupplierId = useRef(supplier_id);
 	const {
 		fields: productFields,
@@ -113,7 +111,6 @@ const FormMutation: React.FC<FormProps> = ({
 		skip: !id,
 	});
 
-	// set new state all products
 	useEffect(() => {
 		if (product?.data?.product && id) {
 			setProductState((prevState) => {
@@ -158,20 +155,20 @@ const FormMutation: React.FC<FormProps> = ({
 	}, [product, id]);
 	
 	*/
+
 	useEffect(() => {
 		if (id) {
 			// Find the product in productState by id
 			const selectedProduct = productState.find((prod) => prod._id === id);
+			console.log('fire');
 			if (selectedProduct) {
 				const newProduct = {
 					...selectedProduct,
-					product_type: 'single',
 					variants: [
 						{
-							unit_id: '',
+							unit: '',
 							variant_id: '',
-							quantity: 1,
-							rate: 1,
+							quantity: '',
 						},
 					],
 				};
@@ -188,13 +185,11 @@ const FormMutation: React.FC<FormProps> = ({
 			}
 		}
 	}, [productState, id, setId]); // Run this effect when productState or id changes
-	console.log(productFields, 'check');
+
 	useEffect(() => {
-		const filteredProductFields = productFields?.filter(
-			(productField) =>
-				productField._id && product_ids.includes(productField._id)
+		const filteredProductFields = productFields?.filter((productField) =>
+			product_ids.includes(productField._id)
 		);
-		console.log(filteredProductFields, 'filteredProductFields');
 		methods.setValue('products', filteredProductFields);
 	}, [product_ids]);
 
@@ -209,7 +204,7 @@ const FormMutation: React.FC<FormProps> = ({
 
 				if (confirmed) {
 					// Remove all existing products at once
-					removeProduct(Array.from(Array(productFields.length).keys()));
+					removeProduct([...Array(productFields.length).keys()]);
 					methods.setValue('product_ids', []);
 				} else {
 					// Revert back to the previous supplier_id if the user cancels
@@ -231,7 +226,7 @@ const FormMutation: React.FC<FormProps> = ({
 	const addVariant = (productIndex: number) => {
 		methods.setValue(`products.${productIndex}.variants`, [
 			...methods.getValues(`products.${productIndex}.variants`),
-			{ unit_id: '', variant_id: '', quantity: 1, rate: 1 }, // New variant structure
+			{ unit_id: '', variant_id: '', quantity: 0 }, // New variant structure
 		]);
 	};
 
@@ -251,12 +246,6 @@ const FormMutation: React.FC<FormProps> = ({
 		methods.setValue(`products.${productIndex}.variants`, updatedVariants);
 	};
 
-	const removeProductHandler = (productIndex: number, id: string) => {
-		removeProduct([productIndex]);
-		// remove ids
-		const filtered_ids = product_ids.filter((product_id) => product_id !== id);
-		methods.setValue('product_ids', filtered_ids);
-	};
 	/* for remove can be helpful 
     // Add variant to a product at a specific index
 const addVariant = (productIndex: number) => {
@@ -342,9 +331,11 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													Product Name
 												</th>
 												<th scope="col" className="px-6 py-2">
-													Product Type
+													Select Type
 												</th>
-
+												<th scope="col" className="px-6 py-2">
+													Select Rate Type
+												</th>
 												<th scope="col" className="px-6 py-2">
 													Select Warehouse
 												</th>
@@ -352,23 +343,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													Select Store
 												</th>
 												<th scope="col" className="px-6 py-2">
-													Previous Qty{' '}
-													{productField?._id && (
-														<Button
-															variant="destructive"
-															size="icon"
-															className="absolute top-0 right-0 h-6 w-6"
-															type="button"
-															onClick={() =>
-																removeProductHandler(
-																	productIndex,
-																	productField?._id
-																)
-															}
-														>
-															<DynamicIcon icon="Minus" />
-														</Button>
-													)}
+													Previous Qty
 												</th>
 											</tr>
 										</thead>
@@ -381,64 +356,65 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													<Image
 														className="rounded-md h-10 w-10 object-cover mx-auto"
 														alt="Product image"
-														src={(productField as any).image ?? ''}
+														src={productField?.image}
 														width={40}
 														height={40}
 													/>
 												</th>
-												<td className="px-6 py-2 ">
-													{productField.name ?? ''}
-												</td>
+												<td className="px-6 py-2 ">{productField?.name}</td>
 												<td className="px-6 py-2">
 													<RFrom.RFStatus
 														methods={methods}
 														items="singleVariant"
-														name={`products.${productIndex}.product_type`}
+														name="status"
 														label=""
 													/>
 												</td>
-
 												<td className="px-6 py-2">
-													{productField?.warehouse_data && (
-														<RFrom.RFSelect
-															methods={methods}
-															data={productField?.warehouse_data}
-															name={`products.${productIndex}.select_warehouse_id`}
-														>
-															<SelectGroup>
-																{productField?.warehouse_data?.map((dev) => (
-																	<SelectItem
-																		key={dev._id}
-																		className="capitalize"
-																		value={dev._id}
-																	>
-																		{dev.name}
-																	</SelectItem>
-																))}
-															</SelectGroup>
-														</RFrom.RFSelect>
-													)}
+													<RFrom.RFStatus
+														methods={methods}
+														items="saleRateType"
+														name="sale_rate_type"
+														label=""
+													/>
 												</td>
 												<td className="px-6 py-2">
-													{productField?.store_data && (
-														<RFrom.RFSelect
-															methods={methods}
-															data={productField?.store_data}
-															name={`products.${productIndex}.select_store_id`}
-														>
-															<SelectGroup>
-																{productField?.store_data?.map((dev) => (
-																	<SelectItem
-																		key={dev._id}
-																		className="capitalize"
-																		value={dev._id}
-																	>
-																		{dev.name}
-																	</SelectItem>
-																))}
-															</SelectGroup>
-														</RFrom.RFSelect>
-													)}
+													<RFrom.RFSelect
+														methods={methods}
+														data={productField?.warehouse_data}
+														name="warehouse_id"
+													>
+														<SelectGroup>
+															{productField?.warehouse_data?.map((dev) => (
+																<SelectItem
+																	key={dev._id}
+																	className="capitalize"
+																	value={dev._id}
+																>
+																	{dev.name}
+																</SelectItem>
+															))}
+														</SelectGroup>
+													</RFrom.RFSelect>
+												</td>
+												<td className="px-6 py-2">
+													<RFrom.RFSelect
+														methods={methods}
+														data={productField?.store_data}
+														name="warehouse_id"
+													>
+														<SelectGroup>
+															{productField?.store_data?.map((dev) => (
+																<SelectItem
+																	key={dev._id}
+																	className="capitalize"
+																	value={dev._id}
+																>
+																	{dev.name}
+																</SelectItem>
+															))}
+														</SelectGroup>
+													</RFrom.RFSelect>
 												</td>
 												<td className="px-6 py-2">{productField?.quantity}</td>
 											</tr>
@@ -454,51 +430,41 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													key={variantIndex}
 													className="grid grid-cols-5 gap-x-4 gap-y-6 border p-2 rounded relative bg-gray-50 dark:bg-gray-900"
 												>
-													<div>
-														{methods.watch(
-															`products.${productIndex}.product_type`
-														) === 'variant' && (
-															<RFrom.RFSelect
-																methods={methods}
-																data={data?.data?.unit}
-																label="Unit"
-																name={`products.${productIndex}.variants.${variantIndex}.unit_id`}
-															>
-																<SelectGroup>
-																	{/* <SelectLa>Units</SelectLa  bel> */}
-																	{data?.data?.unit?.map((unit: any) => (
-																		<SelectItem key={unit._id} value={unit._id}>
-																			{unit.name}
-																		</SelectItem>
-																	))}
-																</SelectGroup>
-															</RFrom.RFSelect>
-														)}
-													</div>
-													<div>
-														{methods.watch(
-															`products.${productIndex}.product_type`
-														) === 'variant' && (
-															<RFrom.RFSelect
-																methods={methods}
-																data={data?.data?.variant}
-																label="Variant"
-																name={`products.${productIndex}.variants.${variantIndex}.variant_id`}
-															>
-																<SelectGroup>
-																	{/* <SelectLabel>Variants</SelectLabel> */}
-																	{data?.data?.variant?.map((variant: any) => (
-																		<SelectItem
-																			key={variant._id}
-																			value={variant._id}
-																		>
-																			{variant.name}
-																		</SelectItem>
-																	))}
-																</SelectGroup>
-															</RFrom.RFSelect>
-														)}
-													</div>
+													<RFrom.RFSelect
+														methods={methods}
+														data={data?.units}
+														label="Unit"
+														name={`products.${productIndex}.variants.${variantIndex}.unit_id`}
+													>
+														<SelectGroup>
+															<SelectLabel>Units</SelectLabel>
+															{data?.units?.map((unit) => (
+																<SelectItem key={unit._id} value={unit._id}>
+																	{unit.name}
+																</SelectItem>
+															))}
+														</SelectGroup>
+													</RFrom.RFSelect>
+
+													<RFrom.RFSelect
+														methods={methods}
+														data={data?.variants}
+														label="Variant"
+														name={`products.${productIndex}.variants.${variantIndex}.variant_id`}
+													>
+														<SelectGroup>
+															<SelectLabel>Variants</SelectLabel>
+															{data?.variants?.map((variant) => (
+																<SelectItem
+																	key={variant._id}
+																	value={variant._id}
+																>
+																	{variant.name}
+																</SelectItem>
+															))}
+														</SelectGroup>
+													</RFrom.RFSelect>
+
 													<RFrom.RFInput
 														label="Quantity"
 														methods={methods}
@@ -518,7 +484,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														name={`products.${productIndex}.variants.${variantIndex}.total`}
 														type="number"
 														disabled
-														placeholder={`${variant.rate * variant.quantity}`}
+														placeholder="0.00"
 													/>
 
 													{methods.watch(`products.${productIndex}.variants`)
@@ -526,7 +492,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														<Button
 															variant="destructive"
 															size="icon"
-															className="absolute top-3 right-0 h-6 w-6"
+															className="absolute -top-3 right-0 h-6 w-6"
 															type="button"
 															onClick={() =>
 																removeVariant(productIndex, variantIndex)
