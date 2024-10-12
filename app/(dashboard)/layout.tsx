@@ -16,7 +16,7 @@ export default function RootLayout({
 	const router = useRouter();
 	const pathname = usePathname(); // Get the current path
 	const { data, isLoading, isError, error } = useGetSidebarPrivetQuery();
-	console.log(error, 'index');
+
 	if (error?.data?.message === 'Unauthorized') {
 		signOut({ redirect: true, callbackUrl: '/login' });
 		return notFound();

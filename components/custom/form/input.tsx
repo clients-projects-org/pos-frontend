@@ -726,7 +726,6 @@ function SelectSearchMultiple({
 			}
 		}
 	};
-	console.log(value, 'value');
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>

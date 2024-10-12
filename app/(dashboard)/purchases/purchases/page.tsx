@@ -7,11 +7,13 @@ import { useState } from 'react';
 import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
 import { Row } from '@tanstack/react-table';
-import { useGetProductsQuery } from '@/lib/features/create-product';
-import { PurchaseComponents } from '@/lib/features/purchases';
+import {
+	PurchaseComponents,
+	useGetPurchaseQuery,
+} from '@/lib/features/purchases';
 export default function Category() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
-	const { data, isLoading, isFetching, isError } = useGetProductsQuery(value);
+	const { data, isLoading, isFetching, isError } = useGetPurchaseQuery(value);
 	const getSelectedRow = (e: Row<ProductType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
 		console.log(ids);

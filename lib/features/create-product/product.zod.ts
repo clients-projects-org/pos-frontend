@@ -21,6 +21,7 @@ export const FormSchema = z
 
 		// product from
 		supplier_id: z.string().min(2, { message: `Supplier is Required` }),
+		unit_id: z.string().min(2, { message: `Unit is Required` }),
 		// warehouse_id: z.string().min(2, { message: `Warehouse is Required` }),
 		warehouse_id: z
 			.array(z.string().min(2, { message: 'Warehouse is Required' }))
@@ -141,6 +142,7 @@ export const createZodFrom = () => {
 			category_id: '',
 			sub_category_id: '',
 			brand_id: '',
+			unit_id: '',
 			sort_description: '',
 			long_description: '',
 

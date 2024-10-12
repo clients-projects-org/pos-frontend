@@ -1,11 +1,11 @@
 import { apiSlice } from '../api/apiSlice';
 
-export const productApi = apiSlice.injectEndpoints({
+export const purchaseApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getProducts: builder.query<any, string>({
-			query: (payload): string => `product?status=${payload}`,
+		getPurchase: builder.query<any, string>({
+			query: (payload): string => `purchase?status=${payload}`,
 			providesTags: (result, error, arg) => {
-				return ['Products'];
+				return ['Purchase'];
 			},
 		}),
 
@@ -17,77 +17,63 @@ export const productApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeProducts: builder.mutation<any, any>({
+		storePurchase: builder.mutation<any, any>({
 			query: (payload) => {
-				const body = new FormData();
-				Object.entries(payload).forEach(([key, value]) => {
-					if (key === 'store_id') {
-						value?.forEach((item: any) => {
-							body.append('store_id[]', item);
-						});
-					} else if (key === 'gallery_images') {
-						value?.forEach((item: any) => {
-							body.append('gallery_images', item);
-						});
-					} else {
-						body.append(key, value);
-					}
-				});
 				return {
-					url: `/product/store`,
+					url: `/purchase/store`,
 					method: 'POST',
-					body,
+					body: payload,
 					formData: true,
 				};
 			},
 			invalidatesTags: () => {
-				return ['Products'];
+				return ['Purchase'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		updateProducts: builder.mutation<any, any>({
+		updatePurchase: builder.mutation<any, any>({
 			query: (payload) => {
 				return {
-					url: `/product/update/${payload._id}`,
+					url: `/purchase/update/${payload._id}`,
 					method: 'PUT',
 					body: payload,
 				};
 			},
 
 			invalidatesTags: () => {
-				return ['Products'];
+				return ['Purchase'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteProducts: builder.mutation<any, any>({
+		deletePurchase: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
-				url: `product/${id}`,
+				url: `purchase/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Products'],
+			invalidatesTags: ['Purchase'],
 		}),
 
-		updateProductsStatus: builder.mutation<any, any>({
+		updatePurchaseStatus: builder.mutation<any, any>({
 			query: ({ id, status }) => ({
-				url: `product/status/${id}`,
+				url: `purchase/status/${id}`,
 				method: 'PUT',
 				body: { status },
 			}),
 
 			invalidatesTags: (result, error, arg) => {
-				return ['Products', { type: 'Products', id: arg.id }];
+				return ['Purchase', { type: 'Purchase', id: arg.id }];
 			},
 		}),
 	}),
 });
 
 export const {
-	useGetProductsQuery,
+	useGetPurchaseQuery,
 	useGetCreateDataPurchaseQuery,
-	useStoreProductsMutation,
-	useUpdateProductsMutation,
-	useUpdateProductsStatusMutation,
-	useDeleteProductsMutation,
-} = productApi;
+	useStorePurchaseMutation,
+	useUpdatePurchaseMutation,
+	useUpdatePurchaseStatusMutation,
+	useDeletePurchaseMutation,
+} = purchaseApi;

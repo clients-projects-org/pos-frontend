@@ -1,10 +1,10 @@
+import { generateUniqueId } from '@/lib/actions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const variantSchema = z.object({
-	unit_id: z.string().min(2, { message: `Unit is Required` }),
-	variant_id: z.string().min(2, { message: `Variant is Required` }),
+	variant_id: z.string().optional(), // Make optional by default
 	quantity: z.preprocess(
 		(val) => {
 			// If it's a string, convert it to a number
@@ -33,24 +33,40 @@ const variantSchema = z.object({
 	),
 });
 
-const productSchema = z.object({
-	_id: z.string().optional(),
+const productSchema = z
+	.object({
+		_id: z.string().optional(),
 
-	// just for type checking [no use case]
-	name: z.string().optional(),
-	quantity: z.string().optional(),
-	warehouse_data: z.array(z.any()).optional(),
-	store_data: z.array(z.any()).optional(),
-	// -------------------end---------------------------
+		// just for type checking [no use case]
+		name: z.string().optional(),
+		quantity: z.number().optional(),
+		warehouse_data: z.array(z.any()).optional(),
+		store_data: z.array(z.any()).optional(),
+		// -------------------end---------------------------
 
-	product_id: z.string().min(2, { message: `Product is Required` }),
-	select_warehouse_id: z.string().min(2, { message: `Warehouse is Required` }),
-	select_store_id: z.string().min(2, { message: `Store is Required` }),
-	variants: z.array(variantSchema).min(1, 'At least one variant is required'),
-	product_type: z.enum(['single', 'variant'], {
-		message: 'Product type is required',
-	}),
-});
+		// product_id: z.string().min(2, { message: `Product is Required` }),
+		warehouse_id: z
+			.string()
+			.min(2, { message: `Warehouse is Required` }),
+		store_id: z.string().min(2, { message: `Store is Required` }),
+		variants: z.array(variantSchema).min(1, 'At least one variant is required'),
+		product_type: z.enum(['single', 'variant'], {
+			message: 'Product type is required',
+		}),
+	})
+	.superRefine((data, ctx) => {
+		if (data.product_type === 'variant') {
+			data.variants.forEach((variant, index) => {
+				if (!variant.variant_id) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'Variant ID is required ',
+						path: ['variants', index, 'variant_id'],
+					});
+				}
+			});
+		}
+	});
 
 export const FormSchema = z.object({
 	purchase_date: z.date({ message: 'Purchase date is required' }),
@@ -107,13 +123,13 @@ export const FormSchema = z.object({
 			// If it's a string, convert it to a number
 			if (typeof val === 'string') {
 				const num = Number(val);
-				return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+				return isNaN(num) ? undefined : num; // Return undefined if conversion fails (so it fails validation)
 			}
-			return val; // Otherwise return the value unchanged
+			return val; // Return value unchanged if it's already a number
 		},
 		z.number().min(0, {
-			message: 'Tax is Required',
-		}) // Validate the number
+			message: 'Tax must be 0 or greater',
+		}) // Validate that the number is at least 0
 	),
 
 	reference_number: z
@@ -129,6 +145,7 @@ export const FormSchema = z.object({
 export const createZodFromNew = () => {
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
+
 		defaultValues: {
 			description: '',
 			discount_type: 'none',
@@ -142,7 +159,7 @@ export const createZodFromNew = () => {
 			shipping_cost: 0,
 			supplier_id: '',
 			purchase_status: 'ordered',
-			reference_number: '',
+			reference_number: 'PUR-' + generateUniqueId(),
 		},
 	});
 

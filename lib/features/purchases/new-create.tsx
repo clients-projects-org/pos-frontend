@@ -17,14 +17,13 @@ import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import {
 	useGetCreateDataPurchaseQuery,
-	useStoreProductsMutation,
+	useStorePurchaseMutation,
 } from './purchaseApiSlice';
 import { Form } from '@/components/ui/form';
 import Image from 'next/image';
 import { useGetProductsByIdQuery } from '../create-product';
-import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
+import { SelectGroup, SelectItem } from '@/components/ui/select';
 import { createZodFromNew, FormSchema } from './new-zod';
-import { ProductType } from '@/lib/type';
 import { ProductTypeView } from '../create-product/product.type';
 type FormValues = z.infer<typeof FormSchema>;
 
@@ -37,18 +36,29 @@ interface FormProps {
 export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
 	const { methods } = createZodFromNew();
-	const [store, { isLoading }] = useStoreProductsMutation();
-	console.log(methods.watch(), 'watch');
+	console.log(methods.formState.errors, 'errors');
 
+	const [store, { isLoading }] = useStorePurchaseMutation();
 	async function onSubmit(data: FormValues) {
-		const storeData = {
-			name: data.name,
-			code: data.code?.toLocaleLowerCase(),
-			status: data.status,
+		console.log(data);
+		const submitData = {
+			...data,
+			products: data.products.map((product) => ({
+				product_id: product._id,
+				warehouse_id: product.warehouse_id,
+				store_id: product.store_id,
+				product_type: product.product_type,
+				variants: product.variants?.map((variant) => ({
+					variant_id: variant.variant_id,
+					quantity: variant.quantity,
+					rate: variant.rate,
+				})), // Array of variants
+			})),
 		};
+
 		try {
 			const response = await store({
-				...storeData,
+				...submitData,
 			} as any).unwrap();
 			apiReqResponse(response);
 			methods.reset();
@@ -96,8 +106,13 @@ const FormMutation: React.FC<FormProps> = ({
 	setOpen,
 }: FormProps) => {
 	const [id, setId] = useState<string | null>(null);
+
+	const products = methods.watch('products');
 	const supplier_id = methods.watch('supplier_id');
 	const product_ids = methods.watch('product_ids');
+	const discount_type = methods.watch('discount_type');
+	const discount_value = methods.watch('discount_value');
+
 	const [productState, setProductState] = useState<ProductTypeView[]>([]);
 	const prevSupplierId = useRef(supplier_id);
 	const {
@@ -131,33 +146,6 @@ const FormMutation: React.FC<FormProps> = ({
 		}
 	}, [id, product?.data]);
 
-	/*
-	useEffect(() => {
-		if (product && id) {
-			const newProduct = {
-				...product?.data?.product,
-				variants: [
-					{
-						unit: '',
-						variant_id: '',
-						quantity: '',
-					},
-				],
-			};
-
-			const isProductAlreadyAdded = productFields.some(
-				(field) => field._id === newProduct._id
-			);
-
-			console.log(newProduct, 'newProduct');
-
-			if (!isProductAlreadyAdded) {
-				appendProduct(newProduct);
-			}
-		}
-	}, [product, id]);
-	
-	*/
 	useEffect(() => {
 		if (id) {
 			// Find the product in productState by id
@@ -168,7 +156,6 @@ const FormMutation: React.FC<FormProps> = ({
 					product_type: 'single',
 					variants: [
 						{
-							unit_id: '',
 							variant_id: '',
 							quantity: 1,
 							rate: 1,
@@ -188,13 +175,12 @@ const FormMutation: React.FC<FormProps> = ({
 			}
 		}
 	}, [productState, id, setId]); // Run this effect when productState or id changes
-	console.log(productFields, 'check');
+
 	useEffect(() => {
 		const filteredProductFields = productFields?.filter(
 			(productField) =>
 				productField._id && product_ids.includes(productField._id)
 		);
-		console.log(filteredProductFields, 'filteredProductFields');
 		methods.setValue('products', filteredProductFields);
 	}, [product_ids]);
 
@@ -222,16 +208,14 @@ const FormMutation: React.FC<FormProps> = ({
 		}
 	}, [supplier_id]);
 
-	const discount_type = methods.watch('discount_type');
 	const getTargetValue = (e: string) => {
 		setId(e);
 	};
-	const watch1 = methods.watch();
 	// Add a new variant to a specific product by index
 	const addVariant = (productIndex: number) => {
 		methods.setValue(`products.${productIndex}.variants`, [
 			...methods.getValues(`products.${productIndex}.variants`),
-			{ unit_id: '', variant_id: '', quantity: 1, rate: 1 }, // New variant structure
+			{ variant_id: '', quantity: 1, rate: 1 }, // New variant structure
 		]);
 	};
 
@@ -262,7 +246,7 @@ const FormMutation: React.FC<FormProps> = ({
 const addVariant = (productIndex: number) => {
   methods.setValue(`products.${productIndex}.variants`, [
     ...methods.getValues(`products.${productIndex}.variants`),
-    { unit_id: '', variant_id: '', quantity: 0 },
+    {   variant_id: '', quantity: 0 },
   ]);
 };
 
@@ -280,11 +264,80 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 };
 
     */
-	const getVariantFieldArray = (productIndex: number) =>
-		useFieldArray({
-			control: methods.control,
-			name: `products.${productIndex}.variants`,
-		});
+
+	// subtotal calculate all variants
+	const calculateSubtotal = () => {
+		// watch all products
+		return products?.reduce((acc, product) => {
+			const productSubtotal = product.variants.reduce((variantAcc, variant) => {
+				return variantAcc + variant.quantity * variant.rate;
+			}, 0); // Calculate subtotal for each product's variants
+
+			return acc + productSubtotal; // Add to the total subtotal
+		}, 0); // Initialize total subtotal
+	};
+
+	const subtotal = calculateSubtotal();
+
+	// Calculate discount based on discount_type and discount_value
+	const calculateDiscount = () => {
+		let finalTotal = subtotal;
+
+		if (discount_type === 'fixed') {
+			// Apply fixed discount (subtract fixed value)
+			finalTotal = subtotal - discount_value;
+		} else if (discount_type === 'percentage') {
+			// Apply percentage discount (subtract percentage from subtotal)
+			const percentageDiscount = (subtotal * discount_value) / 100;
+			finalTotal = subtotal - percentageDiscount;
+		}
+
+		// Ensure total doesn't drop below zero
+		return Math.max(finalTotal, 0);
+	};
+
+	const totalAfterDiscount = calculateDiscount();
+
+	// grand total calculate
+	const calculateGrandTotal = () => {
+		const tax = Math.max(methods.watch('tax') || 0, 0); // Ensure tax is positive or 0
+		const shippingCost = Math.max(methods.watch('shipping_cost') || 0, 0); // Ensure shipping cost is positive or 0
+
+		// Calculate the tax amount (assuming it's a percentage)
+		const taxAmount = (totalAfterDiscount * tax) / 100;
+
+		// Grand total = (Total after discount) + tax + shipping - paid amount
+		const grandTotal = totalAfterDiscount + taxAmount + shippingCost;
+
+		// Ensure grand total doesn't go below zero
+		return Math.max(grandTotal, 0);
+	};
+
+	const grandTotal = calculateGrandTotal();
+
+	// Function to calculate the due and exchange amounts
+	const calculateDueAndExchange = () => {
+		const grandTotal = calculateGrandTotal();
+
+		const paidAmount = Math.max(methods.watch('paid_amount') || 0, 0); // Ensure paid amount is positive or 0
+
+		let dueAmount = 0;
+		let exchangeAmount = 0;
+
+		if (paidAmount < grandTotal) {
+			// If paid amount is less than the grand total, the due amount is the difference
+			dueAmount = grandTotal - paidAmount;
+		} else {
+			// If paid amount is greater than or equal to the grand total, the exchange is the excess amount
+			exchangeAmount = paidAmount - grandTotal;
+		}
+
+		return {
+			dueAmount,
+			exchangeAmount,
+		};
+	};
+	const { dueAmount, exchangeAmount } = calculateDueAndExchange();
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -353,22 +406,25 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 												</th>
 												<th scope="col" className="px-6 py-2">
 													Previous Qty{' '}
-													{productField?._id && (
-														<Button
-															variant="destructive"
-															size="icon"
-															className="absolute top-0 right-0 h-6 w-6"
-															type="button"
-															onClick={() =>
-																removeProductHandler(
-																	productIndex,
-																	productField?._id
-																)
-															}
-														>
-															<DynamicIcon icon="Minus" />
-														</Button>
-													)}
+													{productField?._id &&
+														methods.watch(
+															`products.${productIndex}.product_type`
+														) === 'variant' && (
+															<Button
+																variant="destructive"
+																size="icon"
+																className="absolute top-0 right-0 h-6 w-6"
+																type="button"
+																onClick={() =>
+																	removeProductHandler(
+																		productIndex,
+																		productField?._id as string
+																	)
+																}
+															>
+																<DynamicIcon icon="Minus" />
+															</Button>
+														)}
 												</th>
 											</tr>
 										</thead>
@@ -403,7 +459,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														<RFrom.RFSelect
 															methods={methods}
 															data={productField?.warehouse_data}
-															name={`products.${productIndex}.select_warehouse_id`}
+															name={`products.${productIndex}.warehouse_id`}
 														>
 															<SelectGroup>
 																{productField?.warehouse_data?.map((dev) => (
@@ -424,7 +480,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														<RFrom.RFSelect
 															methods={methods}
 															data={productField?.store_data}
-															name={`products.${productIndex}.select_store_id`}
+															name={`products.${productIndex}.store_id`}
 														>
 															<SelectGroup>
 																{productField?.store_data?.map((dev) => (
@@ -454,27 +510,6 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													key={variantIndex}
 													className="grid grid-cols-5 gap-x-4 gap-y-6 border p-2 rounded relative bg-gray-50 dark:bg-gray-900"
 												>
-													<div>
-														{methods.watch(
-															`products.${productIndex}.product_type`
-														) === 'variant' && (
-															<RFrom.RFSelect
-																methods={methods}
-																data={data?.data?.unit}
-																label="Unit"
-																name={`products.${productIndex}.variants.${variantIndex}.unit_id`}
-															>
-																<SelectGroup>
-																	{/* <SelectLa>Units</SelectLa  bel> */}
-																	{data?.data?.unit?.map((unit: any) => (
-																		<SelectItem key={unit._id} value={unit._id}>
-																			{unit.name}
-																		</SelectItem>
-																	))}
-																</SelectGroup>
-															</RFrom.RFSelect>
-														)}
-													</div>
 													<div>
 														{methods.watch(
 															`products.${productIndex}.product_type`
@@ -540,43 +575,23 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 
 										{/* Add Variant Button */}
 										{methods.watch(`products.${productIndex}.variants`).length <
-											7 && (
-											<Button
-												variant="secondary"
-												className="absolute bottom-0 right-0 h-6 w-6"
-												size="icon"
-												onClick={() => addVariant(productIndex)}
-												type="button"
-											>
-												<DynamicIcon icon="Plus" />
-											</Button>
-										)}
+											7 &&
+											methods.watch(`products.${productIndex}.product_type`) ===
+												'variant' && (
+												<Button
+													variant="secondary"
+													className="absolute bottom-0 right-0 h-6 w-6"
+													size="icon"
+													onClick={() => addVariant(productIndex)}
+													type="button"
+												>
+													<DynamicIcon icon="Plus" />
+												</Button>
+											)}
 									</div>
 								</div>
 							</div>
 						))}
-					</div>
-
-					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-end mt-8">
-						<RFrom.RFInput
-							label="Tax"
-							methods={methods}
-							name="tax"
-							type="number"
-						/>
-
-						<RFrom.RFInput
-							label="Shipping Cost"
-							methods={methods}
-							name="shipping_cost"
-							type="number"
-						/>
-						<RFrom.SearchAbleSelect
-							methods={methods}
-							label="Payment Method"
-							name="payment_method"
-							OPTIONS={data?.data?.paymentMethod}
-						/>
 					</div>
 
 					<div className="flex justify-end mt-3">
@@ -585,7 +600,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 								<tr>
 									<td className="px-6 py-2">Sub Total</td>
 									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">100</td>
+									<td className="px-6 py-2">{subtotal.toFixed(2)}</td>
 								</tr>
 								<tr>
 									<td className="px-6 py-2">Discount Type</td>
@@ -615,6 +630,41 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 										</td>
 									</tr>
 								)}
+								{(discount_type === 'fixed' ||
+									discount_type === 'percentage') && (
+									<tr className="border-t text-center font-bold">
+										<td className="px-6 py-2">After Discount</td>
+										<td className="px-6 py-2">:</td>
+										<td className="px-6 py-2">
+											{totalAfterDiscount.toFixed(2)}
+										</td>
+									</tr>
+								)}
+
+								<tr>
+									<td className="px-6 py-2">Tax (%)</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-6 py-2">
+										<RFrom.RFInput
+											label=""
+											methods={methods}
+											name="tax"
+											type="number"
+										/>
+									</td>
+								</tr>
+								<tr>
+									<td className="px-6 py-2">Shipping Cost</td>
+									<td className="px-6 py-2">:</td>
+									<td className="px-6 py-2">
+										<RFrom.RFInput
+											label=""
+											methods={methods}
+											name="shipping_cost"
+											type="number"
+										/>
+									</td>
+								</tr>
 								<tr>
 									<td className="px-6 py-2">Paid</td>
 									<td className="px-6 py-2">:</td>
@@ -630,15 +680,31 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 								<tr>
 									<td className="px-6 py-4">Due</td>
 									<td className="px-6 py-2">:</td>
-									<td className="px-8 py-4">100</td>
+									<td className="px-8 py-4">{dueAmount.toFixed(2)}</td>
 								</tr>
+								{exchangeAmount > 0 && (
+									<tr>
+										<td className="px-6 py-4">Exchange</td>
+										<td className="px-6 py-2">:</td>
+										<td className="px-8 py-4">{exchangeAmount.toFixed(2)}</td>
+									</tr>
+								)}
 								<tr className="border-t text-center font-bold">
 									<td className="px-6 py-2">Grand Total</td>
 									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">100</td>
+									<td className="px-6 py-2">{grandTotal.toFixed(2)}</td>
 								</tr>
 							</table>
 						</div>
+					</div>
+
+					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-end mt-8">
+						<RFrom.SearchAbleSelect
+							methods={methods}
+							label="Payment Method"
+							name="payment_method"
+							OPTIONS={data?.data?.paymentMethod}
+						/>
 					</div>
 
 					<div>

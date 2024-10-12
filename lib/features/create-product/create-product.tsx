@@ -18,7 +18,7 @@ import {
 import React, { useEffect } from 'react';
 import { userStoreImageInfo } from '@/lib/image-size';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
-import { StoreType, SupplierType } from '@/lib/type';
+import { StoreType, SupplierType, UnitType } from '@/lib/type';
 import { PageDetailsApiHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
 import { CheckNecessaryData } from './check-necessary-data';
@@ -241,13 +241,32 @@ export function CreateProduct() {
 													<div className="col-span-4">
 														<RFrom.RFSelect
 															methods={methods}
-															data={data?.data?.Brand}
+															data={data?.data?.brand}
 															label="Brand"
 															name="brand_id"
 														>
 															<SelectGroup>
-																<SelectLabel>Brand All List</SelectLabel>
 																{data?.data?.brand?.map((dev: SupplierType) => (
+																	<SelectItem
+																		key={dev._id}
+																		className="capitalize"
+																		value={dev._id}
+																	>
+																		{dev.name}
+																	</SelectItem>
+																))}
+															</SelectGroup>
+														</RFrom.RFSelect>
+													</div>
+													<div className="col-span-4">
+														<RFrom.RFSelect
+															methods={methods}
+															data={data?.data?.unit}
+															label="Unit"
+															name="unit_id"
+														>
+															<SelectGroup>
+																{data?.data?.unit?.map((dev: UnitType) => (
 																	<SelectItem
 																		key={dev._id}
 																		className="capitalize"

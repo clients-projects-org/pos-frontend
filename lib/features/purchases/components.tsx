@@ -21,8 +21,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import {
-	useDeleteProductsMutation,
-	useUpdateProductsStatusMutation,
+	useDeletePurchaseMutation,
+	useUpdatePurchaseStatusMutation,
 } from './purchaseApiSlice';
 import { PurchaseStoreModal } from './store';
 import { PurchaseStoreModalNew } from './new-create';
@@ -99,10 +99,10 @@ const Actions = ({ data }: { data: ProductType }) => {
 	const router = useRouter();
 	const params = useParams<{ slug: string; item: string }>();
 
-	const [deleting, { isLoading }] = useDeleteProductsMutation();
+	const [deleting, { isLoading }] = useDeletePurchaseMutation();
 
 	const [updateStatus, { isLoading: updateStatusLoading }] =
-		useUpdateProductsStatusMutation();
+		useUpdatePurchaseStatusMutation();
 
 	const loading = isLoading || updateStatusLoading;
 

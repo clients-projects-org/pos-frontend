@@ -2,7 +2,7 @@
 import { FormProvider } from 'react-hook-form';
 
 import { Form } from '@/components/ui/form';
-import { RFrom } from '@/components/custom/form';
+import { MultiSelector2, RFrom } from '@/components/custom/form';
 import { useRouter } from 'next/navigation';
 import { useStoreVariantMutation } from './apiSlice';
 import { createZodFrom, FormSchema, FormValues } from './unit.zod';
@@ -47,6 +47,14 @@ export function Store() {
 							<div className="col-span-4">
 								<RFrom.RFStatus methods={methods} name="status" />
 							</div>
+						</div>
+						<div className="col-span-6">
+							<MultiSelector2
+								label="Attributes"
+								methods={methods}
+								name="attributes"
+								creatable
+							/>
 						</div>
 
 						<RFrom.RFTextarea methods={methods} />
