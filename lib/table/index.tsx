@@ -94,7 +94,7 @@ export function TableBox<DataType>({
 	return (
 		<div className="w-full">
 			<SearchFilter table={table} TEndChild={TEndChild} TFilters={TFilters} />
-			<TB table={table} columns={columns} />
+			<TB<DataType> table={table} columns={columns} />
 			<Footer table={table} />
 		</div>
 	);

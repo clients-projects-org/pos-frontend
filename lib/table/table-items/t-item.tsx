@@ -88,6 +88,7 @@ const OnlyImage = () => {
 		enableHiding: false,
 	};
 };
+
 const Status = () => {
 	return {
 		accessorKey: 'status',
@@ -112,6 +113,7 @@ const Status = () => {
 		),
 	};
 };
+
 const CreatedBy = () => {
 	return {
 		accessorKey: 'createdBy',
@@ -181,6 +183,34 @@ const Category = () => {
 		},
 	};
 };
+const SupplierName = () => {
+	return {
+		accessorKey: 'supplier_data',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Supplier
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
+
+		cell: ({ row }: any) => {
+			return (
+				<div className="capitalize whitespace-nowrap">
+					{row.original.supplier_data?.name
+						? row.original.supplier_data?.name &&
+							row.original.supplier_data.name
+						: 'N/A'}
+				</div>
+			);
+		},
+	};
+};
+
 const ProductType = () => {
 	return {
 		accessorKey: 'product_type',
@@ -348,4 +378,5 @@ export const TableItem = {
 	Category,
 	OnlyImage,
 	ProductType,
+	SupplierName,
 };

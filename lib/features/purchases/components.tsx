@@ -14,11 +14,11 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableItem } from '@/lib/table/table-items/t-item';
-import { ProductType, StatusType } from '@/lib/type';
+import { ProductType, PurchaseType, StatusType } from '@/lib/type';
 import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { confirm } from '@/lib/actions';
+import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import {
 	useDeletePurchaseMutation,
@@ -26,17 +26,89 @@ import {
 } from './purchaseApiSlice';
 import { PurchaseStoreModal } from './store';
 import { PurchaseStoreModalNew } from './new-create';
+import { Badge } from '@/components/ui/badge';
 
-const Column: ColumnDef<ProductType>[] = [
+const Column: ColumnDef<PurchaseType>[] = [
 	TableItem.SelectBox(),
-	TableItem.OnlyImage(),
-	TableItem.Text('name', 'Name'),
-	TableItem.Text('quantity', 'Quantity'),
-	TableItem.Text('buy_price', 'Buy Price'),
-	TableItem.Text('sell_price', 'Sell Price'),
+	{
+		accessorKey: 'reference_number',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Reference Number
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }: any) => <div>#{row.getValue('reference_number')}</div>,
+	},
+	TableItem.SupplierName(),
+	{
+		accessorKey: 'purchase_status',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Purchase Status
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
 
-	TableItem.Date('createdAt', 'Created at'),
-	TableItem.Status(),
+		cell: ({ row }: any) => (
+			<div className="capitalize">
+				<Badge
+					variant={
+						row.getValue('purchase_status') === 'ordered'
+							? 'default'
+							: 'secondary'
+					}
+				>
+					{row.getValue('purchase_status')}
+				</Badge>
+			</div>
+		),
+	},
+
+	TableItem.Date('purchase_date', 'Purchase Date'),
+
+	{
+		accessorKey: 'payment_status',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Payment Status
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+
+		cell: ({ row }: any) => (
+			<div className="capitalize">
+				<Badge
+					variant={
+						row.getValue('payment_status') === 'due'
+							? 'destructive'
+							: 'secondary'
+					}
+				>
+					{row.getValue('payment_status')}
+				</Badge>
+			</div>
+		),
+	},
+
+	TableItem.Text('quantity', 'Purchase Qty'),
+	TableItem.Text('quantity', 'Return Qty'),
+	TableItem.Text('grand_total', 'Amount'),
 
 	{
 		id: 'actions',
@@ -95,7 +167,7 @@ const Filter = ({
 		</>
 	);
 };
-const Actions = ({ data }: { data: ProductType }) => {
+const Actions = ({ data }: { data: PurchaseType }) => {
 	const router = useRouter();
 	const params = useParams<{ slug: string; item: string }>();
 

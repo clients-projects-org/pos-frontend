@@ -40,14 +40,28 @@ export function PurchaseStoreModalNew() {
 
 	const [store, { isLoading }] = useStorePurchaseMutation();
 	async function onSubmit(data: FormValues) {
-		console.log(data);
 		const submitData = {
 			...data,
+			quantity: data.products?.reduce((acc, product) => {
+				const productSubtotal = product.variants.reduce(
+					(variantAcc, variant) => {
+						return variantAcc + variant.quantity;
+					},
+					0
+				); // Calculate subtotal for each product's variants
+
+				return acc + productSubtotal; // Add to the total subtotal
+			}, 0),
+
 			products: data.products.map((product) => ({
 				product_id: product._id,
 				warehouse_id: product.warehouse_id,
 				store_id: product.store_id,
 				product_type: product.product_type,
+				quantity: product.variants?.reduce(
+					(acc, variant) => acc + variant.quantity,
+					0
+				),
 				variants: product.variants?.map((variant) => ({
 					variant_id: variant.variant_id,
 					quantity: variant.quantity,

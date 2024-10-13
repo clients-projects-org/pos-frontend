@@ -1,7 +1,7 @@
 'use client';
 import PageTitle from '@/components/custom/PageTitle';
 import { TableBox } from '@/lib/table';
-import { ProductType, StatusType } from '@/lib/type';
+import { PurchaseType, StatusType } from '@/lib/type';
 import { useState } from 'react';
 
 import { ApiUseHOC } from '@/components/hoc';
@@ -14,7 +14,7 @@ import {
 export default function Category() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
 	const { data, isLoading, isFetching, isError } = useGetPurchaseQuery(value);
-	const getSelectedRow = (e: Row<ProductType>[]): void => {
+	const getSelectedRow = (e: Row<PurchaseType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
 		console.log(ids);
 	};
@@ -28,15 +28,17 @@ export default function Category() {
 				isError={isError}
 			>
 				<Motion>
-					<TableBox<ProductType>
-						columns={PurchaseComponents.Column}
-						data={data?.data}
-						TFilters={
-							<PurchaseComponents.Filter value={value} setValue={setValue} />
-						}
-						TEndChild={<PurchaseComponents.Add />}
-						getSelectedRow={getSelectedRow}
-					/>
+					{data?.data && (
+						<TableBox<PurchaseType>
+							columns={PurchaseComponents.Column}
+							data={data?.data}
+							TFilters={
+								<PurchaseComponents.Filter value={value} setValue={setValue} />
+							}
+							TEndChild={<PurchaseComponents.Add />}
+							getSelectedRow={getSelectedRow}
+						/>
+					)}
 				</Motion>
 			</ApiUseHOC>
 		</>

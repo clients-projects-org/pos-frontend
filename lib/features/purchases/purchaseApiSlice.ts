@@ -1,8 +1,9 @@
+import { ApiResponse, PurchaseType } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const purchaseApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getPurchase: builder.query<any, string>({
+		getPurchase: builder.query<ApiResponse<PurchaseType>, string>({
 			query: (payload): string => `purchase?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Purchase'];
