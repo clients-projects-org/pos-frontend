@@ -105,7 +105,7 @@ const Status = () => {
 		},
 
 		cell: ({ row }: any) => (
-			<div className="capitalize">
+			<div className="capitalize  text-center">
 				<Badge variant={badge(row.getValue('status'))}>
 					{row.getValue('status')}
 				</Badge>
@@ -131,7 +131,7 @@ const CreatedBy = () => {
 
 		cell: ({ row }: any) => {
 			return (
-				<div className="capitalize whitespace-nowrap">
+				<div className="capitalize whitespace-nowrap  text-center">
 					{row.original.createdBy?.name ? (
 						<>
 							{row.original.createdBy?.name && (
@@ -166,7 +166,7 @@ const Category = () => {
 
 		cell: ({ row }: any) => {
 			return (
-				<div className="capitalize whitespace-nowrap">
+				<div className="capitalize whitespace-nowrap  text-center">
 					{row.original.categoryData?.name ? (
 						<>
 							{row.original.categoryData?.name && (
@@ -200,7 +200,7 @@ const SupplierName = () => {
 
 		cell: ({ row }: any) => {
 			return (
-				<div className="capitalize whitespace-nowrap">
+				<div className="capitalize whitespace-nowrap  text-center">
 					{row.original.supplier_data?.name
 						? row.original.supplier_data?.name &&
 							row.original.supplier_data.name
@@ -213,7 +213,7 @@ const SupplierName = () => {
 
 const ProductType = () => {
 	return {
-		accessorKey: 'product_type',
+		accessorKey: 'inventory',
 		header: ({ column }: any) => {
 			return (
 				<Button
@@ -228,19 +228,19 @@ const ProductType = () => {
 
 		cell: ({ row }: any) => {
 			return (
-				<div className="capitalize whitespace-nowrap">
-					{row.original.product_type ? (
+				<div className="capitalize whitespace-nowrap  text-center">
+					{row.original.inventory ? (
 						<>
-							{row.original.product_type && (
+							{row.original.inventory.product_type && (
 								<Badge
 									className="capitalize"
 									variant={
-										row.original.product_type === 'single'
+										row.original.inventory.product_type === 'single'
 											? 'outline'
 											: 'secondary'
 									}
 								>
-									{row.original.product_type}
+									{row.original.inventory.product_type}
 								</Badge>
 							)}
 						</>
@@ -268,7 +268,7 @@ const Text = (name: any, label: any) => {
 			);
 		},
 		cell: ({ row }: any) => (
-			<div className="lowercase ">{row.getValue(name)}</div>
+			<div className="lowercase text-center">{row.getValue(name)}</div>
 		),
 	};
 };
@@ -287,7 +287,7 @@ const Date = (name: any, label: any) => {
 			);
 		},
 		cell: ({ row }: any) => (
-			<div className="lowercase">
+			<div className="capitalize text-center">
 				{row.original[name] && format(row.getValue(name), 'PPP')}
 			</div>
 		),

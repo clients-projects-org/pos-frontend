@@ -61,7 +61,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 		},
 
 		cell: ({ row }: any) => (
-			<div className="capitalize">
+			<div className="capitalize  text-center">
 				<Badge
 					variant={
 						row.getValue('purchase_status') === 'ordered'
@@ -92,7 +92,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 		},
 
 		cell: ({ row }: any) => (
-			<div className="capitalize">
+			<div className="capitalize  text-center">
 				<Badge
 					variant={
 						row.getValue('payment_status') === 'due'

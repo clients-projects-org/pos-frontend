@@ -14,7 +14,11 @@ import {
 } from '@/components/ui/dialog';
 import { DynamicIcon } from '@/components/actions';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
-import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import {
+	apiErrorResponse,
+	apiReqResponse,
+	generateUniqueId,
+} from '@/lib/actions';
 import {
 	useGetCreateDataPurchaseQuery,
 	useStorePurchaseMutation,
@@ -36,7 +40,6 @@ interface FormProps {
 export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
 	const { methods } = createZodFromNew();
-	console.log(methods.formState.errors, 'errors');
 
 	const [store, { isLoading }] = useStorePurchaseMutation();
 	async function onSubmit(data: FormValues) {
@@ -352,6 +355,8 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 		};
 	};
 	const { dueAmount, exchangeAmount } = calculateDueAndExchange();
+
+	// update referace number
 
 	if (isLoading) {
 		return <div>Loading...</div>;

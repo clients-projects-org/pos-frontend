@@ -45,9 +45,7 @@ const productSchema = z
 		// -------------------end---------------------------
 
 		// product_id: z.string().min(2, { message: `Product is Required` }),
-		warehouse_id: z
-			.string()
-			.min(2, { message: `Warehouse is Required` }),
+		warehouse_id: z.string().min(2, { message: `Warehouse is Required` }),
 		store_id: z.string().min(2, { message: `Store is Required` }),
 		variants: z.array(variantSchema).min(1, 'At least one variant is required'),
 		product_type: z.enum(['single', 'variant'], {
@@ -56,17 +54,65 @@ const productSchema = z
 	})
 	.superRefine((data, ctx) => {
 		if (data.product_type === 'variant') {
+			const variantIds = new Set(); // To track unique variant IDs
+
 			data.variants.forEach((variant, index) => {
+				// Check if variant_id is missing for 'variant' type products
 				if (!variant.variant_id) {
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
-						message: 'Variant ID is required ',
+						message: 'Variant ID is required',
 						path: ['variants', index, 'variant_id'],
 					});
+				} else {
+					// Check for duplicate variant IDs
+					if (variantIds.has(variant.variant_id)) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: 'Duplicate Variant ID found',
+							path: ['variants', index, 'variant_id'],
+						});
+					} else {
+						// Add the variant ID to the set
+						variantIds.add(variant.variant_id);
+					}
 				}
 			});
 		}
 	});
+// check variants and store and warehouse ids
+// .superRefine((data, ctx) => {
+// 	if (data.product_type === 'variant') {
+// 		const variantCombinations = new Set(); // To store unique combinations
+
+// 		data.variants.forEach((variant, index) => {
+// 			// Check if variant_id is missing for 'variant' type products
+// 			if (!variant.variant_id) {
+// 				ctx.addIssue({
+// 					code: z.ZodIssueCode.custom,
+// 					message: 'Variant ID is required',
+// 					path: ['variants', index, 'variant_id'],
+// 				});
+// 			}
+
+// 			// Create a unique key based on variant_id, store_id, and warehouse_id
+// 			const variantKey = `${variant.variant_id || 'null'}-${data.store_id}-${data.warehouse_id}`;
+
+// 			// Check for duplicates
+// 			if (variantCombinations.has(variantKey)) {
+// 				ctx.addIssue({
+// 					code: z.ZodIssueCode.custom,
+// 					message:
+// 						'You cannot select the same variant with the same store and warehouse',
+// 					path: ['variants', index],
+// 				});
+// 			} else {
+// 				// Add the combination to the set
+// 				variantCombinations.add(variantKey);
+// 			}
+// 		});
+// 	}
+// });
 
 export const FormSchema = z.object({
 	purchase_date: z.date({ message: 'Purchase date is required' }),

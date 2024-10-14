@@ -30,8 +30,21 @@ const categoryColumn: ColumnDef<ProductType>[] = [
 	TableItem.OnlyImage(),
 	TableItem.Text('name', 'Name'),
 	TableItem.ProductType(),
-	TableItem.Text('quantity', 'Quantity'),
-	TableItem.Text('buy_price', 'Buy Price'),
+	{
+		accessorKey: 'inventory',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Quantity
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }: any) => <div>{row.original.inventory.quantity}</div>,
+	},
 	TableItem.Text('sell_price', 'Sell Price'),
 
 	TableItem.Date('createdAt', 'Created at'),
