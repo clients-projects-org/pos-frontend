@@ -14,11 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { DynamicIcon } from '@/components/actions';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
-import {
-	apiErrorResponse,
-	apiReqResponse,
-	generateUniqueId,
-} from '@/lib/actions';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import {
 	useGetCreateDataPurchaseQuery,
 	useStorePurchaseMutation,
@@ -36,10 +32,11 @@ interface FormProps {
 	onSubmit: (data: FormValues) => void;
 	isLoading: boolean;
 	setOpen: Function;
+	resetForm: () => void;
 }
 export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
-	const { methods } = createZodFromNew();
+	const { methods, resetForm } = createZodFromNew();
 
 	const [store, { isLoading }] = useStorePurchaseMutation();
 	async function onSubmit(data: FormValues) {
@@ -86,7 +83,16 @@ export function PurchaseStoreModalNew() {
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog
+			open={open}
+			onOpenChange={(isOpen) => {
+				console.log(isOpen, 'isOpen');
+				setOpen(isOpen);
+				if (!isOpen) {
+					resetForm();
+				}
+			}}
+		>
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
@@ -111,6 +117,7 @@ export function PurchaseStoreModalNew() {
 					methods={methods}
 					onSubmit={onSubmit}
 					setOpen={setOpen}
+					resetForm={resetForm}
 				/>
 			</DialogContent>
 		</Dialog>
@@ -121,6 +128,7 @@ const FormMutation: React.FC<FormProps> = ({
 	methods,
 	onSubmit,
 	setOpen,
+	resetForm,
 }: FormProps) => {
 	const [id, setId] = useState<string | null>(null);
 
@@ -737,7 +745,10 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 
 				<DialogFooter>
 					<Button
-						onClick={() => setOpen(false)}
+						onClick={() => {
+							setOpen(false);
+							resetForm();
+						}}
 						type="button"
 						variant="destructive"
 					>

@@ -22,6 +22,7 @@ import { badge, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import {
 	useDeletePurchaseMutation,
+	useReceivePurchaseMutation,
 	useUpdatePurchaseStatusMutation,
 } from './purchaseApiSlice';
 import { PurchaseStoreModal } from './store';
@@ -107,7 +108,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 	},
 
 	TableItem.Text('quantity', 'Purchase Qty'),
-	TableItem.Text('quantity', 'Return Qty'),
+	TableItem.Text('0', 'Return Qty'),
 	TableItem.Text('grand_total', 'Amount'),
 
 	{
@@ -172,6 +173,8 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 	const params = useParams<{ slug: string; item: string }>();
 
 	const [deleting, { isLoading }] = useDeletePurchaseMutation();
+	const [receiving, { isLoading: receivingLoading }] =
+		useReceivePurchaseMutation();
 
 	const [updateStatus, { isLoading: updateStatusLoading }] =
 		useUpdatePurchaseStatusMutation();
@@ -189,6 +192,35 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 			if (confirmed) {
 				// Perform the delete action here
 				await deleting({ id }).unwrap();
+				const options: ToastOptions = {
+					title: 'Successfully Deleted',
+					description: 'Item delete is done, You can not find it, Thanks',
+					autoClose: true,
+					autoCloseDelay: 5000,
+				};
+				showToast(options);
+				if (params.slug.startsWith('permission')) {
+					console.log('first');
+					router.push('/user-management/roles-permissions');
+				}
+			} else {
+				console.log('Delete action cancelled');
+			}
+		} catch (err) {
+			console.error('Failed to delete the permission: ', err);
+		}
+	};
+	const handleReceive = async (id: string) => {
+		try {
+			const confirmed = await confirm({
+				message:
+					'This action cannot be undone. This will permanently delete your account and remove your data from our servers.',
+				title: 'Delete Account',
+			});
+
+			if (confirmed) {
+				// Perform the delete action here
+				await receiving(id).unwrap();
 				const options: ToastOptions = {
 					title: 'Successfully Deleted',
 					description: 'Item delete is done, You can not find it, Thanks',
@@ -243,11 +275,11 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 				disabled={loading}
 			/>
 			<DropdownMenuSeparator />
-			{data.status !== 'active' && data.status !== 'new' && (
+			{data.purchase_status === 'ordered' && (
 				<DropDownDotItem
 					icon="CircleCheckBig"
-					name="Active"
-					onChange={() => data._id && handleStatusChange('active')}
+					name="Receive Order"
+					onChange={() => data._id && handleReceive(data._id)}
 					disabled={loading}
 				/>
 			)}

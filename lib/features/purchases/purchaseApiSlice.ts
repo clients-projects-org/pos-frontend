@@ -33,6 +33,19 @@ export const purchaseApi = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
+		receivePurchase: builder.mutation<any, any>({
+			query: (payload) => {
+				return {
+					url: `/purchase/receive/${payload}`,
+					method: 'GET',
+				};
+			},
+			invalidatesTags: () => {
+				return ['Purchase'];
+			},
+		}),
+		// .....................................
+
 		updatePurchase: builder.mutation<any, any>({
 			query: (payload) => {
 				return {
@@ -72,6 +85,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
 
 export const {
 	useGetPurchaseQuery,
+	useReceivePurchaseMutation,
 	useGetCreateDataPurchaseQuery,
 	useStorePurchaseMutation,
 	useUpdatePurchaseMutation,

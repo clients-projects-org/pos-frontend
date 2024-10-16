@@ -191,25 +191,30 @@ export const FormSchema = z.object({
 export const createZodFromNew = () => {
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
-
-		defaultValues: {
-			description: '',
-			discount_type: 'none',
-			paid_amount: 0,
-			discount_value: 0,
-			payment_method: '',
-			product_ids: [],
-			products: [],
-			purchase_date: new Date(),
-			tax: 0,
-			shipping_cost: 0,
-			supplier_id: '',
-			purchase_status: 'ordered',
-			reference_number: 'PUR-' + generateUniqueId(),
-		},
+		defaultValues: getDefaultValues(),
 	});
 
-	return { methods };
+	const resetForm = () => {
+		methods.reset(getDefaultValues()); // Pass new default values with a fresh reference_number
+	};
+
+	return { methods, resetForm };
 };
+
+const getDefaultValues = (): FormValuesNew => ({
+	description: '',
+	discount_type: 'none',
+	paid_amount: 0,
+	discount_value: 0,
+	payment_method: '',
+	product_ids: [],
+	products: [],
+	purchase_date: new Date(),
+	tax: 0,
+	shipping_cost: 0,
+	supplier_id: '',
+	purchase_status: 'ordered',
+	reference_number: 'PUR-' + generateUniqueId(), // Generate new reference number
+});
 
 export type FormValuesNew = z.infer<typeof FormSchema>;
