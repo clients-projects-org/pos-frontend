@@ -27,6 +27,25 @@ import { showToast, ToastOptions } from '@/lib/actions/tost';
 const Column: ColumnDef<UnitType>[] = [
 	TableItem.SelectBox(),
 	TableItem.Text('name', 'Name'),
+	{
+		accessorKey: 'attributes',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Attributes
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }: any) => (
+			<div className="lowercase text-center">
+				{row.original?.attributes?.map((i: any) => i.name)?.join(', ')}
+			</div>
+		),
+	},
 	TableItem.CreatedBy(),
 	TableItem.Date('createdAt', 'Created at'),
 	TableItem.Status(),

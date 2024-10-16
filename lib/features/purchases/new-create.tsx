@@ -29,58 +29,13 @@ type FormValues = z.infer<typeof FormSchema>;
 
 interface FormProps {
 	methods: UseFormReturn<FormValues>;
-	onSubmit: (data: FormValues) => void;
-	isLoading: boolean;
 	setOpen: Function;
 	resetForm: () => void;
 }
+
 export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
 	const { methods, resetForm } = createZodFromNew();
-
-	const [store, { isLoading }] = useStorePurchaseMutation();
-	async function onSubmit(data: FormValues) {
-		const submitData = {
-			...data,
-			quantity: data.products?.reduce((acc, product) => {
-				const productSubtotal = product.variants.reduce(
-					(variantAcc, variant) => {
-						return variantAcc + variant.quantity;
-					},
-					0
-				); // Calculate subtotal for each product's variants
-
-				return acc + productSubtotal; // Add to the total subtotal
-			}, 0),
-
-			products: data.products.map((product) => ({
-				product_id: product._id,
-				warehouse_id: product.warehouse_id,
-				store_id: product.store_id,
-				product_type: product.product_type,
-				quantity: product.variants?.reduce(
-					(acc, variant) => acc + variant.quantity,
-					0
-				),
-				variants: product.variants?.map((variant) => ({
-					variant_id: variant.variant_id,
-					quantity: variant.quantity,
-					rate: variant.rate,
-				})), // Array of variants
-			})),
-		};
-
-		try {
-			const response = await store({
-				...submitData,
-			} as any).unwrap();
-			apiReqResponse(response);
-			methods.reset();
-			setOpen(false);
-		} catch (error: unknown) {
-			apiErrorResponse(error, methods, FormSchema);
-		}
-	}
 
 	return (
 		<Dialog
@@ -113,9 +68,7 @@ export function PurchaseStoreModalNew() {
 				</DialogHeader>
 				{/* form  */}
 				<FormMutation
-					isLoading={isLoading}
 					methods={methods}
-					onSubmit={onSubmit}
 					setOpen={setOpen}
 					resetForm={resetForm}
 				/>
@@ -126,7 +79,6 @@ export function PurchaseStoreModalNew() {
 
 const FormMutation: React.FC<FormProps> = ({
 	methods,
-	onSubmit,
 	setOpen,
 	resetForm,
 }: FormProps) => {
@@ -364,7 +316,59 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 	};
 	const { dueAmount, exchangeAmount } = calculateDueAndExchange();
 
-	// update referace number
+	const calculatePaidAmount = () => {
+		const grandTotal = calculateGrandTotal();
+		const paidAmount = Math.max(methods.watch('paid_amount') || 0, 0);
+
+		// Return the lesser of paidAmount or grandTotal
+		return Math.min(paidAmount, grandTotal);
+	};
+
+	const [store, { isLoading: isStoreLoading }] = useStorePurchaseMutation();
+
+	async function onSubmit(data: FormValues) {
+		const submitData = {
+			...data,
+			paid_amount: calculatePaidAmount(),
+			quantity: data.products?.reduce((acc, product) => {
+				const productSubtotal = product.variants.reduce(
+					(variantAcc, variant) => {
+						return variantAcc + variant.quantity;
+					},
+					0
+				); // Calculate subtotal for each product's variants
+
+				return acc + productSubtotal; // Add to the total subtotal
+			}, 0),
+
+			products: data.products.map((product) => ({
+				product_id: product._id,
+				warehouse_id: product.warehouse_id,
+				store_id: product.store_id,
+				product_type: product.product_type,
+				quantity: product.variants?.reduce(
+					(acc, variant) => acc + variant.quantity,
+					0
+				),
+				variants: product.variants?.map((variant) => ({
+					variant_id: variant.variant_id,
+					quantity: variant.quantity,
+					rate: variant.rate,
+				})), // Array of variants
+			})),
+		};
+
+		try {
+			const response = await store({
+				...submitData,
+			} as any).unwrap();
+			apiReqResponse(response);
+			methods.reset();
+			setOpen(false);
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
+	}
 
 	if (isLoading) {
 		return <div>Loading...</div>;

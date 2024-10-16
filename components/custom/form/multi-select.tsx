@@ -53,28 +53,30 @@ export function MultiSelector2<T extends FieldValues>({
 		<FormField
 			control={methods.control}
 			name={name}
-			render={({ field }) => (
-				<FormItem>
-					<FormLabel>{label}</FormLabel>
-					<FormControl>
-						<MultipleSelector
-							defaultOptions={OPTIONS}
-							onChange={(value: any) => {
-								field.onChange(value.map((item: any) => item.value));
-							}}
-							placeholder="type..."
-							creatable={creatable}
-							emptyIndicator={
-								<p className="text-center text-sm leading-10 text-gray-600 dark:text-gray-400">
-									no results found.
-								</p>
-							}
-						/>
-					</FormControl>
+			render={({ field }) => {
+				return (
+					<FormItem>
+						<FormLabel>{label}</FormLabel>
+						<FormControl>
+							<MultipleSelector
+								defaultOptions={OPTIONS}
+								onChange={(value: any) => {
+									field.onChange(value.map((item: any) => item.value));
+								}}
+								placeholder="type..."
+								creatable={creatable}
+								emptyIndicator={
+									<p className="text-center text-sm leading-10 text-gray-600 dark:text-gray-400">
+										no results found.
+									</p>
+								}
+							/>
+						</FormControl>
 
-					<FormMessage />
-				</FormItem>
-			)}
+						<FormMessage />
+					</FormItem>
+				);
+			}}
 		/>
 	);
 }
