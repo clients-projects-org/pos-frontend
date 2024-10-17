@@ -115,7 +115,7 @@ function TB<ProductType>({
 						<TableRow key={headerGroup.id}>
 							{headerGroup.headers.map((header) => {
 								return (
-									<TableHead className="py-3" key={header.id}>
+									<TableHead className="py-3 text-center" key={header.id}>
 										{header.isPlaceholder
 											? null
 											: flexRender(
@@ -141,7 +141,7 @@ function TB<ProductType>({
 								data-state={row.getIsSelected() && 'selected'}
 							>
 								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
+									<TableCell key={cell.id} className="text-center">
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
 									</TableCell>
 								))}

@@ -24,6 +24,7 @@ import { showToast, ToastOptions } from '@/lib/actions/tost';
 const Column: ColumnDef<UnitType>[] = [
 	TableItem.SelectBox(),
 	TableItem.Text('name', 'Name'),
+	TableItem.Text('short_name', 'Short Name'),
 	TableItem.CreatedBy(),
 	TableItem.Date('createdAt', 'Created at'),
 	TableItem.Status(),

@@ -329,7 +329,7 @@ const Action = ({ children }: any) => {
 		header: () => 'Actions',
 		cell: () => {
 			return (
-				<div className="flex items-center">
+				<div className="flex items-center justify-center">
 					{children}
 					<Button variant="ghost" className="h-8 w-8 p-0">
 						<DynamicIcon icon="ScanEye" className="h-4 w-4" />

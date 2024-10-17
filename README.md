@@ -1,6 +1,8 @@
 [ http://localhost:8080](http://localhost:8080)
 https://dreamspos.dreamstechnologies.com/html/template/blank-page.html
 https://pos27.skymoonlabs.com/product/create
+https://hisabnikash.com/A-Pos/Demouser/public/login 
+
 
 https://v0.dev/r/qeiIKxe0hwn 
 

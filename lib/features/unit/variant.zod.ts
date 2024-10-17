@@ -18,6 +18,14 @@ export const FormSchema = z
 			})
 			.max(32, 'Name must be a maximum 32 characters'),
 
+		// short_name
+		short_name: z
+			.string()
+			.min(1, {
+				message: `Short Name is Required`,
+			})
+			.max(32, 'Short Name must be a maximum 32 characters'),
+
 		// status
 		status: zod.status,
 
@@ -42,6 +50,7 @@ export const createZodFrom = () => {
 			image: 'Aperture',
 			image_type: 'icon',
 			description: '',
+			short_name: '',
 		},
 	});
 
@@ -64,6 +73,14 @@ export const FormSchemaEdit = z.object({
 		})
 		.max(32, 'Name must be a maximum 32 characters'),
 
+	// short_name
+	short_name: z
+		.string()
+		.min(1, {
+			message: `Short Name is Required`,
+		})
+		.max(32, 'Short Name must be a maximum 32 characters'),
+
 	status: z.enum(statusData, {
 		message: 'Status is Required',
 	}),
@@ -77,6 +94,7 @@ export const editZodFrom = (data: FormValuesEdit) => {
 		resolver: zodResolver(FormSchemaEdit),
 		defaultValues: {
 			name: data?.name || '',
+			short_name: data?.short_name || '',
 			status: data?.status || 'active',
 			description: data?.description || '',
 		},
@@ -86,6 +104,7 @@ export const editZodFrom = (data: FormValuesEdit) => {
 		if (data) {
 			methods.reset({
 				name: data?.name || '',
+				short_name: data?.short_name || '',
 				status: data?.status || 'active',
 				description: data?.description || '',
 			});

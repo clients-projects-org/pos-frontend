@@ -67,6 +67,12 @@ export function Edit() {
 								</div>
 							</div>
 
+							<RFrom.RFInput
+								label="Short Name"
+								methods={methods}
+								name="short_name"
+							/>
+
 							<RFrom.RFTextarea methods={methods} />
 
 							<div className="flex justify-end gap-3">

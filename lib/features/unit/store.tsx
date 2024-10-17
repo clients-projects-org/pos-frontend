@@ -29,7 +29,7 @@ export function Store() {
 	// const methods = useForm();
 	// const onSubmit = (data) => console.log(data);
 	return (
-		<div className="max-w-5xl mx-auto w-full border p-4 rounded">
+		<div className="max-w-4xl mx-auto w-full border p-4 rounded">
 			<FormProvider {...methods}>
 				<Form {...methods}>
 					<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-3">
@@ -48,6 +48,12 @@ export function Store() {
 								<RFrom.RFStatus methods={methods} name="status" />
 							</div>
 						</div>
+
+						<RFrom.RFInput
+							label="Short Name"
+							methods={methods}
+							name="short_name"
+						/>
 
 						<RFrom.RFTextarea methods={methods} />
 

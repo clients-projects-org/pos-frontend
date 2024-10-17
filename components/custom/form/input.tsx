@@ -493,11 +493,15 @@ export function RFCheck({
 	methods,
 	name,
 	label,
+	desc,
+	descTitle,
 }: {
 	methods: any;
 	name: any;
 	label?: string;
 	placeholder?: string;
+	desc?: string;
+	descTitle?: string;
 }) {
 	return (
 		<FormField
@@ -505,7 +509,7 @@ export function RFCheck({
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel>{label}</FormLabel>
+					{label && <FormLabel>{label}</FormLabel>}
 					<FormControl>
 						<div className="items-top flex space-x-2">
 							<Checkbox
@@ -513,17 +517,22 @@ export function RFCheck({
 								checked={field.value}
 								onCheckedChange={field.onChange}
 							/>
-							<div className="grid gap-1.5 leading-none">
-								<label
-									htmlFor="terms1"
-									className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-								>
-									Is Feature Product
-								</label>
-								<p className="text-sm text-muted-foreground">
-									This is a feature product that can be added to your store.
-								</p>
-							</div>
+
+							{(desc || descTitle) && (
+								<div className="grid gap-1.5 leading-none">
+									{descTitle && (
+										<label
+											htmlFor="terms1"
+											className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+										>
+											{descTitle}
+										</label>
+									)}
+									{desc && (
+										<p className="text-sm text-muted-foreground">{desc} </p>
+									)}
+								</div>
+							)}
 						</div>
 					</FormControl>
 					<FormMessage />
