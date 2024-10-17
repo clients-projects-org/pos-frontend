@@ -134,6 +134,7 @@ const FormMutation: React.FC<FormProps> = ({
 					variants: [
 						{
 							variant_id: '',
+							attribute_id: '',
 							quantity: 1,
 							rate: 1,
 						},
@@ -192,7 +193,7 @@ const FormMutation: React.FC<FormProps> = ({
 	const addVariant = (productIndex: number) => {
 		methods.setValue(`products.${productIndex}.variants`, [
 			...methods.getValues(`products.${productIndex}.variants`),
-			{ variant_id: '', quantity: 1, rate: 1 }, // New variant structure
+			{ variant_id: '', attribute_id: '', quantity: 1, rate: 1 }, // New variant structure
 		]);
 	};
 
@@ -352,6 +353,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 				),
 				variants: product.variants?.map((variant) => ({
 					variant_id: variant.variant_id,
+					attribute_id: variant.attribute_id,
 					quantity: variant.quantity,
 					rate: variant.rate,
 				})), // Array of variants
@@ -369,6 +371,8 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 			apiErrorResponse(error, methods, FormSchema);
 		}
 	}
+
+	console.log(methods.formState.errors, 'methods.formState.errors');
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -541,30 +545,77 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													key={variantIndex}
 													className="grid grid-cols-5 gap-x-4 gap-y-6 border p-2 rounded relative bg-gray-50 dark:bg-gray-900"
 												>
-													<div>
+													<>
 														{methods.watch(
 															`products.${productIndex}.product_type`
-														) === 'variant' && (
-															<RFrom.RFSelect
-																methods={methods}
-																data={data?.data?.variant}
-																label="Variant"
-																name={`products.${productIndex}.variants.${variantIndex}.variant_id`}
-															>
-																<SelectGroup>
-																	{/* <SelectLabel>Variants</SelectLabel> */}
-																	{data?.data?.variant?.map((variant: any) => (
-																		<SelectItem
-																			key={variant._id}
-																			value={variant._id}
-																		>
-																			{variant.name}
-																		</SelectItem>
-																	))}
-																</SelectGroup>
-															</RFrom.RFSelect>
+														) === 'variant' ? (
+															<>
+																{/* First Select for Variant */}
+																<RFrom.RFSelect
+																	methods={methods}
+																	data={data?.data?.variant}
+																	label="Variant"
+																	name={`products.${productIndex}.variants.${variantIndex}.variant_id`}
+																>
+																	<SelectGroup>
+																		{data?.data?.variant?.map(
+																			(variant: any) => (
+																				<SelectItem
+																					key={variant._id}
+																					value={variant._id}
+																				>
+																					{variant.name}
+																				</SelectItem>
+																			)
+																		)}
+																	</SelectGroup>
+																</RFrom.RFSelect>
+
+																{/* Watch the selected variant */}
+																{methods.watch(
+																	`products.${productIndex}.variants.${variantIndex}.variant_id`
+																) ? (
+																	<RFrom.RFSelect
+																		data={data?.data?.variant?.find(
+																			(variant: any) =>
+																				variant._id ===
+																				methods.watch(
+																					`products.${productIndex}.variants.${variantIndex}.variant_id`
+																				)
+																		)}
+																		methods={methods}
+																		label="Attribute"
+																		name={`products.${productIndex}.variants.${variantIndex}.attribute_id`}
+																	>
+																		<SelectGroup>
+																			{/* Get the selected variant */}
+																			{data?.data?.variant
+																				?.find(
+																					(variant: any) =>
+																						variant._id ===
+																						methods.watch(
+																							`products.${productIndex}.variants.${variantIndex}.variant_id`
+																						)
+																				)
+																				?.attributes?.map((attribute: any) => (
+																					<SelectItem
+																						key={attribute._id}
+																						value={attribute._id}
+																					>
+																						{attribute.name}
+																					</SelectItem>
+																				))}
+																		</SelectGroup>
+																	</RFrom.RFSelect>
+																) : (
+																	<p className="mt-2">Please Select Variant</p>
+																)}
+															</>
+														) : (
+															<div></div>
 														)}
-													</div>
+													</>
+
 													<RFrom.RFInput
 														label="Quantity"
 														methods={methods}
@@ -628,103 +679,105 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 					<div className="flex justify-end mt-3">
 						<div className="max-w-xl  ">
 							<table>
-								<tr>
-									<td className="px-6 py-2">Sub Total</td>
-									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">{subtotal.toFixed(2)}</td>
-								</tr>
-								<tr>
-									<td className="px-6 py-2">Discount Type</td>
-									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">
-										<RFrom.RFStatus
-											methods={methods}
-											items="flatPercent"
-											name={`discount_type`}
-											placeholder="Discount Type"
-											label=""
-										/>
-									</td>
-								</tr>
-								{(discount_type === 'fixed' ||
-									discount_type === 'percentage') && (
+								<tbody>
 									<tr>
-										<td className="px-6 py-2">Discount Value</td>
+										<td className="px-6 py-2">Sub Total</td>
+										<td className="px-6 py-2">:</td>
+										<td className="px-6 py-2">{subtotal.toFixed(2)}</td>
+									</tr>
+									<tr>
+										<td className="px-6 py-2">Discount Type</td>
+										<td className="px-6 py-2">:</td>
+										<td className="px-6 py-2">
+											<RFrom.RFStatus
+												methods={methods}
+												items="flatPercent"
+												name={`discount_type`}
+												placeholder="Discount Type"
+												label=""
+											/>
+										</td>
+									</tr>
+									{(discount_type === 'fixed' ||
+										discount_type === 'percentage') && (
+										<tr>
+											<td className="px-6 py-2">Discount Value</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													methods={methods}
+													name={`discount_value`}
+													type="number"
+													placeholder="Discount Value"
+												/>
+											</td>
+										</tr>
+									)}
+									{(discount_type === 'fixed' ||
+										discount_type === 'percentage') && (
+										<tr className="border-t text-center font-bold">
+											<td className="px-6 py-2">After Discount</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												{totalAfterDiscount.toFixed(2)}
+											</td>
+										</tr>
+									)}
+
+									<tr>
+										<td className="px-6 py-2">Tax (%)</td>
+										<td className="px-6 py-2">:</td>
+										<td className="px-6 py-2">
+											<RFrom.RFInput
+												label=""
+												methods={methods}
+												name="tax"
+												type="number"
+											/>
+										</td>
+									</tr>
+									<tr>
+										<td className="px-6 py-2">Shipping Cost</td>
+										<td className="px-6 py-2">:</td>
+										<td className="px-6 py-2">
+											<RFrom.RFInput
+												label=""
+												methods={methods}
+												name="shipping_cost"
+												type="number"
+											/>
+										</td>
+									</tr>
+									<tr>
+										<td className="px-6 py-2">Paid</td>
 										<td className="px-6 py-2">:</td>
 										<td className="px-6 py-2">
 											<RFrom.RFInput
 												methods={methods}
-												name={`discount_value`}
+												name={`paid_amount`}
 												type="number"
-												placeholder="Discount Value"
+												placeholder="Paid Value"
 											/>
 										</td>
 									</tr>
-								)}
-								{(discount_type === 'fixed' ||
-									discount_type === 'percentage') && (
-									<tr className="border-t text-center font-bold">
-										<td className="px-6 py-2">After Discount</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-6 py-2">
-											{totalAfterDiscount.toFixed(2)}
-										</td>
-									</tr>
-								)}
-
-								<tr>
-									<td className="px-6 py-2">Tax (%)</td>
-									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">
-										<RFrom.RFInput
-											label=""
-											methods={methods}
-											name="tax"
-											type="number"
-										/>
-									</td>
-								</tr>
-								<tr>
-									<td className="px-6 py-2">Shipping Cost</td>
-									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">
-										<RFrom.RFInput
-											label=""
-											methods={methods}
-											name="shipping_cost"
-											type="number"
-										/>
-									</td>
-								</tr>
-								<tr>
-									<td className="px-6 py-2">Paid</td>
-									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">
-										<RFrom.RFInput
-											methods={methods}
-											name={`paid_amount`}
-											type="number"
-											placeholder="Paid Value"
-										/>
-									</td>
-								</tr>
-								<tr>
-									<td className="px-6 py-4">Due</td>
-									<td className="px-6 py-2">:</td>
-									<td className="px-8 py-4">{dueAmount.toFixed(2)}</td>
-								</tr>
-								{exchangeAmount > 0 && (
 									<tr>
-										<td className="px-6 py-4">Exchange</td>
+										<td className="px-6 py-4">Due</td>
 										<td className="px-6 py-2">:</td>
-										<td className="px-8 py-4">{exchangeAmount.toFixed(2)}</td>
+										<td className="px-8 py-4">{dueAmount.toFixed(2)}</td>
 									</tr>
-								)}
-								<tr className="border-t text-center font-bold">
-									<td className="px-6 py-2">Grand Total</td>
-									<td className="px-6 py-2">:</td>
-									<td className="px-6 py-2">{grandTotal.toFixed(2)}</td>
-								</tr>
+									{exchangeAmount > 0 && (
+										<tr>
+											<td className="px-6 py-4">Exchange</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-8 py-4">{exchangeAmount.toFixed(2)}</td>
+										</tr>
+									)}
+									<tr className="border-t text-center font-bold">
+										<td className="px-6 py-2">Grand Total</td>
+										<td className="px-6 py-2">:</td>
+										<td className="px-6 py-2">{grandTotal.toFixed(2)}</td>
+									</tr>
+								</tbody>
 							</table>
 						</div>
 					</div>

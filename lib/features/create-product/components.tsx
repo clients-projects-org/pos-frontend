@@ -31,7 +31,7 @@ const categoryColumn: ColumnDef<ProductType>[] = [
 	TableItem.Text('name', 'Name'),
 	TableItem.ProductType(),
 	{
-		accessorKey: 'inventory',
+		accessorKey: '_id',
 		header: ({ column }: any) => {
 			return (
 				<Button

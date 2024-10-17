@@ -54,6 +54,7 @@ interface TableBoxProps<DataType> {
 	TFilters: React.JSX.Element;
 	TEndChild: React.JSX.Element;
 	getSelectedRow: Function;
+	searchColumnName?: string;
 }
 
 export function TableBox<DataType>({
@@ -62,6 +63,7 @@ export function TableBox<DataType>({
 	TFilters,
 	TEndChild,
 	getSelectedRow,
+	searchColumnName,
 }: TableBoxProps<DataType>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -93,7 +95,12 @@ export function TableBox<DataType>({
 
 	return (
 		<div className="w-full">
-			<SearchFilter table={table} TEndChild={TEndChild} TFilters={TFilters} />
+			<SearchFilter
+				table={table}
+				TEndChild={TEndChild}
+				TFilters={TFilters}
+				searchColumnName={searchColumnName}
+			/>
 			<TB<DataType> table={table} columns={columns} />
 			<Footer table={table} />
 		</div>
@@ -297,18 +304,26 @@ function SearchFilter<ProductType>({
 	table,
 	TFilters,
 	TEndChild,
+	searchColumnName,
 }: {
 	table: TanTable<ProductType>;
 	TFilters: React.JSX.Element;
 	TEndChild: React.JSX.Element;
+	searchColumnName?: string;
 }) {
 	return (
 		<div className="flex items-center py-4 gap-2 flex-col lg:flex-row">
 			<Input
 				placeholder="Search..."
-				value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+				value={
+					(table
+						.getColumn(searchColumnName || 'name')
+						?.getFilterValue() as string) ?? ''
+				}
 				onChange={(event) =>
-					table.getColumn('name')?.setFilterValue(event.target.value)
+					table
+						.getColumn(searchColumnName || 'name')
+						?.setFilterValue(event.target.value)
 				}
 				className="w-full"
 				autoComplete="off"

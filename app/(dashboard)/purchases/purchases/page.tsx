@@ -30,6 +30,7 @@ export default function Category() {
 				<Motion>
 					{data?.data && (
 						<TableBox<PurchaseType>
+							searchColumnName="reference_number"
 							columns={PurchaseComponents.Column}
 							data={data?.data}
 							TFilters={

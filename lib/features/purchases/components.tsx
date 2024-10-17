@@ -108,7 +108,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 	},
 
 	TableItem.Text('quantity', 'Purchase Qty'),
-	TableItem.Text('0', 'Return Qty'),
+	// TableItem.Text('_id', 'Return Qty'),
 	TableItem.Text('grand_total', 'Amount'),
 
 	{
@@ -253,6 +253,7 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 			console.error('Failed to update the status: ', err);
 		}
 	};
+
 	return (
 		<DropDownThreeDot
 			isLoading={isLoading || updateStatusLoading}
@@ -284,7 +285,7 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 				/>
 			)}
 
-			{data.status !== 'deactivated' && data.status !== 'new' && (
+			{/* {data.status !== 'deactivated' && data.status !== 'new' && (
 				<DropDownDotItem
 					icon="CircleSlash2"
 					name="Deactivated"
@@ -308,7 +309,7 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 					onChange={() => data._id && handleDelete(data._id)}
 					disabled={loading}
 				/>
-			)}
+			)} */}
 		</DropDownThreeDot>
 	);
 };

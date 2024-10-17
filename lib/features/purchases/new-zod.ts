@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 const variantSchema = z.object({
 	variant_id: z.string().optional(), // Make optional by default
+	attribute_id: z.string().optional(), // Make optional by default
 	quantity: z.preprocess(
 		(val) => {
 			// If it's a string, convert it to a number
@@ -54,32 +55,128 @@ const productSchema = z
 	})
 	.superRefine((data, ctx) => {
 		if (data.product_type === 'variant') {
-			const variantIds = new Set(); // To track unique variant IDs
+			const variantAttributePairs = new Set(); // To track unique (variant_id, attribute_id) pairs
 
 			data.variants.forEach((variant, index) => {
-				// Check if variant_id is missing for 'variant' type products
+				// Check if both variant_id and attribute_id are present
 				if (!variant.variant_id) {
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
 						message: 'Variant ID is required',
-						path: ['variants', index, 'variant_id'],
+						path: ['variants', index, 'variant_id'], // Error on variant_id
 					});
-				} else {
-					// Check for duplicate variant IDs
-					if (variantIds.has(variant.variant_id)) {
+				}
+
+				if (!variant.attribute_id) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'Attribute ID is required',
+						path: ['variants', index, 'attribute_id'], // Error on attribute_id
+					});
+				}
+
+				// Check if the combination of variant_id and attribute_id is unique
+				if (variant.variant_id && variant.attribute_id) {
+					const pairKey = `${variant.variant_id}-${variant.attribute_id}`;
+
+					if (variantAttributePairs.has(pairKey)) {
+						// problem hossa je attribute change korle error jay na
+
+						// ctx.addIssue({
+						// 	code: z.ZodIssueCode.custom,
+						// 	message: 'Duplicate Variant/Attribute Found',
+						// 	path: ['variants', index, 'variant_id'], // Error on variant_id
+						// });
+
 						ctx.addIssue({
 							code: z.ZodIssueCode.custom,
-							message: 'Duplicate Variant ID found',
-							path: ['variants', index, 'variant_id'],
+							message: 'Duplicate Attribute found.',
+							path: ['variants', index, 'attribute_id'], // Error on attribute_id
 						});
 					} else {
-						// Add the variant ID to the set
-						variantIds.add(variant.variant_id);
+						variantAttributePairs.add(pairKey); // Add the pair to the set
 					}
 				}
 			});
 		}
 	});
+// .superRefine((data, ctx) => {
+// 	if (data.product_type === 'variant') {
+// 		const variantIds = new Set(); // To track unique variant IDs
+// 		const attributeIds = new Set(); // To track unique attribute IDs
+
+// 		data.variants.forEach((variant, index) => {
+// 			// Check if variant_id is missing for 'variant' type products
+// 			if (!variant.variant_id) {
+// 				ctx.addIssue({
+// 					code: z.ZodIssueCode.custom,
+// 					message: 'Variant ID is required',
+// 					path: ['variants', index, 'variant_id'],
+// 				});
+// 			} else {
+// 				// Check for duplicate variant IDs
+// 				if (variantIds.has(variant.variant_id)) {
+// 					ctx.addIssue({
+// 						code: z.ZodIssueCode.custom,
+// 						message: 'Duplicate Variant ID found',
+// 						path: ['variants', index, 'variant_id'],
+// 					});
+// 				} else {
+// 					variantIds.add(variant.variant_id);
+// 				}
+// 			}
+
+// 			// Check if attribute_id is missing for 'variant' type products
+// 			if (!variant.attribute_id) {
+// 				ctx.addIssue({
+// 					code: z.ZodIssueCode.custom,
+// 					message: 'Attribute ID is required',
+// 					path: ['variants', index, 'attribute_id'],
+// 				});
+// 			} else {
+// 				// Check for duplicate attribute IDs
+// 				if (attributeIds.has(variant.attribute_id)) {
+// 					ctx.addIssue({
+// 						code: z.ZodIssueCode.custom,
+// 						message: 'Duplicate Attribute ID found',
+// 						path: ['variants', index, 'attribute_id'],
+// 					});
+// 				} else {
+// 					attributeIds.add(variant.attribute_id);
+// 				}
+// 			}
+// 		});
+// 	}
+// });
+
+// .superRefine((data, ctx) => {
+// 	if (data.product_type === 'variant') {
+// 		const variantIds = new Set(); // To track unique variant IDs
+
+// 		data.variants.forEach((variant, index) => {
+// 			// Check if variant_id is missing for 'variant' type products
+// 			if (!variant.variant_id) {
+// 				ctx.addIssue({
+// 					code: z.ZodIssueCode.custom,
+// 					message: 'Variant ID is required',
+// 					path: ['variants', index, 'variant_id'],
+// 				});
+// 			} else {
+// 				// Check for duplicate variant IDs
+// 				if (variantIds.has(variant.variant_id)) {
+// 					ctx.addIssue({
+// 						code: z.ZodIssueCode.custom,
+// 						message: 'Duplicate Variant ID found',
+// 						path: ['variants', index, 'variant_id'],
+// 					});
+// 				} else {
+// 					// Add the variant ID to the set
+// 					variantIds.add(variant.variant_id);
+// 				}
+// 			}
+// 		});
+// 	}
+// });
 // check variants and store and warehouse ids
 // .superRefine((data, ctx) => {
 // 	if (data.product_type === 'variant') {
