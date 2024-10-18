@@ -45,7 +45,7 @@ export const DropDownDotItem = ({
 	disabled,
 }: {
 	icon: string;
-	name: string;
+	name: React.ReactNode;
 	onChange: () => void;
 	disabled?: boolean;
 }) => {

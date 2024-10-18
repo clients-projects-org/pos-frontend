@@ -41,7 +41,6 @@ export function PurchaseStoreModalNew() {
 		<Dialog
 			open={open}
 			onOpenChange={(isOpen) => {
-				console.log(isOpen, 'isOpen');
 				setOpen(isOpen);
 				if (!isOpen) {
 					resetForm();
@@ -365,7 +364,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 				...submitData,
 			} as any).unwrap();
 			apiReqResponse(response);
-			methods.reset();
+			resetForm();
 			setOpen(false);
 		} catch (error: unknown) {
 			apiErrorResponse(error, methods, FormSchema);
@@ -386,7 +385,10 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 							methods={methods}
 							label="Supplier Select"
 							name="supplier_id"
-							OPTIONS={data?.data?.supplier}
+							OPTIONS={data?.data?.supplier?.map((e: any) => ({
+								_id: e._id,
+								name: `${e.name} (${e.business_name})`,
+							}))}
 						/>
 
 						<RFrom.SearchSelectMultiple

@@ -5,6 +5,7 @@ export type SupplierType = {
 	sr: number;
 	_id: number;
 	name: string;
+	business_name: string;
 	email: string;
 	phone: string;
 	status: StatusType;

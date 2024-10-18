@@ -15,7 +15,6 @@ export function Edit() {
 
 	const { data, isError, isFetching, error, isLoading } =
 		useGetSupplierByIdQuery((slug as string).split('-')[1]);
-	console.log(data);
 	const { methods } = editZodFrom(data?.data);
 
 	const [update, { isLoading: isLoadingUpdate }] = useUpdateSupplierMutation();
@@ -54,7 +53,7 @@ export function Edit() {
 								{/* Name */}
 								<div className="col-span-8">
 									<RFrom.RFInput
-										label="Customer Name"
+										label="Supplier Name"
 										methods={methods}
 										name="name"
 									/>
@@ -67,6 +66,14 @@ export function Edit() {
 							</div>
 
 							<div className="grid grid-cols-12 gap-3">
+								{/* business_name  */}
+								<div className="col-span-12">
+									<RFrom.RFInput
+										label="Business Name"
+										methods={methods}
+										name="business_name"
+									/>
+								</div>
 								{/* email  */}
 								<div className="col-span-6">
 									<RFrom.RFInput label="Email" methods={methods} name="email" />
@@ -86,7 +93,7 @@ export function Edit() {
 							<RFrom.RFTextarea methods={methods} />
 
 							<div className="flex justify-end gap-3">
-								<Link href="/peoples/customers">
+								<Link href="/peoples/Suppliers">
 									<Button
 										disabled={isLoadingUpdate}
 										variant="destructive"
@@ -100,7 +107,7 @@ export function Edit() {
 									variant="default"
 									type="submit"
 								>
-									{isLoadingUpdate ? 'Updating...' : 'Update Customer'}
+									{isLoadingUpdate ? 'Updating...' : 'Update Supplier'}
 								</Button>
 							</div>
 						</form>

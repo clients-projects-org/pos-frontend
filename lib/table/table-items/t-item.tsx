@@ -203,7 +203,7 @@ const SupplierName = () => {
 				<div className="capitalize whitespace-nowrap  text-center">
 					{row.original.supplier_data?.name
 						? row.original.supplier_data?.name &&
-							row.original.supplier_data.name
+							`${row.original.supplier_data.name} (${row.original.supplier_data.business_name})`
 						: 'N/A'}
 				</div>
 			);

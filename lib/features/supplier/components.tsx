@@ -29,6 +29,7 @@ const Column: ColumnDef<SupplierType>[] = [
 	TableItem.SelectBox(),
 	TableItem.ImageIcon(),
 	TableItem.Text('name', 'Name'),
+	TableItem.Text('business_name', 'Business Name'),
 	TableItem.Text('email', 'Email'),
 	TableItem.Text('phone', 'Phone'),
 	{

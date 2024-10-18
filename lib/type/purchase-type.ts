@@ -14,7 +14,7 @@ export type PurchaseType = {
 	grand_total: number;
 	due_amount: number;
 	payment_method: string;
-	payment_status: string;
+	payment_status: 'paid' | 'due';
 	description: string;
 	created_by: string;
 	createdAt: string;
@@ -22,6 +22,7 @@ export type PurchaseType = {
 	supplier_data: {
 		_id: string;
 		name: string;
+		business_name: string;
 	};
 	createdBy: {
 		_id: string;

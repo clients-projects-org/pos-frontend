@@ -18,6 +18,14 @@ export const FormSchema = z
 			})
 			.max(32, 'Name must be a maximum 32 characters'),
 
+		// business_name
+		business_name: z
+			.string()
+			.min(2, {
+				message: `Business Name is Required`,
+			})
+			.max(32, 'Business Name must be a maximum 32 characters'),
+
 		// email
 		email: z.string().email({ message: 'Invalid email address' }).optional(),
 
@@ -79,6 +87,14 @@ export const FormSchemaEdit = z.object({
 		})
 		.max(32, 'Name must be a maximum 32 characters'),
 
+	// business_name
+	business_name: z
+		.string()
+		.min(2, {
+			message: `Business name is Required`,
+		})
+		.max(32, 'Business name must be a maximum 32 characters'),
+
 	// email
 	email: z.string().email({ message: 'Invalid email address' }),
 
@@ -105,6 +121,7 @@ export const editZodFrom = (data: FormValuesEdit) => {
 		resolver: zodResolver(FormSchemaEdit),
 		defaultValues: {
 			name: data?.name || '',
+			business_name: data?.business_name || '',
 			email: data?.email || '',
 			phone: data?.phone || '',
 			status: data?.status || 'active',
@@ -117,6 +134,7 @@ export const editZodFrom = (data: FormValuesEdit) => {
 		if (data) {
 			methods.reset({
 				name: data?.name || '',
+				business_name: data?.business_name || '',
 				status: data?.status || 'active',
 				email: data?.email || '',
 				phone: data?.phone || '',

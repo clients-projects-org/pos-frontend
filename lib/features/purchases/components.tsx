@@ -14,20 +14,45 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableItem } from '@/lib/table/table-items/t-item';
-import { ProductType, PurchaseType, StatusType } from '@/lib/type';
+import { PurchaseType, StatusType } from '@/lib/type';
 import { ColumnDef } from '@tanstack/react-table';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { badge, confirm } from '@/lib/actions';
+import { confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import {
 	useDeletePurchaseMutation,
 	useReceivePurchaseMutation,
 	useUpdatePurchaseStatusMutation,
 } from './purchaseApiSlice';
-import { PurchaseStoreModal } from './store';
 import { PurchaseStoreModalNew } from './new-create';
 import { Badge } from '@/components/ui/badge';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useEffect, useState } from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { toast } from '@/components/hooks/use-toast';
+import {
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
 
 const Column: ColumnDef<PurchaseType>[] = [
 	TableItem.SelectBox(),
@@ -101,7 +126,9 @@ const Column: ColumnDef<PurchaseType>[] = [
 							: 'secondary'
 					}
 				>
-					{row.getValue('payment_status')}
+					{row.getValue('payment_status')}{' '}
+					{row.getValue('payment_status') === 'due' &&
+						`(${row.original.due_amount})`}
 				</Badge>
 			</div>
 		),
@@ -171,6 +198,7 @@ const Filter = ({
 const Actions = ({ data }: { data: PurchaseType }) => {
 	const router = useRouter();
 	const params = useParams<{ slug: string; item: string }>();
+	const [paymentModal, setPaymentModal] = useState(false);
 
 	const [deleting, { isLoading }] = useDeletePurchaseMutation();
 	const [receiving, { isLoading: receivingLoading }] =
@@ -230,7 +258,7 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
 					console.log('first');
-					router.push('/user-management/roles-permissions');
+					// router.push('/user-management/roles-permissions');
 				}
 			} else {
 				console.log('Delete action cancelled');
@@ -259,7 +287,7 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 			isLoading={isLoading || updateStatusLoading}
 			icon="MoreHorizontal"
 		>
-			<DropDownDotItem
+			{/* <DropDownDotItem
 				icon="SquarePen"
 				name="Edit"
 				onChange={() => {
@@ -274,7 +302,7 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 					router.push(`/inventory/category/${data._id}`);
 				}}
 				disabled={loading}
-			/>
+			/> */}
 			<DropdownMenuSeparator />
 			{data.purchase_status === 'ordered' && (
 				<DropDownDotItem
@@ -283,6 +311,33 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 					onChange={() => data._id && handleReceive(data._id)}
 					disabled={loading}
 				/>
+			)}
+
+			{data.payment_status === 'due' && (
+				<Dialog open={paymentModal} onOpenChange={setPaymentModal}>
+					<DialogTrigger asChild>
+						<button className="w-full flex items-center gap-2 text-sm px-2 py-2 rounded-sm">
+							<DynamicIcon icon="HandCoins" className="w-4 h-4" />
+							<span>Add Payment</span>
+						</button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[425px]">
+						<DialogHeader>
+							<DialogTitle className="text-center">
+								<p>Add Payment</p>
+								<p className="text-sm ">
+									{data.supplier_data.name}({data.supplier_data.business_name})
+								</p>
+							</DialogTitle>
+
+							<DialogDescription className="text-center">
+								{' '}
+								#{data.reference_number}
+							</DialogDescription>
+						</DialogHeader>
+						<PurchasePayment data={data} setPaymentModal={setPaymentModal} />
+					</DialogContent>
+				</Dialog>
 			)}
 
 			{/* {data.status !== 'deactivated' && data.status !== 'new' && (
@@ -320,3 +375,103 @@ const Add = () => {
 };
 
 export const PurchaseComponents = { Filter, Add, Column };
+
+export function PurchasePayment({
+	data,
+	setPaymentModal,
+}: {
+	data: PurchaseType;
+	setPaymentModal: Function;
+}) {
+	const FormSchema = z.object({
+		note: z.string().optional(),
+		paid_amount: z.preprocess(
+			(val) => {
+				// If it's a string, convert it to a number
+				if (typeof val === 'string') {
+					const num = Number(val);
+					return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+				}
+				return val; // Otherwise return the value unchanged
+			},
+			z
+				.number()
+				.min(1, {
+					message: 'Paid Amount is Required',
+				})
+				.max(data.due_amount, {
+					message: `Paid Amount should be less than or equal to ${data.due_amount}`,
+				})
+		),
+	});
+
+	const form = useForm<z.infer<typeof FormSchema>>({
+		resolver: zodResolver(FormSchema),
+		defaultValues: {
+			paid_amount: data.due_amount || 0,
+		},
+	});
+
+	// useEffect(() => {
+	// 	if (data) {
+	// 		form.reset({
+	// 			paid_amount: data.due_amount || 0,
+	// 		});
+	// 	}
+	// }, [data, form.reset]);
+
+	function onSubmit(data: z.infer<typeof FormSchema>) {
+		toast({
+			title: 'You submitted the following values:',
+			description: (
+				<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+					<code className="text-white">{JSON.stringify(data, null, 2)}</code>
+				</pre>
+			),
+		});
+	}
+
+	return (
+		<Form {...form}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+				<FormField
+					control={form.control}
+					name="paid_amount"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Payment</FormLabel>
+							<FormControl>
+								<Input placeholder="type..." {...field} type="number" />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="note"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Note</FormLabel>
+							<FormControl>
+								<Textarea placeholder="type..." {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<DialogFooter>
+					<Button
+						type="button"
+						variant="destructive"
+						onClick={() => setPaymentModal(false)}
+					>
+						Cancel
+					</Button>
+					<Button type="submit">Submit</Button>
+				</DialogFooter>
+			</form>
+		</Form>
+	);
+}

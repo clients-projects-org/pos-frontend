@@ -83,6 +83,15 @@ export function Store() {
 
 						<div className="grid grid-cols-12 gap-3">
 							{/* email  */}
+							<div className="col-span-12">
+								<RFrom.RFInput
+									label="Business Name"
+									methods={methods}
+									name="business_name"
+								/>
+							</div>
+
+							{/* email  */}
 							<div className="col-span-6">
 								<RFrom.RFInput label="Email" methods={methods} name="email" />
 							</div>
