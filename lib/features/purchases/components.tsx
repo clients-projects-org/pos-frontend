@@ -17,9 +17,10 @@ import { TableItem } from '@/lib/table/table-items/t-item';
 import { PurchaseType, StatusType } from '@/lib/type';
 import { ColumnDef } from '@tanstack/react-table';
 import { useParams, useRouter } from 'next/navigation';
-import { confirm } from '@/lib/actions';
+import { apiReqResponse, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import {
+	useAddPaymentPurchaseMutation,
 	useDeletePurchaseMutation,
 	useReceivePurchaseMutation,
 	useUpdatePurchaseStatusMutation,
@@ -28,6 +29,7 @@ import { PurchaseStoreModalNew } from './new-create';
 import { Badge } from '@/components/ui/badge';
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
@@ -53,6 +55,8 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
+import { useGetPaymentMethodQuery } from '../payment-method';
+import { RFrom } from '@/components/custom/form';
 
 const Column: ColumnDef<PurchaseType>[] = [
 	TableItem.SelectBox(),
@@ -314,14 +318,18 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 			)}
 
 			{data.payment_status === 'due' && (
-				<Dialog open={paymentModal} onOpenChange={setPaymentModal}>
+				<Dialog open={paymentModal}>
 					<DialogTrigger asChild>
-						<button className="w-full flex items-center gap-2 text-sm px-2 py-2 rounded-sm">
+						<button
+							type="button"
+							onClick={() => setPaymentModal(true)}
+							className="w-full flex items-center gap-2 text-sm px-2 py-2 rounded-sm"
+						>
 							<DynamicIcon icon="HandCoins" className="w-4 h-4" />
 							<span>Add Payment</span>
 						</button>
 					</DialogTrigger>
-					<DialogContent className="sm:max-w-[425px]">
+					<DialogContent showCloseButton={false} className="sm:max-w-[425px]">
 						<DialogHeader>
 							<DialogTitle className="text-center">
 								<p>Add Payment</p>
@@ -383,8 +391,11 @@ export function PurchasePayment({
 	data: PurchaseType;
 	setPaymentModal: Function;
 }) {
+	const { data: paymentMethod } = useGetPaymentMethodQuery('active');
+	const [addPayment, { isLoading }] = useAddPaymentPurchaseMutation();
 	const FormSchema = z.object({
 		note: z.string().optional(),
+		payment_method: z.string().min(1, 'Payment Method is Required'),
 		paid_amount: z.preprocess(
 			(val) => {
 				// If it's a string, convert it to a number
@@ -420,15 +431,20 @@ export function PurchasePayment({
 	// 	}
 	// }, [data, form.reset]);
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
-		toast({
-			title: 'You submitted the following values:',
-			description: (
-				<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-					<code className="text-white">{JSON.stringify(data, null, 2)}</code>
-				</pre>
-			),
+	async function onSubmit(values: z.infer<typeof FormSchema>) {
+		const confirmed = await confirm({
+			message:
+				'This action cannot be undone. This will permanently delete permission and remove it from servers.',
+			title: 'Delete Permission',
 		});
+
+		if (confirmed) {
+			const response = await addPayment({
+				...values,
+				_id: data._id,
+			}).unwrap();
+			// apiReqResponse(response);
+		}
 	}
 
 	return (
@@ -446,6 +462,12 @@ export function PurchasePayment({
 							<FormMessage />
 						</FormItem>
 					)}
+				/>
+				<RFrom.SearchAbleSelect
+					methods={form}
+					label="Payment Method"
+					name="payment_method"
+					OPTIONS={paymentMethod?.data}
 				/>
 				<FormField
 					control={form.control}

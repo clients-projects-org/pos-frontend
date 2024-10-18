@@ -325,5 +325,15 @@ export interface ApiErrorResponseType {
 	errorMessages?: ErrorMessage[];
 }
 
+export type PurchasePaymentHistoryType = {
+	_id?: string;
+	payment_method: string;
+	purchase_id: string;
+	supplier_id: string;
+	added_by: string;
+	paid_amount: number;
+	note?: string;
+};
+
 // Define a union type for both success and error responses
 export type ApiResponse<T> = ApiSuccessResponse<T>;

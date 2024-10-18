@@ -813,8 +813,8 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 					>
 						Cancel
 					</Button>
-					<Button type="submit" disabled={isLoading}>
-						{isLoading ? 'Creating...' : 'Create'}
+					<Button type="submit" disabled={isStoreLoading}>
+						{isStoreLoading ? 'Creating...' : 'Create'}
 					</Button>
 				</DialogFooter>
 			</form>

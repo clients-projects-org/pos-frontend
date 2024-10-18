@@ -149,6 +149,41 @@ const CreatedBy = () => {
 	};
 };
 
+const Added_by = () => {
+	return {
+		accessorKey: 'added_by',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Added By
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
+
+		cell: ({ row }: any) => {
+			return (
+				<div className="capitalize whitespace-nowrap  text-center">
+					{row.original.added_by?.name ? (
+						<>
+							{row.original.added_by?.name && (
+								<Badge className="capitalize" variant="outline">
+									{row.original.added_by.name}
+								</Badge>
+							)}
+						</>
+					) : (
+						'N/A'
+					)}
+				</div>
+			);
+		},
+	};
+};
+
 const Category = () => {
 	return {
 		accessorKey: 'categoryData',
@@ -375,6 +410,7 @@ export const TableItem = {
 	AddLink,
 	Date,
 	CreatedBy,
+	Added_by,
 	Category,
 	OnlyImage,
 	ProductType,
