@@ -18,16 +18,22 @@ import { ModeToggle } from './theme';
 import { MenuItem } from './sidebar/sidebar-components';
 import Session from '@/lib/session';
 import { useAllSettingsQuery } from '@/lib/features/all-settings';
+import { usePathname } from 'next/navigation';
 
 export const Nav = () => {
 	const { signOut } = Session();
 	const { data: allSettings } = useAllSettingsQuery();
+	const pathName = usePathname();
 
 	return (
 		<header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
 			<Sheet>
 				<SheetTrigger asChild>
-					<Button variant="outline" size="icon" className="shrink-0 md:hidden">
+					<Button
+						variant="outline"
+						size="icon"
+						className={`shrink-0 ${pathName !== '/sales/pos' && 'md:hidden'}}`}
+					>
 						<Menu className="h-5 w-5" />
 						<span className="sr-only">Toggle navigation menu</span>
 					</Button>
