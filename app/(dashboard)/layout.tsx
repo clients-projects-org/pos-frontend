@@ -51,7 +51,8 @@ export default function RootLayout({
 			{pathname !== '/sales/pos' && <Sidebar />}
 
 			<div className="flex flex-col flex-1 overflow-hidden">
-				<Nav />
+				{pathname !== '/sales/pos' && <Nav />}
+
 				<main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
 					{children}
 				</main>

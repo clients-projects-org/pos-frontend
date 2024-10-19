@@ -19,6 +19,7 @@ import { MenuItem } from './sidebar/sidebar-components';
 import Session from '@/lib/session';
 import { useAllSettingsQuery } from '@/lib/features/all-settings';
 import { usePathname } from 'next/navigation';
+import { FullscreenButton, CalculatorDropdown } from '@/lib/actions';
 
 export const Nav = () => {
 	const { signOut } = Session();
@@ -32,7 +33,7 @@ export const Nav = () => {
 					<Button
 						variant="outline"
 						size="icon"
-						className={`shrink-0 ${pathName !== '/sales/pos' && 'md:hidden'}}`}
+						className={`shrink-0 ${pathName !== '/sales/pos' && 'md:hidden'}`}
 					>
 						<Menu className="h-5 w-5" />
 						<span className="sr-only">Toggle navigation menu</span>
@@ -66,6 +67,8 @@ export const Nav = () => {
 					</div>
 				</form>
 			</div>
+			<CalculatorDropdown />
+			<FullscreenButton />
 			<ModeToggle />
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>

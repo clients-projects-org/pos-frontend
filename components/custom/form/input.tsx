@@ -581,8 +581,10 @@ export function SelectSearch({
 	frameworks,
 	onChange,
 	value,
+	placeholder = 'Select Item...',
 }: {
 	frameworks: { _id: string; name: string }[];
+	placeholder?: string;
 	value: string;
 	onChange: (value: string) => void;
 }) {
@@ -599,7 +601,7 @@ export function SelectSearch({
 				>
 					{value
 						? frameworks?.find((framework) => framework._id === value)?.name
-						: 'Select Item...'}
+						: placeholder}
 					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>
