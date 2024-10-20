@@ -6,15 +6,36 @@ import { Motion } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CalculatorDropdown, FullscreenButton } from '@/lib/actions';
+import { useGetStoreProductQuery } from '@/lib/features/create-product';
+import { useGetCustomerQuery } from '@/lib/features/customer';
 import {
 	PosNav,
 	PosProductCard_1,
 	useGetPOSQuery,
 } from '@/lib/features/pos-sell';
 import { Search } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Page() {
+	const [custom, setCustomer] = useState('');
 	const { data, isLoading, isFetching, isError } = useGetPOSQuery('');
+
+	// get all utility
+	const {
+		data: utilityData,
+		isLoading: utilityLoading,
+		isFetching: utilityFetching,
+		isError: utilityError,
+	} = useGetStoreProductQuery();
+
+	// get all customer
+	const {
+		data: customer,
+		isLoading: customerLoading,
+		isFetching: customerFetching,
+		isError: customerError,
+	} = useGetCustomerQuery('active');
+
 	return (
 		<ApiUseHOC
 			data={data}
@@ -47,32 +68,37 @@ export default function Page() {
 									</div>
 									<SelectSearch
 										placeholder="Brand"
-										frameworks={[]}
+										frameworks={utilityData?.data?.brand}
 										onChange={() => {}}
 										value={''}
 									/>
 									<SelectSearch
 										placeholder="Category"
-										frameworks={[]}
+										frameworks={utilityData?.data?.category}
 										onChange={() => {}}
 										value={''}
 									/>
 									<SelectSearch
 										placeholder="Sub Category"
-										frameworks={[]}
+										frameworks={utilityData?.data?.subCategory}
 										onChange={() => {}}
 										value={''}
 									/>
 									<SelectSearch
 										placeholder="Supplier"
-										frameworks={[]}
+										frameworks={utilityData?.data?.supplier?.map(
+											(supplier: any) => ({
+												name: `${supplier.name} (${supplier.business_name})`,
+												_id: supplier._id,
+											})
+										)}
 										onChange={() => {}}
 										value={''}
 									/>
 								</div>
 								<div className="h-[80vh] overflow-y-auto">
 									<div className="grid grid-cols-6 gap-4 ">
-										{data.data?.map((product) => (
+										{data.data?.map((product: any) => (
 											<PosProductCard_1 key={product._id} product={product} />
 										))}
 									</div>
@@ -85,17 +111,16 @@ export default function Page() {
 									<div className="flex items-center">
 										<SelectSearch
 											placeholder="Customer"
-											frameworks={[]}
-											onChange={() => {}}
-											value={''}
+											frameworks={customer?.data}
+											onChange={(e) => setCustomer(e)}
+											value={custom}
 										/>
 										<Button type="button" size="icon" variant="secondary">
 											<DynamicIcon icon="Plus" className="h-4 w-4" />
 										</Button>
 									</div>
 									<Input placeholder="Invoice Number" />
-								</div>
-								<div>
+									<Input placeholder="Scan Barcode" />
 									<Input placeholder="Scan Barcode" />
 								</div>
 
