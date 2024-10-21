@@ -48,6 +48,9 @@ export interface MenuTypeRoleState extends MenuType {
 
 // product type
 export type ProductType = {
+	inventory: any;
+	category: any;
+	sub_category: any;
 	sr: number;
 	_id: string;
 
@@ -62,6 +65,7 @@ export type ProductType = {
 	category_id: string;
 	sub_category_id: string;
 	brand_id: string;
+	brand: BrandType;
 	sort_description: string;
 	long_description: string;
 
@@ -80,7 +84,7 @@ export type ProductType = {
 	warranty_id: string;
 
 	variant: string;
-	unit: string;
+	unit: UnitType;
 
 	status: StatusType | 'new';
 
@@ -91,6 +95,8 @@ export type ProductType = {
 	tags?: string[];
 	isFeature?: 'true' | 'false';
 	sku: string;
+
+	variant_details: any;
 };
 
 export type UserType = {
@@ -210,7 +216,7 @@ export type BrandType = {
 	_id: string;
 	code?: string;
 	description?: string;
-	name?: string;
+	name: string;
 	slug?: string;
 	image?: string;
 	image_type: ImageType;
