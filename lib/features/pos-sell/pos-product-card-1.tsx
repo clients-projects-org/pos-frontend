@@ -7,8 +7,10 @@ import {
 	PopoverTrigger,
 	PopoverClose,
 } from '@/components/ui/popover';
+import { ProductType } from '@/lib/type';
+import { useGetInventoryProductQuery } from './posApiSlice';
 
-export function PosProductCard_1({ product }: { product: any }) {
+export function PosProductCard_1({ product }: { product: ProductType }) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
@@ -23,7 +25,7 @@ export function PosProductCard_1({ product }: { product: any }) {
 							{product.name}
 						</h2>
 						<p className="mb-2 text-base dark:text-gray-300 text-gray-700">
-							{product.brand_id.name}
+							{/* {product.brand_id.name} */}
 						</p>
 						<div className="flex items-center">
 							<p className="mr-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -44,14 +46,16 @@ export function PosProductCard_1({ product }: { product: any }) {
 				<PopoverClose className="absolute top-2 right-2">
 					<DynamicIcon icon="X" className="h-6 w-6 text-red-500" />
 				</PopoverClose>
-				<ProductDetails />
+				<ProductDetails product={product} />
 			</PopoverContent>
 		</Popover>
 	);
 }
 
-const ProductDetails = () => {
-	console.log('clg');
+const ProductDetails = ({ product }: { product: ProductType }) => {
+	const { data } = useGetInventoryProductQuery(product._id);
+	console.log(data, 'clg');
+
 	return (
 		<div className="grid gap-4">
 			<div className="space-y-2">

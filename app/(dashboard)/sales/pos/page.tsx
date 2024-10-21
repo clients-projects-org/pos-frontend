@@ -98,7 +98,7 @@ export default function Page() {
 								</div>
 								<div className="h-[80vh] overflow-y-auto">
 									<div className="grid grid-cols-6 gap-4 ">
-										{data.data?.map((product: any) => (
+										{data.data?.map((product) => (
 											<PosProductCard_1 key={product._id} product={product} />
 										))}
 									</div>
