@@ -26,12 +26,28 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 	// variants items
 	const items = useAppSelector((state) => state.variantPos.variants);
 	console.log(items, 'items');
+
 	// active product
 	const activeProduct = items.some((item) => item.product_id === product._id);
 
-	const discountPercentage = !product.discount_type
-		? Math.round(((120 - 100) / 120) * 100)
-		: 0;
+	// quantity remaining
+	const quantityRemaining = items
+		.filter((item) => item.product_id === product._id)
+		.reduce((pre, cur) => pre + cur.select_quantity, 0);
+
+	// calculate discount
+	const discount = () => {
+		if (product.discount_type === 'fixed') {
+			return product.sell_price - product.discount_value;
+		} else if (product.discount_type === 'percentage') {
+			return (
+				product.sell_price -
+				Math.round((product.discount_value * product.sell_price) / 100)
+			);
+		} else {
+			return product.sell_price;
+		}
+	};
 
 	return (
 		<Popover>
@@ -49,9 +65,10 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 									objectFit="cover"
 									className="transition-all duration-300 hover:scale-105"
 								/>
-								{discountPercentage > 0 && (
+								{product.discount_type !== 'none' && (
 									<Badge className="absolute top-2 right-2 bg-red-500">
-										{discountPercentage}% OFF
+										{product.discount_value}
+										{product.discount_type === 'percentage' ? '%' : 'tk'} OFF
 									</Badge>
 								)}
 							</div>
@@ -74,40 +91,26 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 							<div className="flex items-center gap-2 text-sm">
 								<Package className="h-4 w-4" />
 								<span>
-									Quantity: {product?.inventory?.quantity} {product?.unit?.name}
+									Quantity: {product?.inventory?.quantity - quantityRemaining}{' '}
+									{product?.unit?.name}
 								</span>
 							</div>
 
-							<div className="mt-2 flex items-center gap-2">
+							<div className="mt-1 flex items-center gap-2">
 								<ShoppingBag className="h-5 w-5 text-green-600" />
 								<div className="flex items-baseline gap-2">
-									{product.discount_type === 'fixed' ? (
-										<>
-											<span className="text-2xl font-bold text-green-600">
-												${product.sell_price.toFixed(2)}
-											</span>
-											<span className="text-lg text-muted-foreground line-through">
-												${product.sell_price.toFixed(2)}
-											</span>
-										</>
-									) : (
-										<span className="text-2xl font-bold text-green-600">
+									<span className="text-2xl font-bold text-green-600">
+										${discount().toFixed(2)}
+									</span>
+
+									{/* if not none then show discount */}
+									{product.discount_type !== 'none' && (
+										<span className="text-lg text-muted-foreground line-through">
 											${product.sell_price.toFixed(2)}
 										</span>
 									)}
 								</div>
 							</div>
-
-							{product.discount_type && (
-								<div className="flex items-center gap-2 text-sm text-green-600">
-									<Percent className="h-4 w-4" />
-									<span>
-										You save: $
-										{(product.sell_price - product.sell_price).toFixed(2)} (
-										{discountPercentage}%)
-									</span>
-								</div>
-							)}
 						</CardContent>
 
 						{/* footer is hidden  */}
@@ -175,6 +178,7 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 											...item,
 											product_name: product.name,
 											product_id: product._id,
+											sell_price: product.sell_price,
 										})
 									)
 								}

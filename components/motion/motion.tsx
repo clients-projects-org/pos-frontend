@@ -6,13 +6,20 @@ const variants = {
 	enter: { opacity: 1 },
 };
 
-export function Motion({ children }: { children: React.ReactNode }) {
+export function Motion({
+	children,
+	className,
+}: {
+	children: React.ReactNode;
+	className?: string;
+}) {
 	return (
 		<motion.div
 			variants={variants}
 			initial="hidden"
 			animate="enter"
 			transition={{ duration: 0.5 }}
+			className={className}
 		>
 			{children}
 		</motion.div>

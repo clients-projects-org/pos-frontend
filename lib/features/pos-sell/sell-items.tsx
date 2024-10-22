@@ -25,6 +25,21 @@ export function SellItems() {
 		dispatch(updateQuantity({ _id: variant._id, quantity: value }));
 	};
 
+	// total quantity
+	const totalQuantity = items.reduce(
+		(pre, cur) => pre + cur.select_quantity,
+		0
+	);
+
+	// total price
+	const totalPrice = items.reduce((pre, cur) => pre + cur.sell_price, 0);
+
+	// total price * quantity
+	const totalPriceAndQuantity = items.reduce(
+		(pre, cur) => pre + cur.select_quantity * cur.sell_price,
+		0
+	);
+
 	// not item found
 	if (items.length === 0) {
 		return (
@@ -40,16 +55,16 @@ export function SellItems() {
 	}
 
 	return (
-		<div className="h-[74vh] overflow-y-auto">
-			<div className="relative overflow-x-auto">
-				<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+		<div className="">
+			<div className="relative overflow-x-auto h-[420px] overflow-y-auto">
+				<table className="w-full text-sm rtl:text-right text-gray-500 dark:text-gray-400 text-center">
 					<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 						<tr>
 							<th scope="col" className="px-6 py-3">
 								Product name
 							</th>
 							<th scope="col" className="px-6 py-3">
-								Quantity
+								Quantity ({totalQuantity})
 							</th>
 							<th scope="col" className="px-6 py-3">
 								Price
@@ -59,7 +74,7 @@ export function SellItems() {
 							</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody className="">
 						{items?.map((variant, index) => (
 							<tr
 								key={index}
@@ -69,9 +84,16 @@ export function SellItems() {
 									scope="row"
 									className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 								>
-									{variant?.product_name}
+									<p>{variant?.product_name}</p>
+									<p className="text-xs font-thin">
+										{
+											variant?.variant_id?.attributes?.find(
+												(v) => v._id === variant?.attribute_id
+											)?.name
+										}
+									</p>
 								</th>
-								<td className="px-0 py-3 flex">
+								<td className="px-0 py-3 flex justify-center">
 									<Button
 										variant="outline"
 										size="icon"
@@ -101,9 +123,9 @@ export function SellItems() {
 										<Plus className="h-4 w-4" />
 									</Button>
 								</td>
-								<td className="px-6 py-3">{variant.select_quantity}</td>
+								<td className="px-6 py-3">{variant.sell_price}</td>
 
-								<td className="px-0 py-3 relative flex">
+								<td className="px-0 py-3 relative  ">
 									<Button
 										onClick={() => dispatch(removeVariant(variant._id))}
 										variant="link"
@@ -113,20 +135,11 @@ export function SellItems() {
 									>
 										<DynamicIcon icon="CircleX" className="h-4 w-4" />
 									</Button>
+									{variant.sell_price * variant.select_quantity}
 								</td>
 							</tr>
 						))}
 					</tbody>
-					<tfoot>
-						<tr className="font-semibold text-gray-900 dark:text-white">
-							<th scope="row" className="px-6 py-3 text-base">
-								Total
-							</th>
-							<td className="px-6 py-3"> </td>
-							<td className="px-6 py-3">3</td>
-							<td className="px-6 py-3">21,000</td>
-						</tr>
-					</tfoot>
 				</table>
 			</div>
 
@@ -137,7 +150,7 @@ export function SellItems() {
 							<tr>
 								<td className="px-6 py-2">Sub Total</td>
 								<td className="px-6 py-2">:</td>
-								<td className="px-6 py-2">500</td>
+								<td className="px-6 py-2">{totalPriceAndQuantity}</td>
 							</tr>
 							<tr>
 								<td className="px-6 py-2">Discount Type</td>

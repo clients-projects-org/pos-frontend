@@ -44,7 +44,7 @@ export default function Page() {
 			isLoading={isLoading}
 			isError={isError}
 		>
-			<Motion>
+			<Motion className="h-full">
 				{data?.data && (
 					<div className="h-full">
 						<div className="border-b pb-2 flex justify-between items-center">
@@ -85,17 +85,7 @@ export default function Page() {
 										onChange={() => {}}
 										value={''}
 									/>
-									<SelectSearch
-										placeholder="Supplier"
-										frameworks={utilityData?.data?.supplier?.map(
-											(supplier: any) => ({
-												name: `${supplier.name} (${supplier.business_name})`,
-												_id: supplier._id,
-											})
-										)}
-										onChange={() => {}}
-										value={''}
-									/>
+									<Input placeholder="Scan Barcode" />
 								</div>
 								<div className="h-[80vh] overflow-y-auto">
 									<div className="grid grid-cols-4 gap-4 ">
