@@ -2,11 +2,28 @@ import { DynamicIcon } from '@/components/actions';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import React from 'react';
-import { removeVariant } from './posSlice';
+import {
+	decrementQuantity,
+	incrementQuantity,
+	removeVariant,
+	updateQuantity,
+	Variant,
+} from './posSlice';
+import { Minus, Plus } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 export function SellItems() {
 	const dispatch = useAppDispatch();
 	const items = useAppSelector((state) => state.variantPos.variants);
+
+	const handleInputChange = (
+		e: React.ChangeEvent<HTMLInputElement>,
+		variant: Variant
+	) => {
+		const value = Math.max(1, Number(e.target.value)); // Prevent quantity from being less than 1
+
+		dispatch(updateQuantity({ _id: variant._id, quantity: value }));
+	};
 
 	// not item found
 	if (items.length === 0) {
@@ -32,13 +49,13 @@ export function SellItems() {
 								Product name
 							</th>
 							<th scope="col" className="px-6 py-3">
-								Color
-							</th>
-							<th scope="col" className="px-6 py-3">
-								Category
+								Quantity
 							</th>
 							<th scope="col" className="px-6 py-3">
 								Price
+							</th>
+							<th scope="col" className="px-6 py-3">
+								Total
 							</th>
 						</tr>
 					</thead>
@@ -54,18 +71,47 @@ export function SellItems() {
 								>
 									{variant?.product_name}
 								</th>
-								<td className="px-6 py-3">{variant.quantity}</td>
-								<td className="px-6 py-3">Laptop</td>
+								<td className="px-0 py-3 flex">
+									<Button
+										variant="outline"
+										size="icon"
+										onClick={() => dispatch(decrementQuantity(variant._id))}
+										aria-label="Decrease quantity"
+									>
+										<Minus className="h-4 w-4" />
+									</Button>
 
-								<td className="px-6 py-3 relative">
+									<div className="w-20">
+										<Input
+											type="number"
+											id="quantity"
+											value={variant.select_quantity}
+											onChange={(e) => handleInputChange(e, variant)}
+											min="1"
+											className="text-center"
+										/>
+									</div>
+
+									<Button
+										variant="outline"
+										size="icon"
+										onClick={() => dispatch(incrementQuantity(variant._id))}
+										aria-label="Increase quantity"
+									>
+										<Plus className="h-4 w-4" />
+									</Button>
+								</td>
+								<td className="px-6 py-3">{variant.select_quantity}</td>
+
+								<td className="px-0 py-3 relative flex">
 									<Button
 										onClick={() => dispatch(removeVariant(variant._id))}
-										variant="destructive"
+										variant="link"
 										size="icon"
 										type="button"
-										className="p-0 h-6 w-6 absolute right-2 top-2"
+										className="p-0 h-6 w-6 absolute right-0 top-0 text-red-500"
 									>
-										<DynamicIcon icon="Trash" className="h-4 w-4" />
+										<DynamicIcon icon="CircleX" className="h-4 w-4" />
 									</Button>
 								</td>
 							</tr>

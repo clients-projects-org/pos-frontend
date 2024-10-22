@@ -23,6 +23,12 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { addVariant, removeVariant } from './posSlice';
 
 export function PosProductCard_1({ product }: { product: ProductType }) {
+	// variants items
+	const items = useAppSelector((state) => state.variantPos.variants);
+	console.log(items, 'items');
+	// active product
+	const activeProduct = items.some((item) => item.product_id === product._id);
+
 	const discountPercentage = !product.discount_type
 		? Math.round(((120 - 100) / 120) * 100)
 		: 0;
@@ -30,7 +36,9 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<div className="cursor-pointer transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 shadow-md duration-300 hover:shadow-lg">
+				<div
+					className={`cursor-pointer transform overflow-hidden  border-2 rounded-lg bg-white dark:bg-slate-800 shadow-md duration-300 hover:shadow-lg ${activeProduct ? 'border-sky-500' : 'border-transparent'}`}
+				>
 					<Card className="w-full max-w-sm overflow-hidden">
 						<CardHeader className="p-0">
 							<div className="relative h-32 w-full">
@@ -124,11 +132,14 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 }
 
 const ProductDetails = ({ product }: { product: ProductType }) => {
+	// find inventory by product id
 	const { data, isLoading } = useGetInventoryProductQuery(product._id);
-	const dispatch = useAppDispatch();
 
+	// variant items
+	const dispatch = useAppDispatch();
 	const items = useAppSelector((state) => state.variantPos.variants);
 
+	// loading
 	if (isLoading) {
 		return <CardLoader line={5} />;
 	}
@@ -167,7 +178,7 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 										})
 									)
 								}
-								className={` border-b  dark:border-gray-700  ${
+								className={` border-b  dark:border-gray-700   ${
 									items.some((i) => i._id === item._id)
 										? 'bg-white dark:bg-gray-900'
 										: 'bg-white dark:bg-gray-950'
@@ -181,7 +192,8 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 								</th>
 								<td className="px-6 py-3">
 									{item.quantity -
-										(items.find((i) => i._id === item._id)?.quantity ?? 0)}
+										(items.find((i) => i._id === item._id)?.select_quantity ??
+											0)}
 								</td>
 								<td className="px-6 py-3 relative">
 									{items.some((i) => i._id === item._id) && (
