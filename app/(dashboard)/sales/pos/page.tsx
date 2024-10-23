@@ -1,13 +1,10 @@
 'use client';
-import { DynamicIcon } from '@/components/actions';
 import { SelectSearch } from '@/components/custom/form';
 import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CalculatorDropdown, FullscreenButton } from '@/lib/actions';
 import { useGetStoreProductQuery } from '@/lib/features/create-product';
-import { useGetCustomerQuery } from '@/lib/features/customer';
 import {
 	PosNav,
 	PosProductCard_1,
@@ -15,10 +12,8 @@ import {
 	useGetPOSQuery,
 } from '@/lib/features/pos-sell';
 import { Search } from 'lucide-react';
-import { useState } from 'react';
 
 export default function Page() {
-	const [custom, setCustomer] = useState('');
 	const { data, isLoading, isFetching, isError } = useGetPOSQuery('');
 
 	// get all utility
@@ -28,14 +23,6 @@ export default function Page() {
 		isFetching: utilityFetching,
 		isError: utilityError,
 	} = useGetStoreProductQuery();
-
-	// get all customer
-	const {
-		data: customer,
-		isLoading: customerLoading,
-		isFetching: customerFetching,
-		isError: customerError,
-	} = useGetCustomerQuery('active');
 
 	return (
 		<ApiUseHOC
@@ -98,23 +85,6 @@ export default function Page() {
 
 							{/* sell side  */}
 							<div className="col-span-4 shadow h-full p-4 space-y-4">
-								<div className="grid grid-cols-2 gap-3 ">
-									<div className="flex items-center">
-										<SelectSearch
-											placeholder="Customer"
-											frameworks={customer?.data}
-											onChange={(e) => setCustomer(e)}
-											value={custom}
-										/>
-										<Button type="button" size="icon" variant="secondary">
-											<DynamicIcon icon="Plus" className="h-4 w-4" />
-										</Button>
-									</div>
-									<Input placeholder="Invoice Number" />
-									<Input placeholder="Scan Barcode" />
-									<Input placeholder="Scan Barcode" />
-								</div>
-
 								<SellItems />
 							</div>
 						</div>

@@ -6,7 +6,7 @@ import {
 	CardHeader,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Package, Percent, ShoppingBag, Tag } from 'lucide-react';
+import { Package, ShoppingBag, Tag } from 'lucide-react';
 import Image from 'next/image';
 
 import {
@@ -20,7 +20,8 @@ import { useGetInventoryProductQuery } from './posApiSlice';
 import { CardLoader } from '@/components/custom/loader';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { addVariant, removeVariant } from './posSlice';
+import { addVariant, decrementQuantity, removeVariant } from './posSlice';
+import { discount } from './pos-function';
 
 export function PosProductCard_1({ product }: { product: ProductType }) {
 	// variants items
@@ -34,20 +35,6 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 	const quantityRemaining = items
 		.filter((item) => item.product_id === product._id)
 		.reduce((pre, cur) => pre + cur.select_quantity, 0);
-
-	// calculate discount
-	const discount = () => {
-		if (product.discount_type === 'fixed') {
-			return product.sell_price - product.discount_value;
-		} else if (product.discount_type === 'percentage') {
-			return (
-				product.sell_price -
-				Math.round((product.discount_value * product.sell_price) / 100)
-			);
-		} else {
-			return product.sell_price;
-		}
-	};
 
 	return (
 		<Popover>
@@ -100,7 +87,7 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 								<ShoppingBag className="h-5 w-5 text-green-600" />
 								<div className="flex items-baseline gap-2">
 									<span className="text-2xl font-bold text-green-600">
-										${discount().toFixed(2)}
+										${discount(product).toFixed(2)}
 									</span>
 
 									{/* if not none then show discount */}
@@ -152,9 +139,16 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 			<div className="space-y-2">
 				<h4 className="font-medium leading-none">{product.name}</h4>
 				<p className="text-sm text-muted-foreground">{product.brand.name}</p>
+				<Badge
+					variant="outline"
+					className="inline-flex gap-1 items-center text-lg"
+				>
+					<ShoppingBag className="h-5 w-5  text-green-600" />$
+					{discount(product).toFixed(2)}
+				</Badge>
 			</div>
 			<div className=" ">
-				<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+				<table className="w-full text-sm text-center text-gray-500 dark:text-gray-400 ">
 					<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 						<tr>
 							<th scope="col" className="px-6 py-3">
@@ -172,16 +166,18 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 						{data?.data?.variant_details?.map((item: any) => (
 							<tr
 								key={item._id}
-								onClick={() =>
-									dispatch(
-										addVariant({
-											...item,
-											product_name: product.name,
-											product_id: product._id,
-											sell_price: product.sell_price,
-										})
-									)
-								}
+								onClick={() => {
+									items.some((i) => i._id === item._id)
+										? {}
+										: dispatch(
+												addVariant({
+													...item,
+													product_name: product.name,
+													product_id: product._id,
+													sell_price: discount(product),
+												})
+											);
+								}}
 								className={` border-b  dark:border-gray-700   ${
 									items.some((i) => i._id === item._id)
 										? 'bg-white dark:bg-gray-900'
@@ -192,24 +188,61 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 									scope="row"
 									className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 								>
-									{item?.variant_id?.name}
+									{item?.variant_id?.name || (
+										<Badge variant="secondary" className="text-xs">
+											---
+										</Badge>
+									)}
 								</th>
 								<td className="px-6 py-3">
 									{item.quantity -
 										(items.find((i) => i._id === item._id)?.select_quantity ??
 											0)}
 								</td>
-								<td className="px-6 py-3 relative">
+								<td className="py-3 relative flex items-center justify-center gap-1">
 									{items.some((i) => i._id === item._id) && (
 										<Button
+											variant="destructive"
+											size="icon"
+											onClick={() => {
+												dispatch(decrementQuantity(item._id));
+											}}
+											aria-label="Increase quantity"
+											className="h-7 w-7"
+										>
+											<DynamicIcon icon="Minus" className="h-4 w-4" />
+										</Button>
+									)}
+									<Button
+										variant="secondary"
+										size="icon"
+										onClick={() => {
+											items.some((i) => i._id === item._id)
+												? dispatch(
+														addVariant({
+															...item,
+															product_name: product.name,
+															product_id: product._id,
+															sell_price: discount(product),
+														})
+													)
+												: {};
+										}}
+										aria-label="Increase quantity"
+										className="h-7 w-7"
+									>
+										<DynamicIcon icon="Plus" className="h-4 w-4" />
+									</Button>
+									{items.some((i) => i._id === item._id) && (
+										<Button
+											variant="destructive"
+											size="icon"
 											onClick={(end) => {
 												end.stopPropagation();
 												dispatch(removeVariant(item._id));
 											}}
-											variant="destructive"
-											size="icon"
-											type="button"
-											className="p-0 h-6 w-6 absolute right-2 top-2"
+											aria-label="Increase quantity"
+											className="h-7 w-7"
 										>
 											<DynamicIcon icon="Trash" className="h-4 w-4" />
 										</Button>
