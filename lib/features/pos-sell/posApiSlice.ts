@@ -16,7 +16,30 @@ export const api = apiSlice.injectEndpoints({
 			// 	return ['POS'];
 			// },
 		}),
+
+		getPosSellHistory: builder.query<ApiResponse<ProductType>, undefined>({
+			query: (): string => `pos/sell-history`,
+			providesTags: () => {
+				return ['POS'];
+			},
+		}),
+
+		storePosSell: builder.mutation<any, string>({
+			query: (payload) => ({
+				url: `pos/sell-store`,
+				method: 'POST',
+				body: payload,
+			}),
+			invalidatesTags: () => {
+				return ['POS'];
+			},
+		}),
 	}),
 });
 
-export const { useGetPOSQuery, useGetInventoryProductQuery } = api;
+export const {
+	useGetPOSQuery,
+	useGetInventoryProductQuery,
+	useGetPosSellHistoryQuery,
+	useStorePosSellMutation,
+} = api;

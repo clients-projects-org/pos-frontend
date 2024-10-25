@@ -22,6 +22,8 @@ import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { addVariant, decrementQuantity, removeVariant } from './posSlice';
 import { discount } from './pos-function';
+import { format } from 'date-fns';
+import { dateLeft } from '@/lib/actions';
 
 export function PosProductCard_1({ product }: { product: ProductType }) {
 	// variants items
@@ -31,6 +33,7 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 	// active product
 	const activeProduct = items.some((item) => item.product_id === product._id);
 
+	// quantity remaining
 	// quantity remaining
 	const quantityRemaining = items
 		.filter((item) => item.product_id === product._id)
@@ -78,7 +81,10 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 							<div className="flex items-center gap-2 text-sm">
 								<Package className="h-4 w-4" />
 								<span>
-									Quantity: {product?.inventory?.quantity - quantityRemaining}{' '}
+									Quantity:{' '}
+									{(product?.inventory?.quantity &&
+										product?.inventory?.quantity - quantityRemaining) ||
+										0}{' '}
 									{product?.unit?.name}
 								</span>
 							</div>
@@ -158,6 +164,9 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 								Stock
 							</th>
 							<th scope="col" className="px-6 py-3">
+								Exp Date
+							</th>
+							<th scope="col" className="px-6 py-3">
 								Action
 							</th>
 						</tr>
@@ -167,16 +176,26 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 							<tr
 								key={item._id}
 								onClick={() => {
-									items.some((i) => i._id === item._id)
-										? {}
-										: dispatch(
-												addVariant({
-													...item,
-													product_name: product.name,
-													product_id: product._id,
-													sell_price: discount(product),
-												})
-											);
+									// Check if the item is not already added
+									// const isAlreadyAdded = items.some((i) => i._id === item._id);
+									const daysLeft = dateLeft(item?.expire_date);
+
+									// If the item is not already added and either there's no expire date or the item is not expired
+									if (
+										// !isAlreadyAdded &&
+										!item?.expire_date ||
+										(typeof daysLeft === 'number' && daysLeft > 0)
+									) {
+										dispatch(
+											addVariant({
+												...item,
+												product_name: product.name,
+												product_id: product._id,
+												sell_price: discount(product),
+												inventory_id: data?.data?._id,
+											})
+										);
+									}
 								}}
 								className={` border-b  dark:border-gray-700   ${
 									items.some((i) => i._id === item._id)
@@ -199,12 +218,53 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 										(items.find((i) => i._id === item._id)?.select_quantity ??
 											0)}
 								</td>
+								<td className="px-6 py-3">
+									{/* Check expiration date */}
+									{item?.expire_date ? (
+										<>
+											{/* Ensure dateLeft is called safely */}
+											{item.expire_date ? (
+												// Call dateLeft only if expire_date is not null
+												(() => {
+													const daysLeft = dateLeft(item.expire_date);
+													if (typeof daysLeft === 'number') {
+														return daysLeft > 0 ? (
+															`${daysLeft} Days Left`
+														) : (
+															<Badge variant="destructive" className="text-xs">
+																Expired
+															</Badge>
+														);
+													} else {
+														return (
+															<Badge variant="secondary" className="text-xs">
+																N/A
+															</Badge>
+														);
+													}
+												})()
+											) : (
+												<Badge variant="secondary" className="text-xs">
+													N/A
+												</Badge>
+											)}
+										</>
+									) : (
+										<Badge variant="secondary" className="text-xs">
+											N/A
+										</Badge>
+									)}
+								</td>
 								<td className="py-3 relative flex items-center justify-center gap-1">
 									{items.some((i) => i._id === item._id) && (
 										<Button
+											type="button"
 											variant="destructive"
 											size="icon"
-											onClick={() => {
+											onClick={(event) => {
+												event.stopPropagation();
+
+												console.log('fire--');
 												dispatch(decrementQuantity(item._id));
 											}}
 											aria-label="Increase quantity"
@@ -213,32 +273,69 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 											<DynamicIcon icon="Minus" className="h-4 w-4" />
 										</Button>
 									)}
-									<Button
-										variant="secondary"
-										size="icon"
-										onClick={() => {
-											items.some((i) => i._id === item._id)
-												? dispatch(
+
+									{item?.expire_date ? (
+										typeof dateLeft(item?.expire_date) === 'number' &&
+										dateLeft(item?.expire_date)! > 0 && (
+											<Button
+												variant="secondary"
+												size="icon"
+												onClick={(event) => {
+													console.log('first');
+													// Check if the item is already in the cart
+													event.stopPropagation();
+
+													dispatch(
 														addVariant({
 															...item,
 															product_name: product.name,
 															product_id: product._id,
 															sell_price: discount(product),
+															inventory_id: data?.data?._id,
 														})
-													)
-												: {};
-										}}
-										aria-label="Increase quantity"
-										className="h-7 w-7"
-									>
-										<DynamicIcon icon="Plus" className="h-4 w-4" />
-									</Button>
+													);
+													// if (items.some((i) => i._id === item._id)) {
+													// }
+												}}
+												aria-label="Increase quantity"
+												className="h-7 w-7"
+											>
+												<DynamicIcon icon="Plus" className="h-4 w-4" />
+											</Button>
+										)
+									) : (
+										<Button
+											variant="secondary"
+											size="icon"
+											onClick={(event) => {
+												console.log('first');
+												// Check if the item is already in the cart
+												event.stopPropagation();
+
+												dispatch(
+													addVariant({
+														...item,
+														product_name: product.name,
+														product_id: product._id,
+														sell_price: discount(product),
+													})
+												);
+												// if (items.some((i) => i._id === item._id)) {
+												// }
+											}}
+											aria-label="Increase quantity"
+											className="h-7 w-7"
+										>
+											<DynamicIcon icon="Plus" className="h-4 w-4" />
+										</Button>
+									)}
+
 									{items.some((i) => i._id === item._id) && (
 										<Button
 											variant="destructive"
 											size="icon"
-											onClick={(end) => {
-												end.stopPropagation();
+											onClick={(event) => {
+												event.stopPropagation();
 												dispatch(removeVariant(item._id));
 											}}
 											aria-label="Increase quantity"

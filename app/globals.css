@@ -169,3 +169,7 @@
 .create_product_overflow_problem_select .overflow-hidden {
 	overflow: inherit;
 }
+
+.remove__default_calender_handler .rdp-caption {
+	display: none;
+}

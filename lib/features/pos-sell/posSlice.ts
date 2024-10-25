@@ -18,7 +18,18 @@ export interface Variant {
 		createdAt: string;
 		updatedAt: string;
 	};
+	warehouse_id: {
+		_id: string;
+		name: string;
+	};
+	store_id: {
+		_id: string;
+		name: string;
+	};
+	product_type: 'single' | 'variant';
 	attribute_id: string;
+	manufacture_date: string;
+	expire_date: string;
 	product_id: string;
 	product_name: string;
 	sell_price: number;
@@ -77,10 +88,18 @@ const posSlice = createSlice({
 		},
 
 		// Decrement quantity by 1 (but not below 1)
+		// Decrement quantity by 1 (but not below 1)
 		decrementQuantity(state, action: PayloadAction<string>) {
 			const variant = state.variants.find((v) => v._id === action.payload);
-			if (variant && variant.select_quantity > 1) {
-				variant.select_quantity -= 1;
+			if (variant) {
+				if (variant.select_quantity > 1) {
+					variant.select_quantity -= 1;
+				} else {
+					// Remove the variant from the state if select_quantity reaches 0
+					state.variants = state.variants.filter(
+						(v) => v._id !== action.payload
+					);
+				}
 			}
 		},
 

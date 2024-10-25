@@ -13,14 +13,18 @@ import { Minus, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { RFrom, SelectSearch } from '@/components/custom/form';
 import { useGetCustomerQuery } from '../customer';
-import { createZodFromPos, FormValuesPos } from './pos-zod';
+import { createZodFromPos, FormSchema, FormValuesPos } from './pos-zod';
 import { Form } from '@/components/ui/form';
+import { useStorePosSellMutation } from './posApiSlice';
+import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 
 export function SellItems() {
 	const [customer, setCustomer] = useState('');
+	console.log(customer, 'customer');
 	const { methods, resetForm } = createZodFromPos();
 	const discount_type = methods.watch('discount_type');
 	const discount_value = methods.watch('discount_value');
+	const [store, { isLoading: isSellLoading }] = useStorePosSellMutation();
 
 	// get all customer
 	const {
@@ -53,13 +57,6 @@ export function SellItems() {
 		(pre, cur) => pre + cur.select_quantity * cur.sell_price,
 		0
 	);
-
-	async function onSubmit(data: FormValuesPos) {
-		console.log(data, 'data');
-
-		try {
-		} catch (error: unknown) {}
-	}
 
 	// Calculate discount based on discount_type and discount_value
 	const calculateDiscount = () => {
@@ -120,6 +117,61 @@ export function SellItems() {
 		};
 	};
 	const { dueAmount, exchangeAmount } = calculateDueAndExchange();
+
+	const calculatePaidAmount = () => {
+		const grandTotal = calculateGrandTotal();
+		const paidAmount = Math.max(methods.watch('paid_amount') || 0, 0);
+
+		// Return the lesser of paidAmount or grandTotal
+		return Math.min(paidAmount, grandTotal);
+	};
+	async function onSubmit(data: FormValuesPos) {
+		const submitData = {
+			total_quantity: totalQuantity,
+			total_price: totalPriceAndQuantity,
+			discount_value: data.discount_value,
+			discount_type: data.discount_type,
+			paid: calculatePaidAmount(),
+			due: dueAmount,
+			payment_status: dueAmount > 0 ? 'due' : 'paid',
+			customer: customer ? customer : '66e1c14b765fd440599cd1b5',
+			product_details: items?.map((i) => ({
+				product_id: i?.product_id,
+				inventory_id: i?.inventory_id,
+				details_id: i?._id,
+				variant_id: i?.variant_id?._id,
+				attribute_id: i?.attribute_id,
+				quantity: i?.select_quantity,
+				sell_price: i?.sell_price,
+				product_price: i?.sell_price,
+
+				warehouse_id: i?.warehouse_id?._id,
+				store_id: i?.store_id?._id,
+
+				product_type: i?.product_type,
+				expire_date: i?.expire_date,
+				manufacture_date: i?.manufacture_date,
+				discount_value: 0,
+				discount_type: 'none',
+			})),
+
+			total_after_discount: totalAfterDiscount,
+			grand_total: calculateGrandTotal(),
+			customer_id: customer,
+			payment_method: '671ae828eda1720739446865',
+
+			tax: data.tax,
+		};
+		try {
+			const response = await store({
+				...submitData,
+			} as any).unwrap();
+			apiReqResponse(response);
+			resetForm();
+		} catch (error: unknown) {
+			apiErrorResponse(error, methods, FormSchema);
+		}
+	}
 
 	return (
 		<>
@@ -343,6 +395,11 @@ export function SellItems() {
 										</tbody>
 									</table>
 								</div>
+							</div>
+							<div className="flex justify-end mt-3">
+								<Button type="submit" disabled={isSellLoading}>
+									{isSellLoading ? 'Selling...' : 'Sell Items'}
+								</Button>
 							</div>
 						</div>
 					)}

@@ -134,6 +134,8 @@ const FormMutation: React.FC<FormProps> = ({
 						{
 							variant_id: '',
 							attribute_id: '',
+							expire_date: '',
+							manufacture_date: '',
 							quantity: 1,
 							rate: 1,
 						},
@@ -355,6 +357,8 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 					attribute_id: variant.attribute_id,
 					quantity: variant.quantity,
 					rate: variant.rate,
+					expire_date: variant.expire_date,
+					manufacture_date: variant.manufacture_date,
 				})), // Array of variants
 			})),
 		};
@@ -545,7 +549,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 											?.map((variant, variantIndex) => (
 												<div
 													key={variantIndex}
-													className="grid grid-cols-5 gap-x-4 gap-y-6 border p-2 rounded relative bg-gray-50 dark:bg-gray-900"
+													className="grid grid-cols-7 gap-x-4 gap-y-6 border p-2 rounded relative bg-gray-50 dark:bg-gray-900"
 												>
 													<>
 														{methods.watch(
@@ -630,6 +634,24 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														name={`products.${productIndex}.variants.${variantIndex}.rate`}
 														type="number"
 													/>
+
+													<RFrom.RFCalender
+														label="Manufacture Date"
+														methods={methods}
+														name={`products.${productIndex}.variants.${variantIndex}.manufacture_date`}
+													/>
+
+													<RFrom.RFCalender
+														label="Expire Date"
+														methods={methods}
+														name={`products.${productIndex}.variants.${variantIndex}.expire_date`}
+													/>
+													{/* <DateTimePicker
+														clearable
+														onChange={() => {}}
+														value={new Date('2024-10-24T03:13:18.219Z')}
+														hideTime
+													/> */}
 
 													<RFrom.RFInput
 														label="Total"

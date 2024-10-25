@@ -1,38 +1,70 @@
 import { generateUniqueId } from '@/lib/actions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { string, z } from 'zod';
 
-const variantSchema = z.object({
-	variant_id: z.string().optional(), // Make optional by default
-	attribute_id: z.string().optional(), // Make optional by default
-	quantity: z.preprocess(
-		(val) => {
-			// If it's a string, convert it to a number
-			if (typeof val === 'string') {
-				const num = Number(val);
-				return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+const variantSchema = z
+	.object({
+		variant_id: z.string().optional(), // Make optional by default
+		attribute_id: z.string().optional(), // Make optional by default
+		manufacture_date: z.any().optional(),
+		expire_date: z.any().optional(),
+		// expire_date: z
+		// 	.preprocess(
+		// 		(val) => (typeof val === 'string' ? new Date(val) : val),
+		// 		z.date({ invalid_type_error: 'Invalid expire date' })
+		// 	)
+		// 	.optional(),
+		quantity: z.preprocess(
+			(val) => {
+				// If it's a string, convert it to a number
+				if (typeof val === 'string') {
+					const num = Number(val);
+					return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+				}
+				return val; // Otherwise return the value unchanged
+			},
+			z.number().min(1, {
+				message: 'Quantity is Required',
+			}) // Validate the number
+		),
+		rate: z.preprocess(
+			(val) => {
+				// If it's a string, convert it to a number
+				if (typeof val === 'string') {
+					const num = Number(val);
+					return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
+				}
+				return val; // Otherwise return the value unchanged
+			},
+			z.number().min(1, {
+				message: 'Rate is Required',
+			}) // Validate the number
+		),
+	})
+	.refine(
+		(data) => {
+			// Check if both dates are provided and are valid dates
+			if (data.manufacture_date && data.expire_date) {
+				const manufactureDate = new Date(data.manufacture_date);
+				const expireDate = new Date(data.expire_date);
+
+				// Ensure both dates are valid
+				if (isNaN(manufactureDate.getTime()) || isNaN(expireDate.getTime())) {
+					return true; // Skip if either date is invalid
+				}
+
+				// Check if expire_date is after manufacture_date
+				return expireDate > manufactureDate;
 			}
-			return val; // Otherwise return the value unchanged
+
+			return true; // Skip validation if either date is not provided
 		},
-		z.number().min(1, {
-			message: 'Quantity is Required',
-		}) // Validate the number
-	),
-	rate: z.preprocess(
-		(val) => {
-			// If it's a string, convert it to a number
-			if (typeof val === 'string') {
-				const num = Number(val);
-				return isNaN(num) ? undefined : num; // Return undefined if the conversion fails (so it fails validation)
-			}
-			return val; // Otherwise return the value unchanged
-		},
-		z.number().min(1, {
-			message: 'Rate is Required',
-		}) // Validate the number
-	),
-});
+		{
+			message: 'Expire date must be after the manufacture date',
+			path: ['expire_date'], // Show error on the expire_date field
+		}
+	);
 
 const productSchema = z
 	.object({
