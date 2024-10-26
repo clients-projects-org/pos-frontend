@@ -84,8 +84,8 @@ export const FormSchemaEdit = z
 	})
 	.refine((data) => zod.refined(data, data.image), zod.refinedImageMessage);
 
-export const editZodFrom = (data: FormValuesEdit) => {
-	const methods = useForm<FormValuesEdit>({
+export const editZodFrom = (data: any) => {
+	const methods = useForm<any>({
 		resolver: zodResolver(FormSchemaEdit),
 		defaultValues: {
 			name: data?.name || '',

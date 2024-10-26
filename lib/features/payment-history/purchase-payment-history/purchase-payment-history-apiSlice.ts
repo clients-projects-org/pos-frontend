@@ -1,12 +1,9 @@
-import { ApiResponse, PurchasePaymentHistoryType } from '@/lib/type';
+import { ApiResponse } from '@/lib/type';
 import { apiSlice } from '../../api/apiSlice';
 
 export const purchasePaymentHistoryApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getPurchasePaymentHistory: builder.query<
-			ApiResponse<PurchasePaymentHistoryType>,
-			undefined
-		>({
+		getPurchasePaymentHistory: builder.query<ApiResponse<any>, undefined>({
 			query: (): string => `/payment-history/purchase`,
 		}),
 	}),

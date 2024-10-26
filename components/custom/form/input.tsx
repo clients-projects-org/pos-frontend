@@ -45,11 +45,8 @@ import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { IImageSizeInfoType } from '@/lib/image-size';
 import { Bird, Check, ChevronsUpDown, Rabbit, Turtle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import Image from 'next/image';
-import { image } from '@/assets/image';
 import React, { HTMLInputTypeAttribute } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { get } from 'http';
 
 export function FInput({
 	label,
@@ -168,6 +165,11 @@ export function RFTextarea({
 	name = 'description',
 	label = 'Description',
 	placeholder = 'type...',
+}: {
+	methods: any;
+	name?: any;
+	label?: any;
+	placeholder?: any;
 }) {
 	return (
 		<FormField
@@ -185,7 +187,13 @@ export function RFTextarea({
 		/>
 	);
 }
-export function RFIcon({ methods, label = true }) {
+export function RFIcon({
+	methods,
+	label = true,
+}: {
+	methods: any;
+	label?: boolean;
+}) {
 	return (
 		<FormField
 			control={methods.control}
@@ -210,7 +218,7 @@ export function RFIcon({ methods, label = true }) {
 
 type RFImageProps<T extends FieldValues> = {
 	methods: UseFormReturn<T>;
-	imageInfo: IImageSizeInfoType;
+	imageInfo?: IImageSizeInfoType;
 };
 
 export function RFImage<T extends FieldValues>({
@@ -277,7 +285,7 @@ function RFProductGalleryImage<T extends FieldValues>({
 				<FormItem>
 					<FormControl>
 						<ProductMultiImageSelect
-							onChange={(value: File) => {
+							onChange={(value: File[]) => {
 								field.onChange(value);
 							}}
 							defaultValue={field.value}
@@ -345,7 +353,15 @@ export function RFSubmit({
 	);
 }
 
-export function RFCalender({ methods, label, name }) {
+export function RFCalender({
+	methods,
+	label,
+	name,
+}: {
+	methods: any;
+	label: string;
+	name: any;
+}) {
 	return (
 		<FormField
 			control={methods.control}

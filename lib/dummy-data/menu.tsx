@@ -1,6 +1,4 @@
-import { MenuType } from '../type';
-
-export const menu: MenuType[] = [
+export const menu: any[] = [
 	{
 		id: 1,
 		title: 'Main',

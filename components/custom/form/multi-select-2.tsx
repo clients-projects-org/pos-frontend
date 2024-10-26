@@ -146,7 +146,7 @@ export function FancyMultiSelect({ label }: { label: string }) {
 													e.preventDefault();
 													e.stopPropagation();
 												}}
-												onSelect={(value) => {
+												onSelect={() => {
 													setInputValue('');
 													setSelected((prev) => [...prev, framework]);
 												}}

@@ -15,7 +15,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 		// default all
 		default:
-			return <DefaultComponent />;
+			return <DefaultComponent slug={slug} />;
 	}
 }
 
@@ -37,7 +37,7 @@ const EditComponent = () => (
 	</>
 );
 
-const DefaultComponent = () => (
+const DefaultComponent = ({ slug }: { slug: string }) => (
 	<>
 		<PageTitle title="Variant Attributes Details ">
 			<PageLink

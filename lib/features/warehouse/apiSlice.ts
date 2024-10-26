@@ -16,11 +16,11 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeWarehouse: builder.mutation<any, string>({
+		storeWarehouse: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					body.append(key, value as any);
 				});
 				return {
 					url: `/warehouse/store`,
@@ -51,7 +51,7 @@ export const api = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteWarehouse: builder.mutation<any, string>({
+		deleteWarehouse: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `warehouse/${id}`,
 				method: 'DELETE',

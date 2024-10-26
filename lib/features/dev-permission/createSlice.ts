@@ -14,6 +14,7 @@ export type formType = {
 		name: string;
 		status: StatusType;
 		value: boolean;
+		errors?: {};
 	}[];
 };
 // Initial state

@@ -11,7 +11,9 @@ export const FormSchema = z.object({
 		message: 'Must be at least 2 characters.',
 	}),
 	description: z.optional(z.string()),
-	status: zod.status,
+	status: z.enum(['active', 'deactivated'], {
+		message: 'Status is Required',
+	}),
 });
 
 // store
@@ -29,7 +31,7 @@ export const createZodFrom = () => {
 };
 
 // edit
-export const useEditZodFrom = (data: DevNameType) => {
+export const useEditZodFrom = (data: any) => {
 	const methods = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {

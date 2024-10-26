@@ -22,7 +22,7 @@ export default function Page() {
 		isLoading: utilityLoading,
 		isFetching: utilityFetching,
 		isError: utilityError,
-	} = useGetStoreProductQuery();
+	} = useGetStoreProductQuery(undefined);
 
 	return (
 		<ApiUseHOC

@@ -157,11 +157,11 @@ export const createZodFrom = () => {
 			expire_date: new Date(),
 
 			// Single product defaults
-			quantity: '0',
-			alert_quantity: '0',
-			buy_price: '0',
-			sell_price: '0',
-			discount_value: '0',
+			quantity: 0,
+			alert_quantity: 0,
+			buy_price: 0,
+			sell_price: 0,
+			discount_value: 0,
 			discount_type: 'none',
 
 			// Variant product defaults (will be ignored if 'single')

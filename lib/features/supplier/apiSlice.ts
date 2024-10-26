@@ -16,11 +16,11 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeSupplier: builder.mutation<any, string>({
+		storeSupplier: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					body.append(key, value as string);
 				});
 				return {
 					url: `/supplier/store`,
@@ -51,7 +51,7 @@ export const api = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteSupplier: builder.mutation<any, string>({
+		deleteSupplier: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `supplier/${id}`,
 				method: 'DELETE',

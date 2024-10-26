@@ -9,18 +9,18 @@ export const categoryApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getCategoryById: builder.query<any, string>({
+		getCategoryById: builder.query<any, any>({
 			query: (id) => `category/${id}`,
 			providesTags: (result, error, id) => {
 				return [{ type: 'Category', id: id }];
 			},
 		}),
 
-		storeCategory: builder.mutation<any, string>({
+		storeCategory: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					body.append(key, value as any);
 				});
 				return {
 					url: `/category/store`,
@@ -50,7 +50,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteCategory: builder.mutation<any, string>({
+		deleteCategory: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `category/${id}`,
 				method: 'DELETE',

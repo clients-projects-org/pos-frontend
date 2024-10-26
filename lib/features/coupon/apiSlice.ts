@@ -2,21 +2,21 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getCoupon: builder.query<any, void>({
+		getCoupon: builder.query<any, any>({
 			query: (payload): string => `coupon?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Coupon'];
 			},
 		}),
 
-		getCouponById: builder.query<any, string>({
+		getCouponById: builder.query<any, any>({
 			query: (id) => `coupon/${id}`,
 			providesTags: (result, error, id) => {
 				return [{ type: 'Coupon', id: id }];
 			},
 		}),
 
-		storeCoupon: builder.mutation<any, string>({
+		storeCoupon: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/coupon/store`,
 				method: 'POST',
@@ -28,7 +28,7 @@ export const api = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteCoupon: builder.mutation<any, string>({
+		deleteCoupon: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `coupon/${id}`,
 				method: 'DELETE',

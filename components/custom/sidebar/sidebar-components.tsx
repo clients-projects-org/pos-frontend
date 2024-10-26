@@ -14,7 +14,7 @@ import { MenuType } from '@/lib/type';
 import Link from 'next/link';
 
 export function MenuItem() {
-	const { data, isLoading, isError } = useGetSidebarPrivetQuery();
+	const { data, isLoading, isError } = useGetSidebarPrivetQuery(undefined);
 	if (isLoading) {
 		return Array.from({ length: 10 }, (_, i) => (
 			<div key={i}>

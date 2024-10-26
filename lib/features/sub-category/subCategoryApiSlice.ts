@@ -16,7 +16,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeSubCategory: builder.mutation<any, string>({
+		storeSubCategory: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/sub-category/store`,
 				method: 'POST',
@@ -37,7 +37,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deleteSubCategory: builder.mutation<any, string>({
+		deleteSubCategory: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `sub-category/${id}`,
 				method: 'DELETE',

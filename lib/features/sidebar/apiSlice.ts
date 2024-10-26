@@ -3,13 +3,13 @@ import { apiPrivetResponse } from './sidebar-response.interface';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getSidebar: builder.query<any, void>({
+		getSidebar: builder.query<any, any>({
 			query: (): string => `sidebar`,
 			providesTags: (_result, _error, arg) => {
 				return ['Sidebar', { type: 'Sidebar', status: arg }];
 			},
 		}),
-		getSidebarPrivet: builder.query<apiPrivetResponse, void>({
+		getSidebarPrivet: builder.query<apiPrivetResponse, any>({
 			query: (): string => `sidebar/privet`,
 			providesTags: (_result, _error, arg) => {
 				return ['Sidebar'];
@@ -23,7 +23,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeSidebar: builder.mutation<any, string>({
+		storeSidebar: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/sidebar/store`,
 				method: 'POST',
@@ -41,7 +41,7 @@ export const api = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteSidebar: builder.mutation<any, string>({
+		deleteSidebar: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `sidebar/${id}`,
 				method: 'DELETE',

@@ -15,9 +15,8 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
-import { ProductType } from '@/lib/type';
 
-export const ProductColumns: ColumnDef<ProductType>[] = [
+export const ProductColumns: ColumnDef<any>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -191,7 +190,7 @@ export const ProductColumns: ColumnDef<ProductType>[] = [
 		},
 	},
 ];
-export const ProductData: ProductType[] = [
+export const ProductData: any[] = [
 	{
 		id: 'm5gr84i9',
 		image: 'https://ui.shadcn.com/placeholder.svg',

@@ -9,14 +9,14 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getPaymentMethodById: builder.query<any, string>({
+		getPaymentMethodById: builder.query<any, any>({
 			query: (id) => `payment-method/${id}`,
 			providesTags: (result, error, id) => {
 				return [{ type: 'PaymentMethod', id: id }];
 			},
 		}),
 
-		storePaymentMethod: builder.mutation<any, string>({
+		storePaymentMethod: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/payment-method/store`,
 				method: 'POST',
@@ -41,7 +41,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deletePaymentMethod: builder.mutation<any, string>({
+		deletePaymentMethod: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `payment-method/${id}`,
 				method: 'DELETE',

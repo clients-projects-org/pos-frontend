@@ -10,11 +10,11 @@ export const userApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeUser: builder.mutation<any, string>({
+		storeUser: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					body.append(key, value as string);
 				});
 				return {
 					url: `/user/store`,
@@ -49,7 +49,7 @@ export const userApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deleteUser: builder.mutation<any, string>({
+		deleteUser: builder.mutation<any, any>({
 			query: ({ id, type }: any) => ({
 				url: `user/${id}`,
 				method: 'DELETE',
@@ -58,7 +58,7 @@ export const userApi = apiSlice.injectEndpoints({
 			invalidatesTags: ['User'],
 		}),
 
-		getUserById: builder.query<ApiResponse<UserType>, string>({
+		getUserById: builder.query<ApiResponse<UserType>, any>({
 			query: (id) => `user/${id}`,
 			providesTags: (result, error, id) => {
 				return [{ type: 'User', id: id }];

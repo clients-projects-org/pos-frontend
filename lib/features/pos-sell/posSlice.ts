@@ -7,6 +7,7 @@ interface Attribute {
 }
 
 export interface Variant {
+	inventory_id: any;
 	_id: string;
 	variant_id: {
 		_id: string;

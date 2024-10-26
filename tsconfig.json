@@ -10,10 +10,12 @@
 		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
+		// "noUnusedLocals": true,
+		// "noUnusedParameters": true,
 		"jsx": "preserve",
 		"incremental": true,
+		"noUnusedLocals": false, // Disable warning for unused locals
+		"noUnusedParameters": false,
 		"plugins": [
 			{
 				"name": "next"

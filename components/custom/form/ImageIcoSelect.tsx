@@ -43,7 +43,7 @@ export function ImageSelect({
 	imageInfo,
 	onChange,
 }: {
-	imageInfo: IImageSizeInfoType;
+	imageInfo?: IImageSizeInfoType;
 	onChange: (File: File) => void;
 	defaultValue?: string;
 }) {
@@ -62,16 +62,19 @@ export function ImageSelect({
 
 			img.onload = () => {
 				setLoading(false);
-				if (file.size > imageInfo.size * 1024) {
-					setWarning(`Image Size will be less then ${imageInfo.size}Kb`);
+				if (imageInfo && file.size > imageInfo?.size * 1024) {
+					setWarning(`Image Size will be less then ${imageInfo?.size}Kb`);
 					URL.revokeObjectURL(objectUrl); // Clean up the object URL
 					setImageSrc(image.placeholder);
 					return;
 				}
 
-				if (img.width > imageInfo.width || img.height > imageInfo.height) {
+				if (
+					(imageInfo && img.width > imageInfo?.width) ||
+					(imageInfo && img.height > imageInfo?.height)
+				) {
 					setWarning(
-						`Image width and hight less then ${imageInfo.width}px*${imageInfo.width}px`
+						`Image width and hight less then ${imageInfo?.width}px*${imageInfo?.width}px`
 					);
 					URL.revokeObjectURL(objectUrl); // Clean up the object URL
 					setImageSrc(image.placeholder);
@@ -99,7 +102,7 @@ export function ImageSelect({
 				<button type="button" className="">
 					<Image
 						alt="Product image"
-						className={`aspect-square rounded-md object-cover ${imageInfo.viewWidth} ${imageInfo.viewHeight}`}
+						className={`aspect-square rounded-md object-cover ${imageInfo?.viewWidth} ${imageInfo?.viewHeight}`}
 						height={40}
 						src={imageSrc}
 						width={40}
@@ -132,11 +135,11 @@ export function ImageSelect({
 				{imageSrc === image.placeholder && !warning && (
 					<>
 						<p className="text-yellow-500 text-xs ">
-							Image Size will be less then {imageInfo.size}Kb
+							Image Size will be less then {imageInfo?.size}Kb
 						</p>
 						<p className="text-yellow-500 text-xs ">
-							Image width and hight less then {imageInfo.width}px*
-							{imageInfo.width}px
+							Image width and hight less then {imageInfo?.width}px*
+							{imageInfo?.width}px
 						</p>
 					</>
 				)}
@@ -235,7 +238,7 @@ export function ProductImageSelect({
 	imageInfo,
 	onChange,
 }: {
-	imageInfo: IImageSizeInfoType;
+	imageInfo?: IImageSizeInfoType;
 	onChange: (File: File) => void;
 	defaultValue?: string;
 }) {
@@ -254,16 +257,19 @@ export function ProductImageSelect({
 
 			img.onload = () => {
 				setLoading(false);
-				if (file.size > imageInfo.size * 1024) {
-					setWarning(`Image Size will be less then ${imageInfo.size}Kb`);
+				if (imageInfo && file.size > imageInfo?.size * 1024) {
+					setWarning(`Image Size will be less then ${imageInfo?.size}Kb`);
 					URL.revokeObjectURL(objectUrl); // Clean up the object URL
 					setImageSrc(image.placeholder);
 					return;
 				}
 
-				if (img.width > imageInfo.width || img.height > imageInfo.height) {
+				if (
+					(imageInfo && img.width > imageInfo?.width) ||
+					(imageInfo && img.height > imageInfo?.height)
+				) {
 					setWarning(
-						`Image width and hight less then ${imageInfo.width}px*${imageInfo.width}px`
+						`Image width and hight less then ${imageInfo?.width}px*${imageInfo?.width}px`
 					);
 					URL.revokeObjectURL(objectUrl); // Clean up the object URL
 					setImageSrc(image.placeholder);
@@ -290,11 +296,11 @@ export function ProductImageSelect({
 				{imageSrc === image.placeholder && !warning && (
 					<>
 						<p className="text-yellow-500 text-xs ">
-							Image Size will be less then {imageInfo.size}Kb
+							Image Size will be less then {imageInfo?.size}Kb
 						</p>
 						<p className="text-yellow-500 text-xs ">
-							Image width and hight less then {imageInfo.width}px*
-							{imageInfo.width}px
+							Image width and hight less then {imageInfo?.width}px*
+							{imageInfo?.width}px
 						</p>
 					</>
 				)}
@@ -347,7 +353,7 @@ export function ProductMultiImageSelect({
 	imageInfo,
 	onChange,
 }: {
-	imageInfo: IImageSizeInfoType;
+	imageInfo?: IImageSizeInfoType;
 	onChange: (files: File[]) => void;
 	defaultValue?: string;
 }) {
@@ -382,10 +388,10 @@ export function ProductMultiImageSelect({
 						img.src = objectUrl;
 
 						img.onload = () => {
-							if (file.size > imageInfo.size * 1024) {
+							if (imageInfo && file.size > imageInfo?.size * 1024) {
 								resolve({
 									src: '',
-									warning: `Image size must be less than ${imageInfo.size}Kb`,
+									warning: `Image size must be less than ${imageInfo?.size}Kb`,
 									file: null,
 								});
 								URL.revokeObjectURL(objectUrl);
@@ -393,12 +399,12 @@ export function ProductMultiImageSelect({
 							}
 
 							if (
-								img.width > imageInfo.width ||
-								img.height > imageInfo.height
+								(imageInfo && img.width > imageInfo?.width) ||
+								(imageInfo && img.height > imageInfo?.height)
 							) {
 								resolve({
 									src: '',
-									warning: `Image dimensions must be less than ${imageInfo.width}px by ${imageInfo.height}px`,
+									warning: `Image dimensions must be less than ${imageInfo?.width}px by ${imageInfo?.height}px`,
 									file: null,
 								});
 								URL.revokeObjectURL(objectUrl);
@@ -442,11 +448,11 @@ export function ProductMultiImageSelect({
 				{images.length === 0 && (
 					<>
 						<p className="text-yellow-500 text-xs">
-							Image size must be less than {imageInfo.size}Kb.
+							Image size must be less than {imageInfo?.size}Kb.
 						</p>
 						<p className="text-yellow-500 text-xs">
-							Image dimensions must be less than {imageInfo.width}px by{' '}
-							{imageInfo.height}px.
+							Image dimensions must be less than {imageInfo?.width}px by{' '}
+							{imageInfo?.height}px.
 						</p>
 					</>
 				)}

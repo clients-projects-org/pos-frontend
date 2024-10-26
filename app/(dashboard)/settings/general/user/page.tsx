@@ -12,7 +12,8 @@ import {
 import { useGetRolesQuery } from '@/lib/features/role';
 
 export default function GeneralSettingsUser() {
-	const { data, isFetching, isLoading, isError } = useGetRolesQuery('active');
+	const { data, isFetching, isLoading, isError, error } =
+		useGetRolesQuery('active');
 
 	return (
 		<PageDetailsApiHOC
@@ -20,6 +21,7 @@ export default function GeneralSettingsUser() {
 			isError={isError}
 			isLoading={isLoading}
 			isFetching={isFetching}
+			error={error}
 		>
 			<PageTitle title="User Settings" />
 			<div>
@@ -35,7 +37,7 @@ export default function GeneralSettingsUser() {
 									<SelectValue placeholder="Select a role" />
 								</SelectTrigger>
 								<SelectContent>
-									{data?.data.map((role) => (
+									{data?.data.map((role: any) => (
 										<SelectItem key={role.id} value={role._id}>
 											{role.name}
 										</SelectItem>

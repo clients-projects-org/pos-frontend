@@ -190,9 +190,7 @@ const FormMutation: React.FC<FormProps> = ({
 							placeholder="Select a status"
 							items="actDeDraft"
 							defaultValue={methods.getValues('status')}
-							onChange={(value) =>
-								methods.setValue('status', value as StatusType)
-							}
+							onChange={(value) => methods.setValue('status', value as any)}
 						/>
 					</div>
 

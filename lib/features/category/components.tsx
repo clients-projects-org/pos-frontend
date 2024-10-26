@@ -23,7 +23,7 @@ import {
 	useUpdateCategoryStatusMutation,
 } from './categoryApiSlice';
 import { confirm } from '@/lib/actions';
-import { showToast } from '@/lib/actions/tost';
+import { showToast, ToastOptions } from '@/lib/actions/tost';
 
 const categoryColumn: ColumnDef<CategoryType>[] = [
 	TableItem.SelectBox(),

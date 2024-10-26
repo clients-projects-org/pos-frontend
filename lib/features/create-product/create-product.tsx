@@ -33,7 +33,7 @@ export function CreateProduct() {
 		isLoading: isLoadingData,
 		isError,
 		error,
-	} = useGetStoreProductQuery();
+	} = useGetStoreProductQuery(undefined);
 
 	const [store, { isLoading }] = useStoreProductsMutation();
 

@@ -1,9 +1,10 @@
 'use client';
 import { PageDetailsApiHOC } from '@/components/hoc';
-import { useGetStoreByIdQuery } from './apiSlice';
+import { useGetStoreByIdQuery } from '../store';
 
 export function Details({ slug }: { slug: string }) {
-	const { data, isLoading, isFetching, isError } = useGetStoreByIdQuery(slug);
+	const { data, isLoading, isFetching, isError, error } =
+		useGetStoreByIdQuery(slug);
 
 	return (
 		<PageDetailsApiHOC
@@ -11,6 +12,7 @@ export function Details({ slug }: { slug: string }) {
 			isError={isError}
 			isLoading={isLoading}
 			isFetching={isFetching}
+			error={error}
 		>
 			asdasd
 		</PageDetailsApiHOC>

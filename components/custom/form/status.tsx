@@ -49,7 +49,7 @@ const SelectStatus = ({
 	defaultValue: string;
 	placeholder: string;
 	onChange: (value: string) => void;
-	items: string;
+	items: any;
 }) => {
 	const [value, setValue] = React.useState(defaultValue);
 	useEffect(() => {
@@ -68,11 +68,13 @@ const SelectStatus = ({
 			</SelectTrigger>
 			<SelectContent>
 				<SelectGroup>
-					{StatusOptions[items].map((item) => (
-						<SelectItem key={item.value} value={item.value}>
-							{item.label}
-						</SelectItem>
-					))}
+					{StatusOptions[items as keyof typeof StatusOptions].map(
+						(item: any) => (
+							<SelectItem key={item.value} value={item.value}>
+								{item.label}
+							</SelectItem>
+						)
+					)}
 				</SelectGroup>
 			</SelectContent>
 		</Select>

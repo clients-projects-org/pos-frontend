@@ -6,11 +6,10 @@ import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
-import { CategoryType } from '@/lib/type';
 import { DynamicIcon, status } from '@/components/actions';
 import { Badge } from '@/components/ui/badge';
 
-export const categoryData: CategoryType[] = [
+export const categoryData: any[] = [
 	{
 		id: 'm5gr84i9',
 		image: {
@@ -46,7 +45,7 @@ export const categoryData: CategoryType[] = [
 ];
 
 // const SelectedIcon = icon && (Ic as unknown as IconType)[icon];
-export const categoryColumn: ColumnDef<CategoryType>[] = [
+export const categoryColumn: ColumnDef<any>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (

@@ -8,7 +8,7 @@ import { NoItemFound } from '@/components/custom/not-found';
 import { RoleDetailsType } from '@/lib/type';
 
 export default function RoleDetails({ slug }: { slug: string }) {
-	const { data, isLoading, isFetching, isError } = useGetRoleByIdQuery(
+	const { data, isLoading, isFetching, isError, error } = useGetRoleByIdQuery(
 		slug.split('-')[1]
 	);
 
@@ -18,6 +18,7 @@ export default function RoleDetails({ slug }: { slug: string }) {
 			isError={isError}
 			isLoading={isLoading}
 			isFetching={isFetching}
+			error={error}
 		>
 			<div className="mx-auto max-w-5xl w-full border p-4">
 				<div>

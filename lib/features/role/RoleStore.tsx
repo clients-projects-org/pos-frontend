@@ -34,7 +34,7 @@ import { Button } from '@/components/ui/button';
 import { useGetSidebarQuery } from '../sidebar/apiSlice';
 export function RoleStore() {
 	const router = useRouter();
-	const sidebarData = useGetSidebarQuery();
+	const sidebarData = useGetSidebarQuery(undefined);
 	// state
 	const dispatch = useAppDispatch();
 	const permissions = useAppSelector((state) => state.role);

@@ -16,16 +16,16 @@ import { DynamicIcon } from '@/components/actions';
 import { createZodFrom, FormSchema } from './purchase.zod';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
-import {
-	useGetCreateDataPurchaseQuery,
-	useStoreProductsMutation,
-} from './purchaseApiSlice';
+import { useGetCreateDataPurchaseQuery } from './purchaseApiSlice';
 import { Form } from '@/components/ui/form';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { saveProductData } from './purchaseSlice';
 import { RootState } from '@/lib/store';
-import { useGetProductsByIdQuery } from '../create-product';
+import {
+	useGetProductsByIdQuery,
+	useStoreProductsMutation,
+} from '../create-product';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { SupplierType } from '@/lib/type';
 type FormValues = z.infer<typeof FormSchema>;
@@ -41,7 +41,7 @@ export function PurchaseStoreModal() {
 	const { methods } = createZodFrom();
 	const [store, { isLoading }] = useStoreProductsMutation();
 
-	async function onSubmit(data: FormValues) {
+	async function onSubmit(data: any) {
 		const storeData = {
 			name: data.name,
 			code: data.code?.toLocaleLowerCase(),
@@ -91,10 +91,7 @@ export function PurchaseStoreModal() {
 	);
 }
 
-const FormMutation: React.FC<FormProps> = ({
-	methods,
-	onSubmit,
-}: FormProps) => {
+const FormMutation: React.FC<any> = ({ methods, onSubmit }: any) => {
 	const [id, setId] = useState<string | null>(null);
 
 	const dispatch = useAppDispatch();
@@ -111,7 +108,8 @@ const FormMutation: React.FC<FormProps> = ({
 	};
 
 	console.log(selectedData.selectedData, 'selectedData');
-	const { data, isSuccess, isLoading } = useGetCreateDataPurchaseQuery();
+	const { data, isSuccess, isLoading } =
+		useGetCreateDataPurchaseQuery(undefined);
 	const { data: products } = useGetProductsByIdQuery(id || '', {
 		skip: !id,
 	});

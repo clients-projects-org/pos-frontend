@@ -3,8 +3,8 @@ import { PageDetailsApiHOC } from '@/components/hoc';
 import { useGetUnitByIdQuery } from './apiSlice';
 
 export function Details({ slug }: { slug: string }) {
-	const { data, isLoading, isFetching, isError } =
-	useGetUnitByIdQuery(slug);
+	const { data, isLoading, isFetching, isError, error } =
+		useGetUnitByIdQuery(slug);
 
 	return (
 		<PageDetailsApiHOC
@@ -12,6 +12,7 @@ export function Details({ slug }: { slug: string }) {
 			isError={isError}
 			isLoading={isLoading}
 			isFetching={isFetching}
+			error={error}
 		>
 			asdasd
 		</PageDetailsApiHOC>

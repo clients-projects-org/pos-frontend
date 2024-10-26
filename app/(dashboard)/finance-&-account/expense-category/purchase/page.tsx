@@ -31,7 +31,7 @@ export default function Page() {
 			>
 				<Motion>
 					{data?.data && (
-						<TableBox<PurchaseType>
+						<TableBox<any>
 							searchColumnName="paid_amount"
 							columns={PurchasePaymentComponents.Column}
 							data={data?.data}
@@ -42,6 +42,7 @@ export default function Page() {
 								/>
 							}
 							getSelectedRow={getSelectedRow}
+							TEndChild={<div />}
 						/>
 					)}
 				</Motion>

@@ -3,25 +3,25 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getCustomer: builder.query<any, void>({
+		getCustomer: builder.query<any, any>({
 			query: (payload): string => `customer?status=${payload}`,
 			providesTags: () => {
 				return ['Customer'];
 			},
 		}),
 
-		getCustomerById: builder.query<any, string>({
+		getCustomerById: builder.query<any, any>({
 			query: (id) => `customer/${id}`,
 			providesTags: (result, error, id) => {
 				return [{ type: 'Customer', id: id }];
 			},
 		}),
 
-		storeCustomer: builder.mutation<any, string>({
+		storeCustomer: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					body.append(key, value as string);
 				});
 				return {
 					url: `/customer/store`,
@@ -49,7 +49,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deleteCustomer: builder.mutation<any, string>({
+		deleteCustomer: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `customer/${id}`,
 				method: 'DELETE',

@@ -5,23 +5,23 @@ export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getBrand: builder.query<any, string>({
 			query: (payload): string => `brand?status=${payload}`,
-			providesTags: (result, error, arg) => {
+			providesTags: () => {
 				return ['Brand'];
 			},
 		}),
 
 		getBrandById: builder.query<any, string>({
 			query: (id) => `brand/${id}`,
-			providesTags: (result, error, id) => {
+			providesTags: (_result, _error, id) => {
 				return [{ type: 'Brand', id: id }];
 			},
 		}),
 
-		storeBrand: builder.mutation<any, string>({
+		storeBrand: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					body.append(key, value as string);
 				});
 				return {
 					url: `/brand/store`,
@@ -50,7 +50,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deleteBrand: builder.mutation<any, string>({
+		deleteBrand: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `brand/${id}`,
 				method: 'DELETE',
@@ -65,7 +65,7 @@ export const api = apiSlice.injectEndpoints({
 				body: { status },
 			}),
 
-			invalidatesTags: (result, error, arg) => {
+			invalidatesTags: (_result, _error, arg) => {
 				return ['Brand', 'ProductsStoreData', { type: 'Brand', id: arg.id }];
 			},
 		}),

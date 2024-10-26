@@ -128,7 +128,7 @@ const Actions = ({ data }: { data: CategoryType }) => {
 			if (confirmed) {
 				// Perform the delete action here
 				await deleting({ id }).unwrap();
-				const options: ToastOptions = {
+				const options = {
 					title: 'Successfully Deleted',
 					description: 'Item delete is done, You can not find it, Thanks',
 					autoClose: true,

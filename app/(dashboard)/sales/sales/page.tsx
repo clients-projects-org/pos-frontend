@@ -16,7 +16,7 @@ export default function Page() {
 	const [value, setValue] = useState<StatusType | 'all'>('all');
 	const { data, isLoading, isFetching, isError } =
 		useGetPosSellHistoryQuery(undefined);
-	const getSelectedRow = (e: Row<PurchaseType>[]): void => {
+	const getSelectedRow = (e: Row<any>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
 		console.log(ids);
 	};
@@ -31,7 +31,7 @@ export default function Page() {
 			>
 				<Motion>
 					{data?.data && (
-						<TableBox<PurchaseType>
+						<TableBox<any>
 							searchColumnName="reference_number"
 							columns={SellComponents.Column}
 							data={data?.data}

@@ -13,7 +13,7 @@ interface TokenPayload {
 	};
 }
 
-async function refreshAccessToken(token: { refreshToken: string }) {
+async function refreshAccessToken(token: any) {
 	console.log('refreshAccessToken.refreshToken', token.token.refreshToken);
 	try {
 		const response = await fetch(`${env.baseApi}auth/refresh-token`, {

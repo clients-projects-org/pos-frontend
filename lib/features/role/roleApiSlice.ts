@@ -10,14 +10,14 @@ export const roleApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getRoleById: builder.query<any, string>({
+		getRoleById: builder.query<any, any>({
 			query: (id) => `user-role/${id}`,
 			providesTags: (_result, _error, id) => {
 				return [{ type: 'Role', id: id }];
 			},
 		}),
 
-		storeRole: builder.mutation<any, string>({
+		storeRole: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/user-role/store`,
 				method: 'POST',
@@ -39,7 +39,7 @@ export const roleApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deleteRole: builder.mutation<any, string>({
+		deleteRole: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `user-role/${id}`,
 				method: 'DELETE',

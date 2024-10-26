@@ -4,6 +4,7 @@ import Sidebar from '@/components/custom/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetSidebarPrivetQuery } from '@/lib/features/sidebar/apiSlice';
 import Session from '@/lib/session';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useRouter, usePathname, notFound } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -15,9 +16,10 @@ export default function RootLayout({
 	const { session, status, signOut } = Session();
 	const router = useRouter();
 	const pathname = usePathname(); // Get the current path
-	const { data, isLoading, isError, error } = useGetSidebarPrivetQuery();
+	const { data, isLoading, isError, error } =
+		useGetSidebarPrivetQuery(undefined);
 
-	if (error?.data?.message === 'Unauthorized') {
+	if ((error as any).data?.message === 'Unauthorized') {
 		signOut({ redirect: true, callbackUrl: '/login' });
 		return notFound();
 	}

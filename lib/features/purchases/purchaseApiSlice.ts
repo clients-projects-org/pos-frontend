@@ -3,14 +3,14 @@ import { apiSlice } from '../api/apiSlice';
 
 export const purchaseApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getPurchase: builder.query<ApiResponse<PurchaseType>, string>({
+		getPurchase: builder.query<ApiResponse<any>, string>({
 			query: (payload): string => `purchase?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Purchase'];
 			},
 		}),
 
-		getCreateDataPurchase: builder.query<any, void>({
+		getCreateDataPurchase: builder.query<any, any>({
 			query: (): string => `purchase/create-data`,
 
 			providesTags: (result, error, arg) => {

@@ -3,7 +3,7 @@ import { PageDetailsApiHOC } from '@/components/hoc';
 import { useGetSupplierByIdQuery } from './apiSlice';
 
 export function Details({ slug }: { slug: string }) {
-	const { data, isLoading, isFetching, isError } =
+	const { data, isLoading, isFetching, isError, error } =
 		useGetSupplierByIdQuery(slug);
 
 	return (
@@ -11,6 +11,7 @@ export function Details({ slug }: { slug: string }) {
 			data={data}
 			isError={isError}
 			isLoading={isLoading}
+			error={error}
 			isFetching={isFetching}
 		>
 			asdasd

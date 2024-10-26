@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getStore: builder.query<any, void>({
+		getStore: builder.query<any, any>({
 			query: (payload): string => `store?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Store'];
@@ -16,11 +16,11 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeStore: builder.mutation<any, string>({
+		storeStore: builder.mutation<any, any>({
 			query: (payload) => {
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
-					body.append(key, value);
+					body.append(key, value as string);
 				});
 				return {
 					url: `/store/store`,
@@ -47,7 +47,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deleteStore: builder.mutation<any, string>({
+		deleteStore: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `store/${id}`,
 				method: 'DELETE',

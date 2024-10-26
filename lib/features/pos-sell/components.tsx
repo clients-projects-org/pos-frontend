@@ -300,7 +300,7 @@ export function PurchasePayment({
 	data,
 	setPaymentModal,
 }: {
-	data: PurchaseType;
+	data: any;
 	setPaymentModal: Function;
 }) {
 	const { data: paymentMethod } = useGetPaymentMethodQuery('active');

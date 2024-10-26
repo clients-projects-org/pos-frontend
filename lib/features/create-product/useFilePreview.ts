@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export default function useFilePreview(file) {
+export default function useFilePreview(file = null) {
 	const [imgSrc, setImgSrc] = useState(null);
 
 	useEffect(() => {
@@ -8,7 +8,7 @@ export default function useFilePreview(file) {
 			const newUrl = URL.createObjectURL(file[0]);
 
 			if (newUrl !== imgSrc) {
-				setImgSrc(newUrl);
+				setImgSrc(newUrl as any);
 			}
 		}
 	}, [file]);

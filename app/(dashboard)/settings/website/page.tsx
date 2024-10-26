@@ -22,7 +22,8 @@ import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
 
 export default function WebsiteSetting() {
-	const { data, isLoading, isError, isFetching } = useGetSidebarQuery();
+	const { data, isLoading, isError, isFetching } =
+		useGetSidebarQuery(undefined);
 	const [updateStatus, { isLoading: updateStatusLoading }] =
 		useUpdateSidebarStatusMutation();
 

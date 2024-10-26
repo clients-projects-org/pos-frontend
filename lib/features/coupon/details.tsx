@@ -3,7 +3,7 @@ import { PageDetailsApiHOC } from '@/components/hoc';
 import { useGetCouponByIdQuery } from './apiSlice';
 
 export function Details({ slug }: { slug: string }) {
-	const { data, isLoading, isFetching, isError } =
+	const { data, isLoading, isFetching, isError, error } =
 		useGetCouponByIdQuery(slug);
 
 	return (
@@ -12,6 +12,7 @@ export function Details({ slug }: { slug: string }) {
 			isError={isError}
 			isLoading={isLoading}
 			isFetching={isFetching}
+			error={error}
 		>
 			asdasd
 		</PageDetailsApiHOC>

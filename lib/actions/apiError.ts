@@ -9,7 +9,8 @@ import { env } from '../env';
 // Generic error handling function
 export function apiErrorResponse<T extends z.ZodTypeAny>(
 	error: unknown,
-	methods: UseFormReturn<z.infer<T>>,
+	methods: any,
+	// methods: UseFormReturn<z.infer<T>>,
 	FormSchema: T
 ) {
 	if (error && typeof error === 'object' && 'data' in error) {

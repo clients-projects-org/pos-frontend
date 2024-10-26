@@ -99,7 +99,7 @@ const FormMutation: React.FC<FormProps> = ({
 		control: methods.control,
 		name: 'products',
 	});
-	const { data, isLoading } = useGetCreateDataPurchaseQuery();
+	const { data, isLoading } = useGetCreateDataPurchaseQuery(undefined);
 	const { data: product } = useGetProductsByIdQuery(id || '', {
 		skip: !id,
 	});
@@ -149,7 +149,7 @@ const FormMutation: React.FC<FormProps> = ({
 
 				// Only append the product if it's not already in the fields array
 				if (!isProductAlreadyAdded) {
-					appendProduct(newProduct);
+					appendProduct(newProduct as any);
 				}
 			}
 		}
@@ -646,12 +646,6 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														methods={methods}
 														name={`products.${productIndex}.variants.${variantIndex}.expire_date`}
 													/>
-													{/* <DateTimePicker
-														clearable
-														onChange={() => {}}
-														value={new Date('2024-10-24T03:13:18.219Z')}
-														hideTime
-													/> */}
 
 													<RFrom.RFInput
 														label="Total"

@@ -46,7 +46,7 @@ const Actions = ({ data }: { data: RoleType }) => {
 	return (
 		<div className="ml-auto flex items-center gap-2">
 			<Badge
-				variant={badge(data.status && data.status)}
+				variant={data.status !== undefined ? badge(data.status) : undefined}
 				className={`text-xs capitalize py-1`}
 			>
 				{data.status}

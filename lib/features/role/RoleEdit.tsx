@@ -36,7 +36,7 @@ export function RoleEdit() {
 	const param = useParams();
 	const router = useRouter();
 	const devPermissionName = useGetDevNameQuery('active');
-	const sidebarData = useGetSidebarQuery();
+	const sidebarData = useGetSidebarQuery(undefined);
 
 	const { data: roleDetails, isLoading: isLoadingRole } = useGetRoleByIdQuery(
 		(param.slug as string).split('-')[1],

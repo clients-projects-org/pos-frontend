@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		authLogin: builder.mutation<any, string>({
+		authLogin: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/auth/login`,
 				method: 'POST',

@@ -3,7 +3,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getPOS: builder.query<ApiResponse<ProductType[]>, string>({
+		getPOS: builder.query<ApiResponse<any[]>, string>({
 			query: (payload): string => `pos?status=${payload}`,
 			// providesTags: () => {
 			// 	return ['POS'];
@@ -17,14 +17,14 @@ export const api = apiSlice.injectEndpoints({
 			// },
 		}),
 
-		getPosSellHistory: builder.query<ApiResponse<ProductType>, undefined>({
+		getPosSellHistory: builder.query<ApiResponse<any>, undefined>({
 			query: (): string => `pos/sell-history`,
 			providesTags: () => {
 				return ['POS'];
 			},
 		}),
 
-		storePosSell: builder.mutation<any, string>({
+		storePosSell: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `pos/sell-store`,
 				method: 'POST',

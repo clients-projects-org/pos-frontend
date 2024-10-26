@@ -6,11 +6,10 @@ import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
-import { RoleType } from '@/lib/type';
 import { DynamicIcon, status } from '@/components/actions';
 import { Badge } from '@/components/ui/badge';
 
-export const roleData: RoleType[] = [
+export const roleData: any[] = [
 	{
 		_id: '66482b8dbc443ad6b1ec88693',
 		name: 'adminsasd423da4',
@@ -114,7 +113,7 @@ export const roleData: RoleType[] = [
 ];
 
 // const SelectedIcon = icon && (Ic as unknown as IconType)[icon];
-export const roleColumn: ColumnDef<RoleType>[] = [
+export const roleColumn: ColumnDef<any>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (

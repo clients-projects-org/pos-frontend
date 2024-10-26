@@ -1,5 +1,4 @@
 import { DevNameType } from '@/lib/type';
-import { zod } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +13,9 @@ export const FormSchema = z.object({
 		.trim(),
 	code: z.optional(z.string().trim()),
 	description: z.optional(z.string().trim()),
-	status: zod.status,
+	status: z.enum(['active', 'deactivated'], {
+		message: 'Status is Required',
+	}),
 });
 
 // store
@@ -38,7 +39,7 @@ export const devZodFromEdit = (data: DevNameType) => {
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
 			name: data.name,
-			status: data.status,
+			status: (data.status as 'active') || 'active',
 			code: data.code,
 			description: data.description,
 		},

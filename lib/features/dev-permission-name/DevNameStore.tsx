@@ -189,7 +189,7 @@ const FormMutation: React.FC<FormProps> = ({
 							items="actDeDraft"
 							defaultValue={methods.getValues('status')}
 							onChange={(value) =>
-								methods.setValue('status', value as StatusType)
+								methods.setValue('status', value as 'active' | 'deactivated')
 							}
 						/>
 					</div>

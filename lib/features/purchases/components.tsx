@@ -17,7 +17,7 @@ import { TableItem } from '@/lib/table/table-items/t-item';
 import { PurchaseType, StatusType } from '@/lib/type';
 import { ColumnDef } from '@tanstack/react-table';
 import { useParams, useRouter } from 'next/navigation';
-import { apiReqResponse, confirm } from '@/lib/actions';
+import { confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 import {
 	useAddPaymentPurchaseMutation,
@@ -29,7 +29,6 @@ import { PurchaseStoreModalNew } from './new-create';
 import { Badge } from '@/components/ui/badge';
 import {
 	Dialog,
-	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
@@ -38,18 +37,15 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { toast } from '@/components/hooks/use-toast';
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -58,7 +54,7 @@ import {
 import { useGetPaymentMethodQuery } from '../payment-method';
 import { RFrom } from '@/components/custom/form';
 
-const Column: ColumnDef<PurchaseType>[] = [
+const Column: any = [
 	TableItem.SelectBox(),
 	{
 		accessorKey: 'reference_number',
@@ -145,7 +141,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 	{
 		id: 'actions',
 		header: () => 'Actions',
-		cell: ({ row }) => {
+		cell: ({ row }: { row: any }) => {
 			return <Actions data={row.original} />;
 		},
 	},

@@ -1,7 +1,7 @@
 import { generateUniqueId } from '@/lib/actions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { string, z } from 'zod';
+import { z } from 'zod';
 
 const variantSchema = z
 	.object({

@@ -13,29 +13,29 @@ export const productApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getProducts: builder.query<any, string>({
 			query: (payload): string => `product?status=${payload}`,
-			providesTags: (result, error, arg) => {
+			providesTags: () => {
 				return ['Products'];
 			},
 		}),
 
-		getStoreProduct: builder.query<any, void>({
+		getStoreProduct: builder.query<any, any>({
 			query: (): string => `product/store-data`,
 
-			providesTags: (result, error, arg) => {
+			providesTags: () => {
 				return ['ProductsStoreData'];
 			},
 		}),
 
 		getProductsById: builder.query<ResponseByIdType, string>({
 			query: (id) => `product/${id}`,
-			providesTags: (result, error, id) => {
+			providesTags: (_result, _error, id) => {
 				return [{ type: 'Products', id: id }];
 			},
 		}),
 
 		getProductsSupplierById: builder.query<any, string>({
 			query: (id) => `product/by-supplier/${id}`,
-			providesTags: (result, error, id) => {
+			providesTags: (_result, _error, id) => {
 				return [{ type: 'Products', id: id }];
 			},
 		}),
@@ -45,25 +45,25 @@ export const productApi = apiSlice.injectEndpoints({
 				const body = new FormData();
 				Object.entries(payload).forEach(([key, value]) => {
 					if (key === 'store_id') {
-						value?.forEach((item: any) => {
+						(value as any[])?.forEach((item: any) => {
 							body.append('store_id[]', item);
 						});
 					} else if (key === 'warehouse_id') {
-						value?.forEach((item: any) => {
+						(value as any[])?.forEach((item: any) => {
 							body.append('warehouse_id[]', item);
 						});
 					} else if (key === 'gallery_images') {
-						value?.forEach((item: any) => {
+						(value as any[])?.forEach((item: any) => {
 							body.append('gallery_images', item);
 						});
 					} else if (key === 'tags') {
-						value?.forEach((item: any) => {
+						(value as any[])?.forEach((item: any) => {
 							body.append('tags[]', item);
 						});
 					} else if (key === 'variants') {
 						body.append('variants', JSON.stringify(value));
 					} else {
-						body.append(key, value);
+						body.append(key, value as any);
 					}
 				});
 				return {
@@ -94,7 +94,7 @@ export const productApi = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteProducts: builder.mutation<any, string>({
+		deleteProducts: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `product/${id}`,
 				method: 'DELETE',
@@ -109,7 +109,7 @@ export const productApi = apiSlice.injectEndpoints({
 				body: { status },
 			}),
 
-			invalidatesTags: (result, error, arg) => {
+			invalidatesTags: (_result, _error, arg) => {
 				return ['Products', { type: 'Products', id: arg.id }];
 			},
 		}),

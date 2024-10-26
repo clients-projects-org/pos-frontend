@@ -199,10 +199,10 @@ export function UserStore() {
 											<FormItem>
 												<FormControl>
 													{field.value?.image_type === 'image' ? (
-														<ImageSelect />
+														<ImageSelect onChange={() => {}} />
 													) : (
 														<Suspense fallback={<LineLoader />}>
-															<IconSelect />
+															<IconSelect setValue={() => {}} value="" />
 														</Suspense>
 													)}
 												</FormControl>

@@ -16,7 +16,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeVariant: builder.mutation<any, string>({
+		storeVariant: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/variant/store`,
 				method: 'POST',
@@ -43,7 +43,7 @@ export const api = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteVariant: builder.mutation<any, string>({
+		deleteVariant: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `variant/${id}`,
 				method: 'DELETE',

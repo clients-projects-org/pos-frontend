@@ -16,7 +16,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeUnit: builder.mutation<any, string>({
+		storeUnit: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/unit/store`,
 				method: 'POST',
@@ -41,7 +41,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		deleteUnit: builder.mutation<any, string>({
+		deleteUnit: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `unit/${id}`,
 				method: 'DELETE',

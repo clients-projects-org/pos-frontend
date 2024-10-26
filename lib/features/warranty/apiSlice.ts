@@ -2,7 +2,7 @@ import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
-		getWarranty: builder.query<any, void>({
+		getWarranty: builder.query<any, any>({
 			query: (payload): string => `warranty?status=${payload}`,
 			providesTags: (result, error, arg) => {
 				return ['Warranty'];
@@ -16,7 +16,7 @@ export const api = apiSlice.injectEndpoints({
 			},
 		}),
 
-		storeWarranty: builder.mutation<any, string>({
+		storeWarranty: builder.mutation<any, any>({
 			query: (payload) => ({
 				url: `/warranty/store`,
 				method: 'POST',
@@ -40,7 +40,7 @@ export const api = apiSlice.injectEndpoints({
 			// invalidatesTags: ['DevPermission'],
 		}),
 
-		deleteWarranty: builder.mutation<any, string>({
+		deleteWarranty: builder.mutation<any, any>({
 			query: ({ id }: any) => ({
 				url: `warranty/${id}`,
 				method: 'DELETE',

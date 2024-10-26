@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import {
-	Column,
 	ColumnFiltersState,
 	SortingState,
 	VisibilityState,
@@ -243,60 +242,6 @@ function Footer<T>({ table }: { table: TanTable<T> }) {
 				)}
 			</div>
 		</div>
-	);
-}
-
-// header filter max min
-function Filter({
-	column,
-	table,
-}: {
-	column: Column<any, any>;
-	table: TanTable<any>;
-}) {
-	const firstValue = table
-		.getPreFilteredRowModel()
-		.flatRows[0]?.getValue(column.id);
-
-	const columnFilterValue = column.getFilterValue();
-	if (column.id === 'image') {
-		return null;
-	}
-	return typeof firstValue === 'number' ? (
-		<div className="flex space-x-2">
-			<input
-				type="number"
-				value={(columnFilterValue as [number, number])?.[0] ?? ''}
-				onChange={(e) =>
-					column.setFilterValue((old: [number, number]) => [
-						e.target.value,
-						old?.[1],
-					])
-				}
-				placeholder={`Min`}
-				className="w-full border shadow rounded px-2 py-1"
-			/>
-			<input
-				type="number"
-				value={(columnFilterValue as [number, number])?.[1] ?? ''}
-				onChange={(e) =>
-					column.setFilterValue((old: [number, number]) => [
-						old?.[0],
-						e.target.value,
-					])
-				}
-				placeholder={`Max`}
-				className="w-full border shadow rounded px-2 py-1"
-			/>
-		</div>
-	) : (
-		<input
-			type="text"
-			value={(columnFilterValue ?? '') as string}
-			onChange={(e) => column.setFilterValue(e.target.value)}
-			placeholder={`Search...`}
-			className="w-full border shadow rounded px-2 py-1"
-		/>
 	);
 }
 
