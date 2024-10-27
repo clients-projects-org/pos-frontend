@@ -60,7 +60,9 @@ const posSlice = createSlice({
 			);
 
 			if (!variantExists) {
-				state.variants.unshift({ ...action.payload, select_quantity: 1 });
+				if (action.payload.quantity > 0) {
+					state.variants.unshift({ ...action.payload, select_quantity: 1 });
+				}
 			} else {
 				state.variants = state.variants.map((v) => {
 					if (v._id === action.payload._id && v.quantity > v.select_quantity) {

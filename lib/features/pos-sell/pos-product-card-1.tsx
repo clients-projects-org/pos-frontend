@@ -47,13 +47,15 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 					<Card className="w-full max-w-sm overflow-hidden">
 						<CardHeader className="p-0">
 							<div className="relative h-32 w-full">
-								<Image
-									src={product.image}
-									alt={product.name}
-									layout="fill"
-									objectFit="cover"
-									className="transition-all duration-300 hover:scale-105"
-								/>
+								{product.image && product.image !== 'null' && (
+									<Image
+										src={product.image}
+										alt={product.name}
+										layout="fill"
+										objectFit="cover"
+										className="transition-all duration-300 hover:scale-105"
+									/>
+								)}
 								{product.discount_type !== 'none' && (
 									<Badge className="absolute top-2 right-2 bg-red-500">
 										{product.discount_value}

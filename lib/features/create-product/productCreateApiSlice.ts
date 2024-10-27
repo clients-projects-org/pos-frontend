@@ -62,6 +62,8 @@ export const productApi = apiSlice.injectEndpoints({
 						});
 					} else if (key === 'variants') {
 						body.append('variants', JSON.stringify(value));
+					} else if (key === 'image') {
+						body.append('image', value ? value : (null as any));
 					} else {
 						body.append(key, value as any);
 					}

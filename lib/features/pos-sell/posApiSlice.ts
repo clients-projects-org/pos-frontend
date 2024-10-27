@@ -31,7 +31,7 @@ export const api = apiSlice.injectEndpoints({
 				body: payload,
 			}),
 			invalidatesTags: () => {
-				return ['POS'];
+				return ['POS', 'DashboardAdminStatistics'];
 			},
 		}),
 	}),

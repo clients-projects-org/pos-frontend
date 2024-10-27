@@ -113,7 +113,7 @@ export const CloseAlert = ({
 			<DynamicIcon icon="ExclamationTriangleIcon" className="h-4 w-4" />
 			<AlertTitle>Error</AlertTitle>
 			<AlertDescription>
-				<Link href={item.link}>{item.message}</Link>
+				<Link href={item.link}>{item.message} Click Here</Link>
 			</AlertDescription>
 			<Button
 				type="button"

@@ -48,6 +48,7 @@ export const apiSlice = createApi({
 		'PurchasesCreateData',
 		'Purchase',
 		'POS',
+		'DashboardAdminStatistics',
 	],
 	keepUnusedDataFor: 50000,
 });

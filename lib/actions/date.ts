@@ -1,4 +1,4 @@
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
 
 export const dateLeft = (expire_date: string) => {
 	if (!expire_date) {
@@ -10,4 +10,9 @@ export const dateLeft = (expire_date: string) => {
 	const daysLeft = differenceInDays(expireDate, currentDate);
 
 	return daysLeft + 1;
+};
+
+// November 23, 2023
+export const dateFormat1 = (date: string) => {
+	return format(date, 'MMMM d, yyyy');
 };

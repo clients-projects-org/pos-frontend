@@ -28,7 +28,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
 				};
 			},
 			invalidatesTags: () => {
-				return ['Purchase'];
+				return ['Purchase', 'DashboardAdminStatistics'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),
@@ -41,7 +41,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
 				};
 			},
 			invalidatesTags: () => {
-				return ['Purchase'];
+				return ['Purchase', 'DashboardAdminStatistics'];
 			},
 		}),
 
@@ -54,7 +54,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
 				};
 			},
 			invalidatesTags: () => {
-				return ['Purchase'];
+				return ['Purchase', 'DashboardAdminStatistics'];
 			},
 			// invalidatesTags: ['DevPermission'],
 		}),

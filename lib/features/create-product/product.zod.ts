@@ -8,16 +8,19 @@ export type FormValues = z.infer<typeof FormSchema>;
 export const FormSchema = z
 	.object({
 		// image
-		image: z.instanceof(File, {
-			message: 'Product image  is required.',
-		}),
+		image: z
+			.instanceof(File, {
+				message: 'Product image  is required.',
+			})
+			.optional(),
 		gallery_images: z
 			.array(z.instanceof(File), {
 				message: 'Gallery image must be a valid file.',
 			})
 			.refine((files) => files.length > 0, {
 				message: 'At least one gallery image is required.',
-			}),
+			})
+			.optional(),
 
 		// product from
 		supplier_id: z.string().min(2, { message: `Supplier is Required` }),

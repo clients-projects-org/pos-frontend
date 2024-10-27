@@ -50,7 +50,7 @@ export function PurchaseStoreModalNew() {
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
-					className="gap-1 flex items-center border px-3 py-2 text-sm rounded-sm hover:bg-slate-800"
+					className="gap-1 flex items-center border px-3 py-2 text-sm rounded-sm  "
 				>
 					<DynamicIcon icon="PlusCircle" className="h-4 w-4 sm:mr-2" />
 					<span className="sr-only sm:not-sr-only capitalize !whitespace-nowrap">
@@ -375,7 +375,6 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 		}
 	}
 
-
 	if (isLoading) {
 		return <div>Loading...</div>;
 	}
@@ -474,13 +473,16 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 													scope="row"
 													className="px-6  py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 												>
-													<Image
-														className="rounded-md h-10 w-10 object-cover mx-auto"
-														alt="Product image"
-														src={(productField as any).image ?? ''}
-														width={40}
-														height={40}
-													/>
+													{(productField as any).image &&
+														(productField as any).image !== 'null' && (
+															<Image
+																className="rounded-md h-10 w-10 object-cover mx-auto"
+																alt="Product image"
+																src={(productField as any).image}
+																width={40}
+																height={40}
+															/>
+														)}
 												</th>
 												<td className="px-6 py-2 ">
 													{productField.name ?? ''}
