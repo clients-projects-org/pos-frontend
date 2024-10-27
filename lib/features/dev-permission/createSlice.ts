@@ -48,15 +48,12 @@ const formSlice = createSlice({
 		updateRoute: (state, action) => {
 			const { routeId, updates } = action.payload;
 			const route = state.routes.find((route) => route.id === routeId);
+
 			if (action.payload?.index !== undefined) {
 				const index = action.payload.index;
-				if (
-					state.errors &&
-					state.errors.routes &&
-					state.errors.routes[index] &&
-					state.errors.routes[index].name
-				) {
-					state.errors.routes[index].name._errors = [];
+				const routeErrors = state.errors?.routes?.[index];
+				if (routeErrors?.name?._errors) {
+					routeErrors.name._errors = [];
 				}
 			}
 

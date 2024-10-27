@@ -1,7 +1,8 @@
+// tailwind.config.js
 import type { Config } from 'tailwindcss';
-const { fontFamily } = require('tailwindcss/defaultTheme');
+import { fontFamily } from 'tailwindcss/defaultTheme';
 
-const config = {
+const config: Config = {
 	darkMode: ['class'],
 	content: [
 		'./pages/**/*.{ts,tsx}',
@@ -9,6 +10,7 @@ const config = {
 		'./lib/**/*.{ts,tsx}',
 		'./app/**/*.{ts,tsx}',
 		'./src/**/*.{ts,tsx}',
+		'./public/**/*.{html,js}', // Added public directory
 	],
 	prefix: '',
 	theme: {
@@ -80,9 +82,16 @@ const config = {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 			},
+			screens: {
+				xs: '480px', // Example of additional breakpoint
+				'3xl': '1600px', // Example of additional breakpoint
+			},
 		},
 	},
-	plugins: [require('tailwindcss-animate')],
-} satisfies Config;
+	plugins: [
+		require('tailwindcss-animate'),
+		// Add any additional plugins here
+	],
+};
 
 export default config;

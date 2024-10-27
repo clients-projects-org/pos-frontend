@@ -44,8 +44,8 @@ const Column: ColumnDef<WarehouseType>[] = [
 				</Button>
 			);
 		},
-		cell: ({ row }) => {
-			console.log(row);
+		cell: ({ row }: any) => {
+			row;
 			return (
 				<div className="capitalize whitespace-nowrap">
 					{row.original.createdBy?.name ? (
@@ -168,14 +168,12 @@ const Actions = ({ data }: { data: WarehouseType }) => {
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
-					console.log('first');
 					router.push('/peoples/warehouses');
 				}
 			} else {
-				console.log('Delete action cancelled');
 			}
 		} catch (err) {
-			console.error('Failed to delete the permission: ', err);
+			//
 		}
 	};
 

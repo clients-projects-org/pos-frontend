@@ -17,7 +17,6 @@ export default function Page() {
 		useGetPurchasePaymentHistoryQuery(undefined);
 	const getSelectedRow = (e: Row<PurchaseType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
 	};
 	return (
 		<>

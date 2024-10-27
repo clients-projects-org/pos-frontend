@@ -1,3 +1,5 @@
+'use client';
+
 import { ApiResponse, DevNameType, StatusTypeApi } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 

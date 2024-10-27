@@ -65,10 +65,8 @@ export default function InputForm() {
 		// });
 		try {
 			const res: any = await store({ ...data } as any);
-			console.log(res as any, 'res');
 
 			if (res?.error) {
-				console.log(res?.error);
 				showToast({
 					title: 'Wait!',
 					variant: 'destructive',
@@ -88,7 +86,6 @@ export default function InputForm() {
 				}
 			}
 		} catch (error) {
-			console.log(error, 'err');
 			apiErrorResponse(error, form, FormSchema);
 		}
 	}

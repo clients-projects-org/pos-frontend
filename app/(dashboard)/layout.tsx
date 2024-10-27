@@ -19,7 +19,7 @@ export default function RootLayout({
 	const { data, isLoading, isError, error } =
 		useGetSidebarPrivetQuery(undefined);
 
-	if ((error as any).data?.message === 'Unauthorized') {
+	if ((error as any)?.data?.message === 'Unauthorized') {
 		signOut({ redirect: true, callbackUrl: '/login' });
 		return notFound();
 	}

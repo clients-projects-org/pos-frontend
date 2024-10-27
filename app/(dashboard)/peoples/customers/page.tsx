@@ -12,7 +12,7 @@ export default function Customer() {
 	const { data, isLoading, isFetching, isError } = useGetCustomerQuery(value);
 	const getSelectedRow = (e: Row<CustomerType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
+		// (ids);
 	};
 	return (
 		<>

@@ -1,3 +1,4 @@
+'use client';
 import PageTitle, { PageLink } from '@/components/custom/PageTitle';
 import { SubCategoryDetails, Store, Edit } from '@/lib/features/sub-category';
 

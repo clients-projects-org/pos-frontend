@@ -16,14 +16,12 @@ export function Edit() {
 
 	const { data, isError, isFetching, error, isLoading } =
 		useGetVariantByIdQuery((slug as string).split('-')[1]);
-	console.log(data);
 	const { methods } = editZodFrom(data?.data);
 	// Use useFieldArray to manage attributes
 	const { fields, append, remove } = useFieldArray({
 		control: methods.control,
 		name: 'attributes', // This should match the name in your form data
 	});
-	console.log(methods.formState.errors);
 
 	const [update, { isLoading: isLoadingUpdate }] = useUpdateVariantMutation();
 
@@ -41,7 +39,6 @@ export function Edit() {
 		}
 	}
 	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
 	return (
 		<PageDetailsApiHOC
 			data={{ data: true, success: true }}

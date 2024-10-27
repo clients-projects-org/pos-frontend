@@ -33,7 +33,6 @@ export function Edit() {
 		}
 	}
 	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
 	return (
 		<PageDetailsApiHOC
 			data={{ data: true, success: true }}

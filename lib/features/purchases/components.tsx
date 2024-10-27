@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { TableItem } from '@/lib/table/table-items/t-item';
 import { PurchaseType, StatusType } from '@/lib/type';
-import { ColumnDef } from '@tanstack/react-table';
 import { useParams, useRouter } from 'next/navigation';
 import { confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
@@ -228,14 +227,12 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
-					console.log('first');
 					router.push('/user-management/roles-permissions');
 				}
 			} else {
-				console.log('Delete action cancelled');
 			}
 		} catch (err) {
-			console.error('Failed to delete the permission: ', err);
+			//
 		}
 	};
 	const handleReceive = async (id: string) => {
@@ -257,11 +254,10 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
-					console.log('first');
 					// router.push('/user-management/roles-permissions');
 				}
 			} else {
-				console.log('Delete action cancelled');
+				//
 			}
 		} catch (err) {
 			console.error('Failed to delete the permission: ', err);

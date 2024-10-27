@@ -20,7 +20,6 @@ import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 
 export function SellItems() {
 	const [customer, setCustomer] = useState('');
-	console.log(customer, 'customer');
 	const { methods, resetForm } = createZodFromPos();
 	const discount_type = methods.watch('discount_type');
 	const discount_value = methods.watch('discount_value');

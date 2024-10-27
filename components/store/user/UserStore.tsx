@@ -64,7 +64,6 @@ export function UserStore() {
 	});
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
-		console.log(data);
 		toast({
 			title: 'You submitted the following values:',
 			description: (
@@ -74,9 +73,7 @@ export function UserStore() {
 			),
 		});
 	}
-	console.log(methods.getValues());
 	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
 	return (
 		<div className="max-w-5xl mx-auto w-full border p-4 rounded">
 			<FormProvider {...methods}>

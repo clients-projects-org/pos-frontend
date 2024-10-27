@@ -35,8 +35,7 @@ export function Store() {
 		}
 	}
 	const watching = methods.watch();
-	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
+
 	return (
 		<div className="max-w-5xl mx-auto w-full border p-4 rounded">
 			<FormProvider {...methods}>

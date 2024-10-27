@@ -12,7 +12,7 @@ export default function Store() {
 	const { data, isLoading, isFetching, isError } = useGetStoreQuery(value);
 	const getSelectedRow = (e: Row<StoreType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
+		// console\.log\(ids\);
 	};
 	return (
 		<>

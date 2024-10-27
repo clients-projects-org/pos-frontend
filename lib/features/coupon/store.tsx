@@ -57,7 +57,6 @@ export function Store({ slug }: { slug?: string }) {
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
 		store({ ...data, created_by: 'admin' } as any).then((e) => {
-			console.log(e);
 			router.push('/inventory/brand', { scroll: false });
 
 			// router.push('/user-management/roles-permissions', { scroll: false });
@@ -72,9 +71,7 @@ export function Store({ slug }: { slug?: string }) {
 		});
 	}
 	const watching = methods.watch();
-	console.log(watching);
-	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
+
 	return (
 		<div className="max-w-5xl mx-auto w-full border p-4 rounded">
 			<FormProvider {...methods}>

@@ -1,4 +1,5 @@
 'use client';
+
 import PageTitle from '@/components/custom/PageTitle';
 import { TableBox } from '@/lib/table';
 import { CategoryType, StatusType } from '@/lib/type';
@@ -15,7 +16,6 @@ export default function Category() {
 	const { data, isLoading, isFetching, isError } = useGetCategoryQuery(value);
 	const getSelectedRow = (e: Row<CategoryType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
 	};
 	return (
 		<>

@@ -1,3 +1,5 @@
+'use client';
+
 import { DynamicIcon } from '@/components/actions';
 import PageTitle from '@/components/custom/PageTitle';
 import { UserDetails, UserStore, UserEdit } from '@/lib/features/user';

@@ -14,7 +14,6 @@ export default function Brand() {
 
 	const getSelectedRow = (e: Row<BrandType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
 	};
 	return (
 		<>

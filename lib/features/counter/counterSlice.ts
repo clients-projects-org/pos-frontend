@@ -1,3 +1,4 @@
+'use client';
 import { createAppSlice } from '@/lib/createAppSlice';
 import type { AppThunk } from '@/lib/store';
 import type { PayloadAction } from '@reduxjs/toolkit';

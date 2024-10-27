@@ -1,3 +1,4 @@
+'use client';
 import { apiSlice } from '../api/apiSlice';
 
 export const api = apiSlice.injectEndpoints({

@@ -28,7 +28,6 @@ import { dateLeft } from '@/lib/actions';
 export function PosProductCard_1({ product }: { product: ProductType }) {
 	// variants items
 	const items = useAppSelector((state) => state.variantPos.variants);
-	console.log(items, 'items');
 
 	// active product
 	const activeProduct = items.some((item) => item.product_id === product._id);
@@ -264,7 +263,6 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 											onClick={(event) => {
 												event.stopPropagation();
 
-												console.log('fire--');
 												dispatch(decrementQuantity(item._id));
 											}}
 											aria-label="Increase quantity"
@@ -281,7 +279,6 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 												variant="secondary"
 												size="icon"
 												onClick={(event) => {
-													console.log('first');
 													// Check if the item is already in the cart
 													event.stopPropagation();
 
@@ -308,7 +305,6 @@ const ProductDetails = ({ product }: { product: ProductType }) => {
 											variant="secondary"
 											size="icon"
 											onClick={(event) => {
-												console.log('first');
 												// Check if the item is already in the cart
 												event.stopPropagation();
 

@@ -16,7 +16,6 @@ export default function SubCategory() {
 		useGetSubCategoryQuery(value);
 	const getSelectedRow = (e: Row<CategoryType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
 	};
 	return (
 		<>

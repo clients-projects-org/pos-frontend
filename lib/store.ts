@@ -1,3 +1,4 @@
+'use client';
 import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { counterSlice } from './features/counter/counterSlice';

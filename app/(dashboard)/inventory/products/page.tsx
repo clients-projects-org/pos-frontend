@@ -16,7 +16,6 @@ export default function Category() {
 	const { data, isLoading, isFetching, isError } = useGetProductsQuery(value);
 	const getSelectedRow = (e: Row<ProductType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
 	};
 	return (
 		<>

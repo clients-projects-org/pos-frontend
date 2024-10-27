@@ -128,9 +128,7 @@ const handleDelete = async () => {
 	});
 	if (confirmed) {
 		// Perform the delete action here
-		console.log('Account deleted');
-	} else {
-		console.log('Action cancelled');
-	}
+ 	} else {
+ 	}
 };
 */

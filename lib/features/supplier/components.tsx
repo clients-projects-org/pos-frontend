@@ -45,8 +45,7 @@ const Column: ColumnDef<SupplierType>[] = [
 				</Button>
 			);
 		},
-		cell: ({ row }) => {
-			console.log(row);
+		cell: ({ row }: any) => {
 			return (
 				<div className="capitalize whitespace-nowrap">
 					{row.original.createdBy?.name ? (

@@ -18,7 +18,7 @@ export function Edit() {
 
 	const { data, isError, isFetching, error, isLoading } =
 		useGetPaymentMethodByIdQuery((slug as string).split('-')[1]);
-	console.log(data);
+
 	const { methods } = editZodFrom(data?.data);
 
 	const [update, { isLoading: isLoadingUpdate }] =
@@ -37,8 +37,7 @@ export function Edit() {
 			apiErrorResponse(error, methods, FormSchemaEdit);
 		}
 	}
-	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
+
 	return (
 		<PageDetailsApiHOC
 			data={{ data: true, success: true }}

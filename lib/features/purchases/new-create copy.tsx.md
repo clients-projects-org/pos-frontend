@@ -36,7 +36,6 @@ export function PurchaseStoreModalNew() {
 	const [open, setOpen] = React.useState(false);
 	const { methods } = createZodFromNew();
 	const [store, { isLoading }] = useStoreProductsMutation();
-	console.log(methods.watch(), 'watch');
 
 	async function onSubmit(data: FormValues) {
 		const storeData = {
@@ -146,7 +145,6 @@ const FormMutation: React.FC<FormProps> = ({
 				(field) => field._id === newProduct._id
 			);
 
-			console.log(newProduct, 'newProduct');
 
 			if (!isProductAlreadyAdded) {
 				appendProduct(newProduct);
@@ -160,7 +158,6 @@ const FormMutation: React.FC<FormProps> = ({
 		if (id) {
 			// Find the product in productState by id
 			const selectedProduct = productState.find((prod) => prod._id === id);
-			console.log('fire');
 			if (selectedProduct) {
 				const newProduct = {
 					...selectedProduct,

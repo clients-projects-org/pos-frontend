@@ -12,7 +12,6 @@ export default function Unit() {
 	const { data, isLoading, isFetching, isError } = useGetUnitQuery(value);
 	const getSelectedRow = (e: Row<UnitType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
 	};
 	return (
 		<>

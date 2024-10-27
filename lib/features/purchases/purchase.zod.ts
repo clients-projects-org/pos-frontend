@@ -102,6 +102,34 @@ const variantProductFields = z.object({
 				.refine((val) => !isNaN(val) && val > 0, {
 					message: 'Quantity must be a number greater than 0',
 				}),
+
+			alert_quantity: z
+				.string()
+				.transform((val) => Number(val))
+				.refine((val) => !isNaN(val) && val > 0, {
+					message: 'Alert quantity must be a number greater than 0',
+				}),
+			buy_price: z
+				.string()
+				.transform((val) => Number(val))
+				.refine((val) => !isNaN(val) && val > 0, {
+					message: 'Buy price must be a number greater than 0',
+				}),
+			sell_price: z
+				.string()
+				.transform((val) => Number(val))
+				.refine((val) => !isNaN(val) && val > 0, {
+					message: 'Sell price must be a number greater than 0',
+				}),
+			discount_value: z
+				.string()
+				.transform((val) => Number(val))
+				.refine((val) => !isNaN(val), {
+					message: 'Discount value must be a number',
+				}),
+			discount_type: z.enum(['fixed', 'percentage', 'none'], {
+				message: 'Discount Type is Required',
+			}),
 		})
 	),
 });
@@ -122,7 +150,6 @@ export const FormSchema = z
 	])
 	.superRefine((data, ctx) => {
 		// Check if expire date is after manufacture date
-		console.log(data, ctx);
 		if (data.expire_date <= data.manufacture_date) {
 			ctx.addIssue({
 				code: 'invalid_date',
@@ -164,8 +191,8 @@ export const createZodFrom = () => {
 			discount_value: 0,
 			discount_type: 'none',
 
-			// Variant product defaults (will be ignored if 'single')
-			variants: [{ unit_id: '', variant_id: '', quantity: '0' }],
+			// Variant product defaults
+			// variants: [{ unit_id: '', variant_id: '', quantity: '0' }],
 		},
 	});
 

@@ -51,7 +51,6 @@ export function RoleEdit() {
 	const checked = getCheckedRoutes(permissions.data);
 	const checkedSidebar = getCheckedSidebars(permissions.sidebarData);
 
-	console.log(permissions, 'permissions');
 	const handleParentToggle = (devId: string) => {
 		dispatch(toggleParent(devId));
 	};

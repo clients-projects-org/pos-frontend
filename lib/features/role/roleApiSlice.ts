@@ -1,3 +1,5 @@
+'use client';
+
 import { StatusTypeApi } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 

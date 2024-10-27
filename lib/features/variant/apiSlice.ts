@@ -53,7 +53,6 @@ export const api = apiSlice.injectEndpoints({
 
 		updateVariantStatus: builder.mutation<any, any>({
 			query: ({ id, status }) => {
-				console.log(id, status, 'fire');
 				return {
 					url: `variant/status/${id}`,
 					method: 'PUT',

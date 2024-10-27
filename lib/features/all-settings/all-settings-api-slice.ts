@@ -1,3 +1,4 @@
+'use client';
 import { ApiResponse } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 import { AllSettingsType } from './all-settings.interface';

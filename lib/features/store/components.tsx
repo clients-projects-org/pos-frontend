@@ -120,14 +120,13 @@ const Actions = ({ data }: { data: StoreType }) => {
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
-					console.log('first');
 					router.push('/peoples/stores');
 				}
 			} else {
-				console.log('Delete action cancelled');
+				//
 			}
 		} catch (err) {
-			console.error('Failed to delete the permission: ', err);
+			//
 		}
 	};
 

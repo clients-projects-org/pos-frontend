@@ -12,7 +12,6 @@ export default function Warranty() {
 	const { data, isLoading, isFetching, isError } = useGetWarrantyQuery(value);
 	const getSelectedRow = (e: Row<WarrantyType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
 	};
 	return (
 		<>

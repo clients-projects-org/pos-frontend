@@ -1,3 +1,5 @@
+'use client';
+
 import PageTitle, { PageLink } from '@/components/custom/PageTitle';
 import { Details, Store, Edit } from '@/lib/features/warranty';
 

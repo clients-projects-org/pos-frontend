@@ -56,7 +56,6 @@ export default function WebsiteSetting() {
 	}) => {
 		await updateStatus({ id, status, type }).unwrap();
 
-		console.log(id, type, status);
 	};
 	return (
 		<>

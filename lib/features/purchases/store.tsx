@@ -107,13 +107,11 @@ const FormMutation: React.FC<any> = ({ methods, onSubmit }: any) => {
 		append({ unit_id: '', variant_id: '', quantity: 0 });
 	};
 
-	console.log(selectedData.selectedData, 'selectedData');
 	const { data, isSuccess, isLoading } =
 		useGetCreateDataPurchaseQuery(undefined);
 	const { data: products } = useGetProductsByIdQuery(id || '', {
 		skip: !id,
 	});
-	console.log(data, 'data');
 
 	useEffect(() => {
 		if (products && id) {
@@ -125,9 +123,7 @@ const FormMutation: React.FC<any> = ({ methods, onSubmit }: any) => {
 		return <div>Loading...</div>;
 	}
 	const supplier_id = methods.watch('supplier_id');
-	console.log(methods.watch());
 	const getTargetValue = (e: string) => {
-		console.log(e);
 		setId(e);
 	};
 	return (

@@ -1,3 +1,4 @@
+'use client';
 import { isEmptyArray } from '@/lib/actions';
 import { BarLoader, LineLoader } from '../custom/loader';
 import { ApiError } from '../custom/notifications';

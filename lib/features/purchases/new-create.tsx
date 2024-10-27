@@ -375,7 +375,6 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 		}
 	}
 
-	console.log(methods.formState.errors, 'methods.formState.errors');
 
 	if (isLoading) {
 		return <div>Loading...</div>;

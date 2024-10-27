@@ -135,11 +135,10 @@ const Actions = ({ data }: { data: WarrantyType }) => {
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
-					console.log('first');
 					router.push('/user-management/roles-permissions');
 				}
 			} else {
-				console.log('Delete action cancelled');
+				//
 			}
 		} catch (err) {
 			console.error('Failed to delete the permission: ', err);

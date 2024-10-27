@@ -12,7 +12,7 @@ export default function Warehouse() {
 	const { data, isLoading, isFetching, isError } = useGetWarehouseQuery(value);
 	const getSelectedRow = (e: Row<WarehouseType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
+		// console\.log\(ids\);
 	};
 	return (
 		<>

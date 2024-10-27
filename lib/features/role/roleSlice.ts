@@ -101,7 +101,6 @@ const roleSlice = createSlice({
 			const sidebarData = action.payload.sidebarData;
 			const activeSidebars = action.payload.activeSidebars; // Array of active _id values
 
-			console.log(activeSidebars, sidebarData, 'roleData');
 
 			const modifiedData = permissionData?.map((main) => {
 				// Find matching role data for the current permission
@@ -247,7 +246,6 @@ const roleSlice = createSlice({
 			action: PayloadAction<{ devId: string; routeId: string; childId: string }>
 		) {
 			const { devId, routeId, childId } = action.payload;
-			console.log(action, 'devId');
 			const parent = state.sidebarData.find((dev) => dev._id === devId);
 			if (parent) {
 				const route = parent.sidebarChildren?.find(

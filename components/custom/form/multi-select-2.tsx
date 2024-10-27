@@ -86,8 +86,6 @@ export function FancyMultiSelect({ label }: { label: string }) {
 		(framework) => !selected.includes(framework)
 	);
 
-	console.log(selectables, selected, inputValue);
-
 	return (
 		<div className="space-y-2">
 			<FormLabel>{label}</FormLabel>

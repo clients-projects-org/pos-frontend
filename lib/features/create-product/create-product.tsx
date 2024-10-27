@@ -38,7 +38,6 @@ export function CreateProduct() {
 	const [store, { isLoading }] = useStoreProductsMutation();
 
 	async function onSubmit(eventData: FormValues) {
-		console.log(eventData, 'eventData');
 		try {
 			const response = await store(eventData as any).unwrap();
 			apiReqResponse(response);
@@ -51,8 +50,6 @@ export function CreateProduct() {
 	const category = methods.watch('category_id');
 	const checkError = methods.formState.errors;
 	const testWatch = methods.watch();
-	console.log(testWatch, 'firstName');
-	console.log(checkError, 'checkError');
 
 	useEffect(() => {
 		// Whenever category_id changes, clear the sub_category_id

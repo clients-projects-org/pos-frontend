@@ -63,7 +63,6 @@ export function UserEdit({ slug }: { slug: string }) {
 	const [store, { isLoading }] = useUpdateUserMutation();
 
 	async function onSubmit(data: FormValuesEdit) {
-		console.log(data);
 		try {
 			const response = await store({ data: data as any, id: slug }).unwrap();
 			apiReqResponse(response);
@@ -75,7 +74,6 @@ export function UserEdit({ slug }: { slug: string }) {
 	}
 	const watching = methods.watch();
 	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
 	return (
 		<PageDetailsApiHOC
 			data={userData.data}
@@ -115,7 +113,6 @@ export function UserStore() {
 	}
 	const watching = methods.watch();
 	// const methods = useForm();
-	// const onSubmit = (data) => console.log(data);
 	return (
 		<PageDetailsApiHOC
 			data={{ data: true, success: true }}

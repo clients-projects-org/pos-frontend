@@ -552,8 +552,7 @@ export const productSchema = z
 	])
 	.superRefine((data, ctx) => {
 		// Check if expire date is after manufacture date
-		console.log(data, ctx);
-		if (data.expire_date <= data.manufacture_date) {
+ 		if (data.expire_date <= data.manufacture_date) {
 			ctx.addIssue({
 				code: 'invalid_date',
 				path: ['expire_date'],

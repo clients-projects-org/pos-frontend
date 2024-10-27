@@ -46,7 +46,6 @@ const Column: ColumnDef<CustomerType>[] = [
 			);
 		},
 		cell: ({ row }) => {
-			console.log(row);
 			return (
 				<div className="capitalize whitespace-nowrap">
 					{row.original.createdBy?.name ? (
@@ -169,11 +168,9 @@ const Actions = ({ data }: { data: CustomerType }) => {
 				};
 				showToast(options);
 				if (params.slug.startsWith('permission')) {
-					console.log('first');
 					router.push('/user-management/roles-permissions');
 				}
 			} else {
-				console.log('Delete action cancelled');
 			}
 		} catch (err) {
 			console.error('Failed to delete the permission: ', err);

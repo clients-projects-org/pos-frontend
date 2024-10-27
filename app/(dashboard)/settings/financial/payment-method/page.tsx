@@ -16,7 +16,7 @@ export default function Unit() {
 		useGetPaymentMethodQuery(value);
 	const getSelectedRow = (e: Row<UnitType>[]): void => {
 		const ids = e.map((e) => e.original).map((i) => i._id);
-		console.log(ids);
+		// console\.log\(ids\);
 	};
 	return (
 		<>
