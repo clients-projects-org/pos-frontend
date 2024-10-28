@@ -436,6 +436,9 @@ export function PurchasePayment({
 				_id: data._id,
 			}).unwrap();
 			// apiReqResponse(response);
+			if (response.statusCode === 200 && response.success) {
+				setPaymentModal(false);
+			}
 		}
 	}
 

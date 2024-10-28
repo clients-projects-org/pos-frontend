@@ -22,9 +22,8 @@ import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { addVariant, decrementQuantity, removeVariant } from './posSlice';
 import { discount } from './pos-function';
-import { format } from 'date-fns';
 import { dateLeft } from '@/lib/actions';
-
+import image from './product-image.png';
 export function PosProductCard_1({ product }: { product: ProductType }) {
 	// variants items
 	const items = useAppSelector((state) => state.variantPos.variants);
@@ -47,10 +46,18 @@ export function PosProductCard_1({ product }: { product: ProductType }) {
 					<Card className="w-full max-w-sm overflow-hidden">
 						<CardHeader className="p-0">
 							<div className="relative h-32 w-full">
-								{product.image && product.image !== 'null' && (
+								{product.image && product.image !== 'null' ? (
 									<Image
 										src={product.image}
 										alt={product.name}
+										layout="fill"
+										objectFit="cover"
+										className="transition-all duration-300 hover:scale-105"
+									/>
+								) : (
+									<Image
+										src={image}
+										alt={'product image'}
 										layout="fill"
 										objectFit="cover"
 										className="transition-all duration-300 hover:scale-105"

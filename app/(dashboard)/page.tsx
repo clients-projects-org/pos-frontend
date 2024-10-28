@@ -639,10 +639,10 @@ export default function Dashboard() {
 												Total paid purchase amount
 											</span>
 											<span className="inline-flex gap-1">
+												-{' '}
 												{data?.data?.purchaseStatisticsHistory?.allTime?.totalPaid?.toFixed(
 													2
 												)}
-
 												<TkSign />
 											</span>
 										</li>

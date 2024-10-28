@@ -1,4 +1,4 @@
-import { ApiResponse, PurchaseType } from '@/lib/type';
+import { ApiResponse, PurchaseType, ReturnType } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
 export const purchaseApi = apiSlice.injectEndpoints({
@@ -45,7 +45,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		addPaymentPurchase: builder.mutation<any, any>({
+		addPaymentPurchase: builder.mutation<ReturnType<any>, any>({
 			query: (payload) => {
 				return {
 					url: `/purchase/add-payment/${payload._id}`,

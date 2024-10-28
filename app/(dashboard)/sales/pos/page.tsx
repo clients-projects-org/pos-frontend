@@ -1,4 +1,5 @@
 'use client';
+import { DynamicIcon } from '@/components/actions';
 import { SelectSearch } from '@/components/custom/form';
 import { ApiUseHOC } from '@/components/hoc';
 import { Motion } from '@/components/motion';
@@ -12,9 +13,20 @@ import {
 	useGetPOSQuery,
 } from '@/lib/features/pos-sell';
 import { Search } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Page() {
-	const { data, isLoading, isFetching, isError } = useGetPOSQuery('');
+	const [searchTerm, setSearchTerm] = useState('');
+	const [selectedBrand, setSelectedBrand] = useState('');
+	const [selectedCategory, setSelectedCategory] = useState('');
+	const [selectedSubCategory, setSelectedSubCategory] = useState('');
+
+	const { data, isLoading, isFetching, isError } = useGetPOSQuery({
+		search: searchTerm,
+		brand: selectedBrand,
+		category: selectedCategory,
+		subCategory: selectedSubCategory,
+	});
 
 	// get all utility
 	const {
@@ -49,6 +61,8 @@ export default function Page() {
 									<div className="relative">
 										<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 										<Input
+											value={searchTerm}
+											onChange={(e) => setSearchTerm(e.target.value)}
 											type="search"
 											placeholder="Search products..."
 											className="w-full appearance-none bg-background pl-8 shadow-none "
@@ -57,24 +71,41 @@ export default function Page() {
 									<SelectSearch
 										placeholder="Brand"
 										frameworks={utilityData?.data?.brand}
-										onChange={() => {}}
-										value={''}
+										onChange={(e) => setSelectedBrand(e)}
+										value={selectedBrand}
 									/>
 									<SelectSearch
 										placeholder="Category"
 										frameworks={utilityData?.data?.category}
-										onChange={() => {}}
-										value={''}
+										onChange={(e) => {
+											setSelectedCategory(e);
+											setSelectedSubCategory('');
+										}}
+										value={selectedCategory}
 									/>
 									<SelectSearch
 										placeholder="Sub Category"
-										frameworks={utilityData?.data?.subCategory}
-										onChange={() => {}}
-										value={''}
+										frameworks={utilityData?.data?.subCategory?.filter(
+											(e: any) => e?.category_id === selectedCategory
+										)}
+										onChange={(e) => setSelectedSubCategory(e)}
+										value={selectedSubCategory}
 									/>
 									<Input placeholder="Scan Barcode" />
 								</div>
 								<div className="h-[80vh] overflow-y-auto">
+									{data.data?.length === 0 && (
+										<div className="flex justify-center items-center h-full">
+											<div className="border max-w-md w-full py-3 lg:py-8">
+												<div className="text-center flex flex-col items-center gap-2">
+													<DynamicIcon icon="Inbox" className="h-6 w-6" />
+													<p className="text-gray-500 dark:text-gray-400 text-center">
+														No product found
+													</p>
+												</div>
+											</div>
+										</div>
+									)}
 									<div className="grid grid-cols-4 gap-4 ">
 										{data.data?.map((product) => (
 											<PosProductCard_1 key={product._id} product={product} />
