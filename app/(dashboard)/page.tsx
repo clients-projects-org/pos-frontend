@@ -65,7 +65,7 @@ export default function Dashboard() {
 
 	const totalPaidPos = data?.data?.posStatistics?.allTime?.totalPaid ?? 0; // Default to 0 if undefined
 	const totalPaidPurchase =
-		data?.data?.purchaseStatisticsHistory?.allTime?.totalPaid ?? 0; // Default to 0 if undefined
+		data?.data?.posStatistics?.allTime?.total_product_price ?? 0; // Default to 0 if undefined
 
 	const totalPaidDifference = Math.max(
 		0,
@@ -89,7 +89,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">
+							<div className="text-xl font-bold">
 								<TkSign />
 								{data?.data?.posStatistics?.allTime?.totalSalesRevenue}
 							</div>
@@ -105,7 +105,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">
+							<div className="text-xl font-bold">
 								<TkSign />
 								{data?.data?.posStatistics?.allTime?.totalPaid}
 							</div>
@@ -118,7 +118,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">
+							<div className="text-xl font-bold">
 								<TkSign />
 								{data?.data?.posStatistics?.allTime?.totalDue}
 							</div>
@@ -133,7 +133,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold inline-flex gap-1 items-center">
+							<div className="text-xl font-bold inline-flex gap-1 items-center">
 								<DynamicIcon icon="PackageSearch" className="h-6 w-6" />
 								{/* {data?.data?.posStatistics?.allTime?.totalQuantity} */}
 							</div>
@@ -152,7 +152,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">
+							<div className="text-xl font-bold">
 								<TkSign />
 								{data?.data?.purchaseStatistics?.allTime?.totalPurchaseRevenue}
 							</div>
@@ -170,7 +170,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">
+							<div className="text-xl font-bold">
 								<TkSign />
 								{data?.data?.purchaseStatisticsHistory?.allTime?.totalPaid}
 							</div>
@@ -187,7 +187,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">
+							<div className="text-xl font-bold">
 								<TkSign />
 								{data?.data?.purchaseStatistics?.allTime?.totalDue}
 							</div>
@@ -204,7 +204,7 @@ export default function Dashboard() {
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">
+							<div className="text-xl font-bold">
 								<TkSign />
 								{data?.data?.purchaseStatistics?.allTime?.totalShippingCost}
 							</div>
@@ -242,7 +242,7 @@ export default function Dashboard() {
 							<Card x-chunk="dashboard-05-chunk-1">
 								<CardHeader className="pb-2">
 									<CardDescription>Today Sell</CardDescription>
-									<CardTitle className="text-4xl">
+									<CardTitle className="text-xl">
 										<TkSign />
 										{data?.data?.posStatistics?.today?.totalSalesRevenue}
 									</CardTitle>
@@ -259,7 +259,7 @@ export default function Dashboard() {
 							<Card x-chunk="dashboard-05-chunk-1">
 								<CardHeader className="pb-2">
 									<CardDescription>Today Paid</CardDescription>
-									<CardTitle className="text-4xl">
+									<CardTitle className="text-xl">
 										<TkSign />
 										{data?.data?.posStatistics?.today?.totalPaid}
 									</CardTitle>
@@ -276,7 +276,7 @@ export default function Dashboard() {
 							<Card x-chunk="dashboard-05-chunk-1">
 								<CardHeader className="pb-2">
 									<CardDescription>Today Due</CardDescription>
-									<CardTitle className="text-4xl">
+									<CardTitle className="text-xl">
 										<TkSign />
 										{data?.data?.posStatistics?.today?.totalDue}
 									</CardTitle>
@@ -309,7 +309,7 @@ export default function Dashboard() {
 							<Card x-chunk="dashboard-05-chunk-1">
 								<CardHeader className="pb-2">
 									<CardDescription>Today Total Purchase</CardDescription>
-									<CardTitle className="text-4xl">
+									<CardTitle className="text-xl">
 										<TkSign />
 										{
 											data?.data?.purchaseStatistics?.today
@@ -329,7 +329,7 @@ export default function Dashboard() {
 							<Card x-chunk="dashboard-05-chunk-1">
 								<CardHeader className="pb-2">
 									<CardDescription>Today Paid Purchase</CardDescription>
-									<CardTitle className="text-4xl">
+									<CardTitle className="text-xl">
 										<TkSign />
 										{data?.data?.purchaseStatisticsHistory?.today?.totalPaid}
 									</CardTitle>
@@ -346,7 +346,7 @@ export default function Dashboard() {
 							<Card x-chunk="dashboard-05-chunk-1">
 								<CardHeader className="pb-2">
 									<CardDescription>Today Due Purchase</CardDescription>
-									<CardTitle className="text-4xl">
+									<CardTitle className="text-xl">
 										<TkSign />
 										{data?.data?.purchaseStatistics?.today?.totalDue}
 									</CardTitle>
@@ -598,7 +598,7 @@ export default function Dashboard() {
 							</TabsContent>
 						</Tabs>
 					</div>
-					<div>
+					<div className="space-y-4">
 						<Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
 							<CardHeader className="flex flex-row items-start bg-muted/50">
 								<div className="grid gap-0.5">
@@ -624,25 +624,24 @@ export default function Dashboard() {
 									<ul className="grid gap-3">
 										<li className="flex items-center justify-between">
 											<span className="text-muted-foreground">
-												Total paid sell amount
+												Total sell amount
 											</span>
 											<span className="inline-flex gap-1">
-												{data?.data?.posStatistics?.allTime?.totalPaid?.toFixed(
-													2
-												)}
+												{data?.data?.posStatistics?.allTime?.totalPaid}
 
 												<TkSign />
 											</span>
 										</li>
 										<li className="flex items-center justify-between">
 											<span className="text-muted-foreground">
-												Total paid purchase amount
+												Total Product Price
 											</span>
 											<span className="inline-flex gap-1">
 												-{' '}
-												{data?.data?.purchaseStatisticsHistory?.allTime?.totalPaid?.toFixed(
-													2
-												)}
+												{
+													data?.data?.posStatistics?.allTime
+														?.total_product_price
+												}
 												<TkSign />
 											</span>
 										</li>

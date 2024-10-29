@@ -49,13 +49,74 @@ import { useGetPaymentMethodQuery } from '../payment-method';
 import { RFrom } from '@/components/custom/form';
 
 const Column: ColumnDef<PurchaseType>[] = [
-	TableItem.Date('createdAt', 'createdAt'),
-	TableItem.Text('discount_type', 'discount_type'),
-	TableItem.Text('discount_value', 'discount_value'),
-	TableItem.Text('due', 'due'),
-	TableItem.Text('paid', 'paid'),
-	TableItem.Text('total_price', 'total_price'),
-	TableItem.Text('total_quantity', 'total_quantity'),
+	{
+		accessorKey: 'discount_value',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Discount
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }: any) => (
+			<div className="lowercase text-center">
+				{row.getValue('discount_value')}{' '}
+				{row.getValue('discount_type') === 'percentage' && '%'}
+				{row.getValue('discount_type') === 'fixed' && 'tk'}
+			</div>
+		),
+	},
+	{
+		accessorKey: 'paid',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Paid
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }: any) => (
+			<div
+				className={`lowercase text-center ${row.getValue('paid') > 0 && 'text-green-500'}`}
+			>
+				{row.getValue('paid')}
+			</div>
+		),
+	},
+	{
+		accessorKey: 'due',
+		header: ({ column }: any) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Due
+					<DynamicIcon className="ml-2 h-4 w-4" icon="ArrowUpDown" />
+				</Button>
+			);
+		},
+		cell: ({ row }: any) => (
+			<div
+				className={`lowercase text-center ${row.getValue('due') > 0 && 'text-red-500'}`}
+			>
+				{row.getValue('due')}
+			</div>
+		),
+	},
+
+	TableItem.Text('total_quantity', 'Quantity'),
+	TableItem.Text('total_product_price', 'Buy Price'),
+	TableItem.Text('total_price', 'Sell Price'),
+	TableItem.Date('createdAt', 'Date'),
 ];
 
 const Filter = ({

@@ -147,17 +147,19 @@ export function SellItems() {
 				quantity: i?.select_quantity,
 				sell_price: i?.sell_price,
 				product_price: i?.sell_price,
-
 				warehouse_id: i?.warehouse_id?._id,
 				store_id: i?.store_id?._id,
-
+				rate: i?.rate,
 				product_type: i?.product_type,
 				expire_date: i?.expire_date,
 				manufacture_date: i?.manufacture_date,
 				discount_value: 0,
 				discount_type: 'none',
 			})),
-
+			total_product_price: items.reduce(
+				(pre, cur) => pre + cur.rate * cur.select_quantity,
+				0
+			),
 			total_after_discount: totalAfterDiscount,
 			grand_total: calculateGrandTotal(),
 			// customer_id: customer,

@@ -36,6 +36,7 @@ export interface Variant {
 	sell_price: number;
 	select_quantity: number;
 	quantity: number;
+	rate: number;
 }
 
 // Define a type for the initial state

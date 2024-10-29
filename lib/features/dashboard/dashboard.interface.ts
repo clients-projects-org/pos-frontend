@@ -1,6 +1,7 @@
 export type AllSettingsType = {
 	posStatistics: {
 		allTime: {
+			total_product_price: number;
 			totalSalesRevenue: number;
 			totalPaid: number;
 			totalDue: number;
@@ -9,6 +10,7 @@ export type AllSettingsType = {
 			totalQuantity: number;
 		};
 		today: {
+			total_product_price: number;
 			totalSalesRevenue: number;
 			totalPaid: number;
 			totalDue: number;
@@ -17,6 +19,7 @@ export type AllSettingsType = {
 			totalQuantity: number;
 		};
 		thisMonth: {
+			total_product_price: number;
 			totalSalesRevenue: number;
 			totalPaid: number;
 			totalDue: number;
@@ -55,14 +58,14 @@ export type AllSettingsType = {
 		};
 	};
 	purchaseStatisticsHistory: {
-		allTime: { 
-			totalPaid: number; 
+		allTime: {
+			totalPaid: number;
 		};
-		today: { 
-			totalPaid: number; 
+		today: {
+			totalPaid: number;
 		};
-		thisMonth: { 
-			totalPaid: number; 
+		thisMonth: {
+			totalPaid: number;
 		};
 	};
 };
