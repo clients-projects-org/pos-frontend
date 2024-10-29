@@ -120,6 +120,11 @@ const posSlice = createSlice({
 				}
 			}
 		},
+
+		reset(state) {
+			state.variants = [];
+			// return
+		},
 	},
 });
 
@@ -130,6 +135,7 @@ export const {
 	incrementQuantity,
 	decrementQuantity,
 	updateQuantity,
+	reset,
 } = posSlice.actions;
 
 // Export the reducer to be added to the store

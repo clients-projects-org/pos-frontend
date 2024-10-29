@@ -1,5 +1,6 @@
 import { ApiResponse, ProductType } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
+import { InvoiceType } from '@/lib/type/invoice-type';
 
 export const api = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
@@ -25,13 +26,19 @@ export const api = apiSlice.injectEndpoints({
 				if (subCategory) queryParams += `&subCategory=${subCategory}`;
 				return queryParams;
 			},
+			providesTags: () => {
+				return ['POS'];
+			},
 		}),
 
 		getInventoryProduct: builder.query<ApiResponse<ProductType>, string>({
 			query: (payload): string => `inventory/${payload}`,
-			// providesTags: () => {
-			// 	return ['POS'];
-			// },
+			providesTags: () => {
+				return ['POS'];
+			},
+		}),
+		getSellInvoice: builder.query<ApiResponse<InvoiceType>, string>({
+			query: (payload): string => `pos/sell-invoice/${payload}`,
 		}),
 
 		getPosSellHistory: builder.query<ApiResponse<any>, undefined>({
@@ -59,4 +66,5 @@ export const {
 	useGetInventoryProductQuery,
 	useGetPosSellHistoryQuery,
 	useStorePosSellMutation,
+	useGetSellInvoiceQuery,
 } = api;

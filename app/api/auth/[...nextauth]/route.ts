@@ -17,7 +17,7 @@ async function refreshAccessToken(token: any) {
 	try {
 		const response = await fetch(`${env.baseApi}auth/refresh-token`, {
 			headers: {
-				Authorization: `Bearer ${token.token.refreshToken}`,
+				Authorization: `Bearer ${token?.token?.refreshToken}`,
 			},
 		});
 
@@ -36,7 +36,7 @@ async function refreshAccessToken(token: any) {
 		//return token;
 		return {
 			accessToken: tokens?.data?.accessToken,
-			refreshToken: tokens?.data?.refreshToken ?? token.token.refreshToken, // Fall back to old refresh token
+			refreshToken: tokens?.data?.refreshToken ?? token?.token?.refreshToken, // Fall back to old refresh token
 		};
 	} catch (error) {
 		return {
@@ -61,7 +61,7 @@ const handler = NextAuth({
 				// 		success: boolean;
 				// 	});
 				const parsedToken: TokenPayload | null =
-					credentials?.token && JSON.parse(credentials.token);
+					credentials?.token && JSON.parse(credentials?.token);
 
 				if (credentials?.token && parsedToken?.success) {
 					return {
@@ -79,19 +79,21 @@ const handler = NextAuth({
 	callbacks: {
 		async jwt({ token, user }: any) {
 			if (user) {
-				const decodedToken = await decodeJwt(user.token.accessToken);
+				const decodedToken = await decodeJwt(user?.token?.accessToken);
 				// Overwrite iat and exp based on decoded token
 				token.iat = decodedToken?.iat;
 				token.exp = decodedToken?.exp;
 				token.user = {
 					token: {
-						accessToken: user.token.accessToken,
-						refreshToken: user.token.refreshToken,
+						accessToken: user?.token?.accessToken,
+						refreshToken: user?.token.refreshToken,
 					},
 				};
 			}
 
-			const decodedAccessToken = await decodeJwt(token.user.token.accessToken);
+			const decodedAccessToken = await decodeJwt(
+				token.user?.token?.accessToken
+			);
 			if (decodedAccessToken) {
 				if (
 					decodedAccessToken.exp &&
@@ -99,14 +101,14 @@ const handler = NextAuth({
 				) {
 					return token;
 				} else {
-					const getNewToken = await refreshAccessToken(token.user);
-					const decodedToken = await decodeJwt(getNewToken.accessToken);
+					const getNewToken = await refreshAccessToken(token?.user);
+					const decodedToken = await decodeJwt(getNewToken?.accessToken);
 					// Overwrite iat and exp based on decoded token
 					token.iat = decodedToken?.iat;
 					token.exp = decodedToken?.exp;
 					token.user = {
 						token: {
-							accessToken: getNewToken.accessToken,
+							accessToken: getNewToken?.accessToken,
 							refreshToken: getNewToken.refreshToken,
 						},
 					};
@@ -120,8 +122,8 @@ const handler = NextAuth({
 
 		async session({ session, token }: { session: any; token: any }) {
 			// Attach the JWT token and user details to the session
-			if (token.user && token.user.token) {
-				const decodedToken = await decodeJwt(token.user.token.accessToken);
+			if (token.user && token.user?.token) {
+				const decodedToken = await decodeJwt(token.user?.token?.accessToken);
 
 				if (decodedToken) {
 					session.user = {
@@ -132,7 +134,7 @@ const handler = NextAuth({
 				}
 
 				session.isLoggedIn = true;
-				session.accessToken = token.user.token.accessToken;
+				session.accessToken = token.user?.token?.accessToken;
 			} else {
 				session.isLoggedIn = false;
 			}

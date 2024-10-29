@@ -6,6 +6,7 @@ import {
 	decrementQuantity,
 	incrementQuantity,
 	removeVariant,
+	reset,
 	updateQuantity,
 	Variant,
 } from './posSlice';
@@ -17,8 +18,11 @@ import { createZodFromPos, FormSchema, FormValuesPos } from './pos-zod';
 import { Form } from '@/components/ui/form';
 import { useStorePosSellMutation } from './posApiSlice';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import { SellInvoiceModal } from './sell-invoice';
 
 export function SellItems() {
+	const [open, setOpen] = useState(false);
+	const [id, setId] = useState('');
 	const [customer, setCustomer] = useState('');
 	const { methods, resetForm } = createZodFromPos();
 	const discount_type = methods.watch('discount_type');
@@ -35,7 +39,7 @@ export function SellItems() {
 
 	const dispatch = useAppDispatch();
 	const items = useAppSelector((state) => state.variantPos.variants);
-
+	console.log(items, 'items');
 	const handleInputChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
 		variant: Variant
@@ -156,7 +160,7 @@ export function SellItems() {
 
 			total_after_discount: totalAfterDiscount,
 			grand_total: calculateGrandTotal(),
-			customer_id: customer,
+			// customer_id: customer,
 			payment_method: '671ae828eda1720739446865',
 
 			tax: data.tax,
@@ -165,8 +169,14 @@ export function SellItems() {
 			const response = await store({
 				...submitData,
 			} as any).unwrap();
-			apiReqResponse(response);
-			resetForm();
+
+			if (response.success) {
+				dispatch(reset());
+				resetForm();
+				setId(response?.data?._id);
+				setOpen(true);
+				apiReqResponse(response);
+			}
 		} catch (error: unknown) {
 			apiErrorResponse(error, methods, FormSchema);
 		}
@@ -372,9 +382,17 @@ export function SellItems() {
 												</td>
 											</tr>
 											<tr>
-												<td className="px-6 py-2">Due</td>
+												<td
+													className={`px-8 py-2 ${dueAmount > 0 && 'text-red-500'}`}
+												>
+													Due
+												</td>
 												<td className="px-6 py-2">:</td>
-												<td className="px-8 py-2">{dueAmount.toFixed(2)}</td>
+												<td
+													className={`px-8 py-2 ${dueAmount > 0 && 'text-red-500'}`}
+												>
+													{dueAmount.toFixed(2)}
+												</td>
 											</tr>
 											{exchangeAmount > 0 && (
 												<tr>
@@ -404,6 +422,7 @@ export function SellItems() {
 					)}
 				</form>
 			</Form>
+			<SellInvoiceModal open={open} setOpen={setOpen} id={id} />
 		</>
 	);
 }
