@@ -60,7 +60,6 @@ export function SellItems() {
 		(pre, cur) => pre + cur.select_quantity * cur.sell_price,
 		0
 	);
-
 	// Calculate discount based on discount_type and discount_value
 	const calculateDiscount = () => {
 		let finalTotal = totalPriceAndQuantity;
@@ -131,11 +130,11 @@ export function SellItems() {
 	async function onSubmit(data: FormValuesPos) {
 		const submitData = {
 			total_quantity: totalQuantity,
-			total_price: totalPriceAndQuantity,
-			discount_value: data.discount_value,
+			total_price: parseFloat(totalPriceAndQuantity.toFixed(2)),
+			discount_value: parseFloat(data.discount_value.toFixed(2)),
 			discount_type: data.discount_type,
-			paid: calculatePaidAmount(),
-			due: dueAmount,
+			paid: parseFloat(calculatePaidAmount().toFixed(2)),
+			due: parseFloat(dueAmount.toFixed(2)),
 			payment_status: dueAmount > 0 ? 'due' : 'paid',
 			customer: customer ? customer : '66e1c14b765fd440599cd1b5',
 			product_details: items?.map((i) => ({
@@ -145,27 +144,29 @@ export function SellItems() {
 				variant_id: i?.variant_id?._id,
 				attribute_id: i?.attribute_id,
 				quantity: i?.select_quantity,
-				sell_price: i?.sell_price,
-				product_price: i?.sell_price,
+				sell_price: parseFloat(i?.sell_price.toFixed(2)),
+				// product price why ?
+				product_price: parseFloat(i?.sell_price.toFixed(2)),
 				warehouse_id: i?.warehouse_id?._id,
 				store_id: i?.store_id?._id,
-				rate: i?.rate,
+				rate: parseFloat(i?.rate.toFixed(2)),
 				product_type: i?.product_type,
 				expire_date: i?.expire_date,
 				manufacture_date: i?.manufacture_date,
 				discount_value: 0,
 				discount_type: 'none',
 			})),
-			total_product_price: items.reduce(
-				(pre, cur) => pre + cur.rate * cur.select_quantity,
-				0
+			total_product_price: parseFloat(
+				items
+					.reduce((pre, cur) => pre + cur.rate * cur.select_quantity, 0)
+					.toFixed(2)
 			),
-			total_after_discount: totalAfterDiscount,
-			grand_total: calculateGrandTotal(),
+			total_after_discount: parseFloat(totalAfterDiscount.toFixed(2)),
+			grand_total: parseFloat(calculateGrandTotal().toFixed(2)),
 			// customer_id: customer,
 			payment_method: '671ae828eda1720739446865',
 
-			tax: data.tax,
+			tax: parseFloat(data.tax.toFixed(2)),
 		};
 		try {
 			const response = await store({
@@ -301,7 +302,9 @@ export function SellItems() {
 													>
 														<DynamicIcon icon="CircleX" className="h-4 w-4" />
 													</Button>
-													{variant.sell_price * variant.select_quantity}
+													{(
+														variant.sell_price * variant.select_quantity
+													).toFixed(2)}
 												</td>
 											</tr>
 										))}
@@ -316,7 +319,9 @@ export function SellItems() {
 											<tr>
 												<td className="px-6 py-2">Sub Total</td>
 												<td className="px-6 py-2">:</td>
-												<td className="px-6 py-2">{totalPriceAndQuantity}</td>
+												<td className="px-6 py-2">
+													{totalPriceAndQuantity?.toFixed(2)}
+												</td>
 											</tr>
 											<tr>
 												<td className="px-6 py-2">Discount Type</td>

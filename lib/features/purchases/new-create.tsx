@@ -331,7 +331,10 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 	async function onSubmit(data: FormValues) {
 		const submitData = {
 			...data,
-			paid_amount: calculatePaidAmount(),
+			shipping_cost: parseFloat(data.shipping_cost.toFixed(2)),
+			discount_value: parseFloat(data.discount_value.toFixed(2)),
+			tax: parseFloat(data.tax.toFixed(2)),
+			paid_amount: parseFloat(calculatePaidAmount().toFixed(2)),
 			quantity: data.products?.reduce((acc, product) => {
 				const productSubtotal = product.variants.reduce(
 					(variantAcc, variant) => {
@@ -356,7 +359,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 					variant_id: variant.variant_id,
 					attribute_id: variant.attribute_id,
 					quantity: variant.quantity,
-					rate: variant.rate,
+					rate: parseFloat(variant.rate.toFixed(2)),
 					expire_date: variant.expire_date,
 					manufacture_date: variant.manufacture_date,
 				})), // Array of variants
@@ -658,7 +661,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														name={`products.${productIndex}.variants.${variantIndex}.total`}
 														type="number"
 														disabled
-														placeholder={`${variant.rate * variant.quantity}`}
+														placeholder={`${(variant.rate * variant.quantity).toFixed(2)}`}
 													/>
 
 													{methods.watch(`products.${productIndex}.variants`)

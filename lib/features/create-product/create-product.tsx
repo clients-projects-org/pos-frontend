@@ -51,6 +51,8 @@ export function CreateProduct() {
 	const checkError = methods.formState.errors;
 	const testWatch = methods.watch();
 
+	console.log(checkError, 'err');
+
 	useEffect(() => {
 		// Whenever category_id changes, clear the sub_category_id
 		if (category) {
@@ -344,7 +346,7 @@ export function CreateProduct() {
 											</AccordionTrigger>
 											<AccordionContent className="p-5">
 												<div className=" grid grid-cols-12 gap-x-4 gap-y-6">
-													<div className="col-span-4">
+													{/* <div className="col-span-4">
 														<RFrom.RFCalender
 															label="Manufacture Date"
 															methods={methods}
@@ -357,7 +359,7 @@ export function CreateProduct() {
 															methods={methods}
 															name="expire_date"
 														/>
-													</div>
+													</div> */}
 
 													<div className="col-span-6">
 														<MultiSelector2
@@ -368,7 +370,12 @@ export function CreateProduct() {
 														/>
 													</div>
 													<div className="col-span-4">
-														<RFrom.RFCheck methods={methods} name="isFeature" />
+														<RFrom.RFCheck
+															methods={methods}
+															name="isFeature"
+															desc="Is Feature"
+															descTitle="Feature"
+														/>
 													</div>
 												</div>
 											</AccordionContent>
