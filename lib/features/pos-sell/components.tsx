@@ -17,7 +17,7 @@ import { TableItem } from '@/lib/table/table-items/t-item';
 import { PurchaseType, StatusType } from '@/lib/type';
 import { ColumnDef } from '@tanstack/react-table';
 import { useParams, useRouter } from 'next/navigation';
-import { confirm } from '@/lib/actions';
+import { apiReqResponse, confirm } from '@/lib/actions';
 import { showToast, ToastOptions } from '@/lib/actions/tost';
 
 import { Badge } from '@/components/ui/badge';
@@ -47,6 +47,7 @@ import {
 } from '@/components/ui/form';
 import { useGetPaymentMethodQuery } from '../payment-method';
 import { RFrom } from '@/components/custom/form';
+import { useAddPaymentSellMutation } from './posApiSlice';
 
 const Column: ColumnDef<PurchaseType>[] = [
 	{
@@ -85,9 +86,9 @@ const Column: ColumnDef<PurchaseType>[] = [
 		},
 		cell: ({ row }: any) => (
 			<div
-				className={`lowercase text-center ${row.getValue('paid') > 0 && 'text-green-500'}`}
+				className={`lowercase text-center ${row.getValue('due') > 0 ? 'text-yellow-500' : 'text-green-500'}`}
 			>
-				{row.getValue('paid')}
+				{row.getValue('total_price') - row.getValue('due')}
 			</div>
 		),
 	},
@@ -106,7 +107,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 		},
 		cell: ({ row }: any) => (
 			<div
-				className={`lowercase text-center ${row.getValue('due') > 0 && 'text-red-500'}`}
+				className={`lowercase text-center ${row.getValue('due') > 0 ? 'text-red-500' : 'text-green-500'}`}
 			>
 				{row.getValue('due')}
 			</div>
@@ -117,6 +118,13 @@ const Column: ColumnDef<PurchaseType>[] = [
 	TableItem.Text('total_product_price', 'Buy Price'),
 	TableItem.Text('total_price', 'Sell Price'),
 	TableItem.Date('createdAt', 'Date'),
+	{
+		id: 'actions',
+		header: () => 'Actions',
+		cell: ({ row }: { row: any }) => {
+			return <Actions data={row.original} />;
+		},
+	},
 ];
 
 const Filter = ({
@@ -291,16 +299,16 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 							<DialogTitle className="text-center">
 								<p>Add Payment</p>
 								<p className="text-sm ">
-									{data.supplier_data.name}({data.supplier_data.business_name})
+									{/* {data.supplier_data.name}({data.supplier_data.business_name}) */}
 								</p>
 							</DialogTitle>
 
 							<DialogDescription className="text-center">
 								{' '}
-								#{data.reference_number}
+								#{data._id}
 							</DialogDescription>
 						</DialogHeader>
-						<PurchasePayment data={data} setPaymentModal={setPaymentModal} />
+						<SellPayment data={data} setPaymentModal={setPaymentModal} />
 					</DialogContent>
 				</Dialog>
 			)}
@@ -353,7 +361,7 @@ const Add = () => {
 
 export const SellComponents = { Filter, Add, Column };
 
-export function PurchasePayment({
+export function SellPayment({
 	data,
 	setPaymentModal,
 }: {
@@ -361,7 +369,7 @@ export function PurchasePayment({
 	setPaymentModal: Function;
 }) {
 	const { data: paymentMethod } = useGetPaymentMethodQuery('active');
-	// const [addPayment, { isLoading }] = useAddPaymentPurchaseMutation();
+	const [addPayment, { isLoading }] = useAddPaymentSellMutation();
 	const FormSchema = z.object({
 		note: z.string().optional(),
 		payment_method: z.string().min(1, 'Payment Method is Required'),
@@ -388,7 +396,7 @@ export function PurchasePayment({
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			paid_amount: data.due_amount || 0,
+			paid_amount: data.due || 0,
 		},
 	});
 
@@ -403,16 +411,20 @@ export function PurchasePayment({
 	async function onSubmit(values: z.infer<typeof FormSchema>) {
 		const confirmed = await confirm({
 			message:
-				'This action cannot be undone. This will permanently delete permission and remove it from servers.',
-			title: 'Delete Permission',
+				'Are You sure you want to add this payment? This action cannot be undone.',
+			title: 'Add Payment',
 		});
 
 		if (confirmed) {
-			// const response = await addPayment({
-			// 	...values,
-			// 	_id: data._id,
-			// }).unwrap();
-			// apiReqResponse(response);
+			const response = await addPayment({
+				...values,
+				_id: data._id,
+			}).unwrap();
+
+			if (response.success) {
+				apiReqResponse(response);
+				setPaymentModal(false);
+			}
 		}
 	}
 

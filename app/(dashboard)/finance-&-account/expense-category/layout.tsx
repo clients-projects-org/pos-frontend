@@ -11,8 +11,8 @@ const menuItems = [
 		icon: 'BarChart2',
 	},
 	{
-		name: 'Expense Sub Category',
-		href: '/finance-&-account/expense-sub-category',
+		name: 'Sell History',
+		href: '/finance-&-account/expense-category/sell',
 		icon: 'BarChart2',
 	},
 ];

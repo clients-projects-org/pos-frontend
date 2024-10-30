@@ -72,6 +72,7 @@ const productSchema = z
 
 		// just for type checking [no use case]
 		name: z.string().optional(),
+		sell_price: z.any().optional(),
 		quantity: z.number().optional(),
 		warehouse_data: z.array(z.any()).optional(),
 		store_data: z.array(z.any()).optional(),

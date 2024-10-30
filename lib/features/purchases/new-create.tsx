@@ -485,7 +485,11 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														)}
 												</th>
 												<td className="px-6 py-2 ">
-													{productField.name ?? ''}
+													{productField.name ?? ''} (
+													{productField?.sell_price
+														? `${productField?.sell_price} tk`
+														: ''}
+													)
 												</td>
 												<td className="px-6 py-2">
 													<RFrom.RFStatus

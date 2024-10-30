@@ -56,7 +56,6 @@ export const purchaseApi = apiSlice.injectEndpoints({
 			invalidatesTags: () => {
 				return ['Purchase', 'DashboardAdminStatistics'];
 			},
-			// invalidatesTags: ['DevPermission'],
 		}),
 
 		// .....................................

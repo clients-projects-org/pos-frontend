@@ -58,6 +58,18 @@ export const api = apiSlice.injectEndpoints({
 				return ['POS', 'DashboardAdminStatistics'];
 			},
 		}),
+		addPaymentSell: builder.mutation<ReturnType<any>, any>({
+			query: (payload) => {
+				return {
+					url: `/pos/add-payment/${payload._id}`,
+					method: 'POST',
+					body: payload,
+				};
+			},
+			invalidatesTags: () => {
+				return ['POS', 'DashboardAdminStatistics'];
+			},
+		}),
 	}),
 });
 
@@ -67,4 +79,5 @@ export const {
 	useGetPosSellHistoryQuery,
 	useStorePosSellMutation,
 	useGetSellInvoiceQuery,
+	useAddPaymentSellMutation,
 } = api;

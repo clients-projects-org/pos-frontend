@@ -1,19 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-	Activity,
-	ChevronLeft,
-	ChevronRight,
-	Copy,
-	CreditCard,
-	DollarSign,
-	File,
-	ListFilter,
-	MoreVertical,
-	Truck,
-	Users,
-} from 'lucide-react';
+import { DollarSign, File, ListFilter, Truck } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 
@@ -30,18 +18,11 @@ import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
-	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-} from '@/components/ui/pagination';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import {
 	Table,
 	TableBody,
@@ -63,9 +44,12 @@ export default function Dashboard() {
 	const { data, isError, isFetching, error, isLoading } =
 		useDashboardAdminStatisticsQuery();
 
-	const totalPaidPos = data?.data?.posStatistics?.allTime?.totalPaid ?? 0; // Default to 0 if undefined
-	const totalPaidPurchase =
-		data?.data?.posStatistics?.allTime?.total_product_price ?? 0; // Default to 0 if undefined
+	const totalPaidPos = Number(
+		data?.data?.sellStatisticsHistory?.allTime?.totalPaid ?? 0
+	);
+	const totalPaidPurchase = Number(
+		data?.data?.posStatistics?.allTime?.total_product_price ?? 0
+	);
 
 	const totalPaidDifference = Math.max(
 		0,
@@ -107,7 +91,7 @@ export default function Dashboard() {
 						<CardContent>
 							<div className="text-xl font-bold">
 								<TkSign />
-								{data?.data?.posStatistics?.allTime?.totalPaid}
+								{data?.data?.sellStatisticsHistory?.allTime?.totalPaid}
 							</div>
 							<p className="text-xs text-muted-foreground">Total paid amount</p>
 						</CardContent>
@@ -627,7 +611,7 @@ export default function Dashboard() {
 												Total sell amount
 											</span>
 											<span className="inline-flex gap-1">
-												{data?.data?.posStatistics?.allTime?.totalPaid}
+												{data?.data?.sellStatisticsHistory?.allTime?.totalPaid}
 
 												<TkSign />
 											</span>
