@@ -19,6 +19,7 @@ import { Form } from '@/components/ui/form';
 import { useStorePosSellMutation } from './posApiSlice';
 import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
 import { SellInvoiceModal } from './sell-invoice';
+import { toast } from '@/components/hooks/use-toast';
 
 export function SellItems() {
 	const [open, setOpen] = useState(false);
@@ -127,7 +128,20 @@ export function SellItems() {
 		// Return the lesser of paidAmount or grandTotal
 		return Math.min(paidAmount, grandTotal);
 	};
+	const calculateTotalBuyProductPrice = items?.reduce(
+		(pre, cur) => pre + cur.rate * cur.select_quantity,
+		0
+	);
+
 	async function onSubmit(data: FormValuesPos) {
+		if (calculateTotalBuyProductPrice > grandTotal) {
+			toast({
+				title: 'Error',
+				description: `Total buy price ${calculateTotalBuyProductPrice} can't be greater than grand total`,
+				variant: 'destructive',
+			});
+			return;
+		}
 		const submitData = {
 			total_quantity: totalQuantity,
 			total_price: parseFloat(totalPriceAndQuantity.toFixed(2)),

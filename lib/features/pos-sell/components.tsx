@@ -51,7 +51,7 @@ import { useAddPaymentSellMutation } from './posApiSlice';
 
 const Column: ColumnDef<PurchaseType>[] = [
 	{
-		accessorKey: 'discount_value',
+		accessorKey: 'discount_type',
 		header: ({ column }: any) => {
 			return (
 				<Button
@@ -72,7 +72,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 		),
 	},
 	{
-		accessorKey: 'paid',
+		accessorKey: 'total_price',
 		header: ({ column }: any) => {
 			return (
 				<Button
@@ -88,7 +88,8 @@ const Column: ColumnDef<PurchaseType>[] = [
 			<div
 				className={`lowercase text-center ${row.getValue('due') > 0 ? 'text-yellow-500' : 'text-green-500'}`}
 			>
-				{row.getValue('total_price') - row.getValue('due')}
+				{/* {row.getValue('total_price')} */}
+				{(row.getValue('total_price') - row.getValue('due')).toFixed(2)}
 			</div>
 		),
 	},
@@ -116,7 +117,7 @@ const Column: ColumnDef<PurchaseType>[] = [
 
 	TableItem.Text('total_quantity', 'Quantity'),
 	TableItem.Text('total_product_price', 'Buy Price'),
-	TableItem.Text('total_price', 'Sell Price'),
+	TableItem.Text('grand_total', 'Sell Price'),
 	TableItem.Date('createdAt', 'Date'),
 	{
 		id: 'actions',
