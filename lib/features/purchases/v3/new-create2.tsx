@@ -1,7 +1,7 @@
 'use client';
 import { z } from 'zod';
-import { RFrom } from '@/components/custom/form';
-import React, { useEffect, useRef, useState } from 'react';
+import { RFrom, SelectSearchMultiple } from '@/components/custom/form';
+import React, { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -14,18 +14,33 @@ import {
 } from '@/components/ui/dialog';
 import { DynamicIcon } from '@/components/actions';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
-import { apiErrorResponse, apiReqResponse } from '@/lib/actions';
+import { apiErrorResponse, apiReqResponse, confirm } from '@/lib/actions';
+
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
+import Image from 'next/image';
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { CreateZodFromNew2, FormSchema2 } from './new-zod2';
 import {
 	useGetCreateDataPurchaseQuery,
 	useStorePurchaseMutation,
-} from './purchaseApiSlice';
-import { Form } from '@/components/ui/form';
-import Image from 'next/image';
-import { useGetProductsByIdQuery } from '../create-product';
-import { SelectGroup, SelectItem } from '@/components/ui/select';
-import { createZodFromNew, FormSchema } from './new-zod';
-import { ProductTypeView } from '../create-product/product.type';
-type FormValues = z.infer<typeof FormSchema>;
+} from '../purchaseApiSlice';
+type FormValues = z.infer<typeof FormSchema2>;
 
 interface FormProps {
 	methods: UseFormReturn<FormValues>;
@@ -33,9 +48,9 @@ interface FormProps {
 	resetForm: () => void;
 }
 
-export function PurchaseStoreModalNew() {
+export function PurchaseStoreModalNew2() {
 	const [open, setOpen] = React.useState(false);
-	const { methods, resetForm } = createZodFromNew();
+	const { methods, resetForm } = CreateZodFromNew2();
 
 	return (
 		<Dialog
@@ -76,20 +91,69 @@ export function PurchaseStoreModalNew() {
 	);
 }
 
+const data = [
+	{
+		_id: '671e8e15a6c1d74c00a7c2d0',
+		name: 'New Product',
+		sell_price: 100,
+		product_type: 'variant',
+		variants: [
+			{
+				quantity: '50',
+				rate: '?',
+			},
+			{
+				quantity: '50',
+				rate: '?',
+			},
+		],
+	},
+	{
+		_id: '671ef0039a2cb7fbc7a64b53',
+		name: 'Product 1',
+		sell_price: 20,
+		product_type: 'variant',
+		variants: [
+			{
+				quantity: '5',
+				rate: '?',
+			},
+			{
+				quantity: '10',
+				rate: '?',
+			},
+		],
+	},
+	{
+		_id: '672240be6bcd244fffc0ba16',
+		name: 'asdfsdfsdf',
+		sell_price: 5.1,
+		product_type: 'single',
+		variants: [
+			{
+				quantity: '20',
+				rate: '?',
+			},
+		],
+	},
+];
+
 const FormMutation: React.FC<FormProps> = ({
 	methods,
 	setOpen,
 	resetForm,
 }: FormProps) => {
-	const [id, setId] = useState<string | null>(null);
-
 	const products = methods.watch('products');
 	const supplier_id = methods.watch('supplier_id');
 	const product_ids = methods.watch('product_ids');
 	const discount_type = methods.watch('discount_type');
 	const discount_value = methods.watch('discount_value');
+	const payment_system = methods.watch('payment_system');
+	const total_price_auto_rate = methods.watch('total_price_auto_rate');
 
-	const [productState, setProductState] = useState<ProductTypeView[]>([]);
+	console.log({ product_ids });
+	console.log({ products });
+
 	const prevSupplierId = useRef(supplier_id);
 	const {
 		fields: productFields,
@@ -100,104 +164,139 @@ const FormMutation: React.FC<FormProps> = ({
 		name: 'products',
 	});
 	const { data, isLoading } = useGetCreateDataPurchaseQuery(undefined);
-	const { data: product, isLoading: productLoading } = useGetProductsByIdQuery(
-		id || '',
-		{
-			skip: !id,
-		}
-	);
+	console.log(data?.data?.product);
 
-	// set new state all products
 	useEffect(() => {
-		if (product?.data?.product && id) {
-			setProductState((prevState) => {
-				const isProductAlreadyAdded = prevState.some(
-					(existingProduct) =>
-						existingProduct._id === product?.data?.product._id
-				);
-
-				// Only add the new product if it's not already in the state
-				if (!isProductAlreadyAdded) {
-					return [...prevState, product?.data?.product]; // Add the new product
+		if (total_price_auto_rate && discount_value) {
+			const calculateDiscountedTotal = () => {
+				if (total_price_auto_rate && discount_value) {
+					return (
+						total_price_auto_rate -
+						(total_price_auto_rate * discount_value) / 100
+					);
+				} else {
+					return total_price_auto_rate;
 				}
-				return prevState; // Return previous state if product is already added
+			};
+			// Step 1: Calculate the total discounted amount
+			const discountedTotal = calculateDiscountedTotal();
+
+			// Step 2: Calculate the total base cost of all products and their variants
+			const totalBaseCost = productFields.reduce((acc, product) => {
+				const productCost =
+					product.sell_price *
+					product.variants.reduce((sum, variant) => {
+						return sum + parseFloat(variant.quantity);
+					}, 0);
+				return acc + productCost;
+			}, 0);
+
+			// Step 3: Calculate each variant's rate based on its share of the discounted total
+			productFields.forEach((product, productIndex) => {
+				product.variants.forEach((variant, variantIndex) => {
+					// Determine each variant's base cost as a share of the total base cost
+					const variantBaseCost =
+						product.sell_price * parseFloat(variant.quantity);
+					const variantShareOfDiscountedTotal =
+						(variantBaseCost / totalBaseCost) * discountedTotal;
+
+					// Calculate the rate per item for this variant
+					const ratePerItem =
+						variantShareOfDiscountedTotal / parseFloat(variant.quantity);
+
+					// Set the calculated rate for this variant in the form
+					methods.setValue(
+						`products.${productIndex}.variants.${variantIndex}.rate`,
+						ratePerItem
+					);
+				});
 			});
 		}
-	}, [id, product?.data]);
+	}, [total_price_auto_rate, discount_value, productFields, products, methods]);
 
 	useEffect(() => {
-		if (id) {
-			// Find the product in productState by id
-			const selectedProduct = productState.find((prod) => prod._id === id);
-			if (selectedProduct) {
-				const newProduct = {
-					...selectedProduct,
-					product_type: 'single',
-					variants: [
-						{
-							variant_id: '',
-							attribute_id: '',
-							expire_date: '',
-							manufacture_date: '',
-							quantity: 1,
-							rate: 1,
-						},
-					],
-				};
-
-				// Check if the product is already in the productFields array
-				const isProductAlreadyAdded = productFields.some(
-					(field) => field._id === newProduct._id
+		if (product_ids) {
+			// Iterate over the product_ids to find corresponding products in data
+			product_ids.forEach((id) => {
+				const selectedProduct = data?.data?.product?.find(
+					(prod) => prod._id === id
 				);
+				if (selectedProduct) {
+					const newProduct = {
+						...selectedProduct,
+						product_type: 'single',
+						store_data: selectedProduct.store_id,
+						warehouse_data: selectedProduct.warehouse_id,
+						warehouse_id: '',
+						store_id: '',
+						variants: [
+							{
+								variant_id: '',
+								attribute_id: '',
+								expire_date: '',
+								manufacture_date: '',
+								quantity: 0,
+								rate: 0,
+							},
+						],
+					};
 
-				// Only append the product if it's not already in the fields array
-				if (!isProductAlreadyAdded) {
-					appendProduct(newProduct as any);
+					// Check if the product is already in the productFields array
+					const isProductAlreadyAdded = productFields.some(
+						(field) => field._id === newProduct._id
+					);
+
+					// Only append the product if it's not already in the fields array
+					if (!isProductAlreadyAdded) {
+						appendProduct(newProduct as any);
+					}
 				}
-			}
-		}
-	}, [productState, id, setId]); // Run this effect when productState or id changes
+			});
 
-	useEffect(() => {
-		const filteredProductFields = productFields?.filter(
-			(productField) =>
-				productField._id && product_ids.includes(productField._id)
-		);
-		methods.setValue('products', filteredProductFields);
-	}, [product_ids]);
+			// Remove products that are no longer selected
+			productFields.forEach((field, index) => {
+				if (!product_ids.includes(field._id)) {
+					removeProduct(index);
+				}
+			});
+		}
+	}, [product_ids, data, productFields]);
 
 	useEffect(() => {
 		// Only trigger this when the supplier_id changes
-		if (supplier_id && supplier_id !== prevSupplierId.current) {
-			// Check if there are any products already added
-			if (productFields.length > 0) {
-				const confirmed = window.confirm(
-					'You have already added products for the previous supplier. Selecting a new supplier will remove all selected products. Do you want to continue?'
-				);
 
-				if (confirmed) {
-					// Remove all existing products at once
-					removeProduct(Array.from(Array(productFields.length).keys()));
-					methods.setValue('product_ids', []);
-				} else {
-					// Revert back to the previous supplier_id if the user cancels
-					methods.setValue('supplier_id', prevSupplierId.current);
+		async function changeSupplier() {
+			if (supplier_id && supplier_id !== prevSupplierId.current) {
+				// Check if there are any products already added
+				if (productFields.length > 0) {
+					const confirmed = await confirm({
+						message:
+							'This action cannot be undone. This will permanently delete your account and remove your data from our servers.',
+						title: 'Delete Account',
+					});
+
+					if (confirmed) {
+						// Remove all existing products at once
+						removeProduct(Array.from(Array(productFields.length).keys()));
+						methods.setValue('product_ids', []);
+					} else {
+						// Revert back to the previous supplier_id if the user cancels
+						methods.setValue('supplier_id', prevSupplierId.current);
+					}
 				}
 			}
 
 			// Update the previous supplier_id reference after checking
 			prevSupplierId.current = supplier_id;
 		}
+		changeSupplier();
 	}, [supplier_id]);
 
-	const getTargetValue = (e: string) => {
-		setId(e);
-	};
 	// Add a new variant to a specific product by index
 	const addVariant = (productIndex: number) => {
 		methods.setValue(`products.${productIndex}.variants`, [
 			...methods.getValues(`products.${productIndex}.variants`),
-			{ variant_id: '', attribute_id: '', quantity: 1, rate: 1 }, // New variant structure
+			{ variant_id: '', attribute_id: '', quantity: 0, rate: 0 }, // New variant structure
 		]);
 	};
 
@@ -223,29 +322,6 @@ const FormMutation: React.FC<FormProps> = ({
 		const filtered_ids = product_ids.filter((product_id) => product_id !== id);
 		methods.setValue('product_ids', filtered_ids);
 	};
-	/* for remove can be helpful 
-    // Add variant to a product at a specific index
-const addVariant = (productIndex: number) => {
-  methods.setValue(`products.${productIndex}.variants`, [
-    ...methods.getValues(`products.${productIndex}.variants`),
-    {   variant_id: '', quantity: 0 },
-  ]);
-};
-
-// Remove variant at a specific index from the product's variants
-const removeVariant = (productIndex: number, variantIndex: number) => {
-  const currentVariants = methods.getValues(`products.${productIndex}.variants`);
-
-  // Remove the variant at the specified index
-  const updatedVariants = currentVariants.filter(
-    (variant: any, index: number) => index !== variantIndex
-  );
-
-  // Update the variants for the product at productIndex
-  methods.setValue(`products.${productIndex}.variants`, updatedVariants);
-};
-
-    */
 
 	// subtotal calculate all variants
 	const calculateSubtotal = () => {
@@ -328,6 +404,15 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 		// Return the lesser of paidAmount or grandTotal
 		return Math.min(paidAmount, grandTotal);
 	};
+	const calculateAutoDiscountRate = () => {
+		if (total_price_auto_rate && discount_value) {
+			return (
+				total_price_auto_rate - (total_price_auto_rate * discount_value) / 100
+			);
+		} else {
+			return 0;
+		}
+	};
 
 	const [store, { isLoading: isStoreLoading }] = useStorePurchaseMutation();
 
@@ -377,7 +462,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 			resetForm();
 			setOpen(false);
 		} catch (error: unknown) {
-			apiErrorResponse(error, methods, FormSchema);
+			apiErrorResponse(error, methods, FormSchema2);
 		}
 	}
 
@@ -386,7 +471,23 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 	}
 	return (
 		<Form {...methods}>
-			<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+			<form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-2">
+				<FormField
+					control={methods.control}
+					name="payment_system"
+					render={({ field }) => (
+						<FormItem className="flex justify-center gap-2 items-center">
+							<FormLabel className="text-base">Auto Product Rate</FormLabel>
+							<FormControl>
+								<Switch
+									checked={field.value}
+									onCheckedChange={field.onChange}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+
 				<div className="grid gap-4  max-h-[80vh] overflow-y-auto p-4">
 					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-5 ">
 						<RFrom.SearchAbleSelect
@@ -398,8 +499,30 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 								name: `${e.name} (${e.business_name})`,
 							}))}
 						/>
+						<FormField
+							control={methods.control}
+							name={'product_ids'}
+							render={({ field }) => (
+								<FormItem className="space-y-2">
+									<FormLabel className="inline-block">Product</FormLabel>
+									<FormControl>
+										{data?.data?.product && (
+											<SelectSearchMultiple
+												frameworks={data?.data?.product?.filter(
+													(e: any) => e.supplier_id?._id === supplier_id
+												)}
+												value={field.value}
+												onChange={field.onChange}
+											/>
+										)}
+									</FormControl>
 
-						<RFrom.SearchSelectMultiple
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						{/* <RFrom.SearchSelectMultiple
 							methods={methods}
 							label="Product Select"
 							name="product_ids"
@@ -408,7 +531,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 							)}
 							getTargetValue={getTargetValue}
 							disabled={productLoading}
-						/>
+						/> */}
 
 						<RFrom.RFCalender
 							label="Purchase Date"
@@ -492,11 +615,7 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														)}
 												</th>
 												<td className="px-6 py-2 ">
-													{productField.name ?? ''} (
-													{productField?.sell_price
-														? `${productField?.sell_price} tk`
-														: ''}
-													)
+													{productField.name ?? ''}
 												</td>
 												<td className="px-6 py-2">
 													<RFrom.RFStatus
@@ -634,18 +753,77 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 														)}
 													</>
 
-													<RFrom.RFInput
+													{/* <RFrom.RFInput
 														label="Quantity"
 														methods={methods}
 														name={`products.${productIndex}.variants.${variantIndex}.quantity`}
 														type="number"
+													/> */}
+													<FormField
+														control={methods.control}
+														name={`products.${productIndex}.variants.${variantIndex}.quantity`}
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel> Quantity</FormLabel>
+																<FormControl>
+																	<Input
+																		placeholder="type..."
+																		onWheel={(event) =>
+																			event.currentTarget.blur()
+																		}
+																		type="number"
+																		{...field}
+																	/>
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
 													/>
-													<RFrom.RFInput
-														label="Rate"
+													<FormField
+														control={methods.control}
+														name={`products.${productIndex}.variants.${variantIndex}.rate`}
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel
+																	className={
+																		productField.sell_price <
+																		methods.watch(
+																			`products.${productIndex}.variants.${variantIndex}.rate`
+																		)
+																			? 'text-red-500'
+																			: ''
+																	}
+																>{`Buy Price (Sell=>${
+																	productField?.sell_price
+																		? `${productField?.sell_price} tk`
+																		: ''
+																})`}</FormLabel>
+																<FormControl>
+																	<Input
+																		placeholder="type..."
+																		onWheel={(event) =>
+																			event.currentTarget.blur()
+																		}
+																		type="number"
+																		disabled={payment_system}
+																		{...field}
+																	/>
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+													{/* <RFrom.RFInput
+														label={`Buy Price (Sell=>${
+															productField?.sell_price
+																? `${productField?.sell_price} tk`
+																: ''
+														})`}
 														methods={methods}
 														name={`products.${productIndex}.variants.${variantIndex}.rate`}
 														type="number"
-													/>
+														disabled={payment_system}
+													/> */}
 
 													<RFrom.RFCalender
 														label="Manufacture Date"
@@ -704,35 +882,164 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 								</div>
 							</div>
 						))}
-						{productLoading && <p>Loading</p>}
 					</div>
 
 					<div className="flex justify-end mt-3">
 						<div className="max-w-xl  ">
-							<table>
-								<tbody>
-									<tr>
-										<td className="px-6 py-2">Sub Total</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-6 py-2">{subtotal.toFixed(2)}</td>
-									</tr>
-									<tr>
-										<td className="px-6 py-2">Discount Type</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-6 py-2">
-											<RFrom.RFStatus
-												methods={methods}
-												items="flatPercent"
-												name={`discount_type`}
-												placeholder="Discount Type"
-												label=""
-											/>
-										</td>
-									</tr>
-									{(discount_type === 'fixed' ||
-										discount_type === 'percentage') && (
+							{!payment_system && (
+								<table>
+									<tbody>
 										<tr>
-											<td className="px-6 py-2">Discount Value</td>
+											<td className="px-6 py-2">Sub Total</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">{subtotal.toFixed(2)}</td>
+										</tr>
+										<tr>
+											<td className="px-6 py-2">Discount Type</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFStatus
+													methods={methods}
+													items="flatPercent"
+													name={`discount_type`}
+													placeholder="Discount Type"
+													label=""
+												/>
+											</td>
+										</tr>
+										{(discount_type === 'fixed' ||
+											discount_type === 'percentage') && (
+											<tr>
+												<td className="px-6 py-2">Discount Value</td>
+												<td className="px-6 py-2">:</td>
+												<td className="px-6 py-2">
+													<RFrom.RFInput
+														methods={methods}
+														name={`discount_value`}
+														type="number"
+														placeholder="Discount Value"
+													/>
+												</td>
+											</tr>
+										)}
+										{(discount_type === 'fixed' ||
+											discount_type === 'percentage') && (
+											<tr className="border-t text-center font-bold">
+												<td className="px-6 py-2">After Discount</td>
+												<td className="px-6 py-2">:</td>
+												<td className="px-6 py-2">
+													{totalAfterDiscount.toFixed(2)}
+												</td>
+											</tr>
+										)}
+
+										<tr>
+											<td className="px-6 py-2">Tax (%)</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													label=""
+													methods={methods}
+													name="tax"
+													type="number"
+												/>
+											</td>
+										</tr>
+										<tr>
+											<td className="px-6 py-2">Shipping Cost</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													label=""
+													methods={methods}
+													name="shipping_cost"
+													type="number"
+												/>
+											</td>
+										</tr>
+										<tr>
+											<td className="px-6 py-2">Paid</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													methods={methods}
+													name={`paid_amount`}
+													type="number"
+													placeholder="Paid Value"
+												/>
+											</td>
+										</tr>
+										<tr>
+											<td className="px-6 py-4">Due</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-8 py-4">{dueAmount.toFixed(2)}</td>
+										</tr>
+										{exchangeAmount > 0 && (
+											<tr>
+												<td className="px-6 py-4">Exchange</td>
+												<td className="px-6 py-2">:</td>
+												<td className="px-8 py-4">
+													{exchangeAmount.toFixed(2)}
+												</td>
+											</tr>
+										)}
+										<tr className="border-t text-center font-bold">
+											<td className="px-6 py-2">Grand Total</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">{grandTotal.toFixed(2)}</td>
+										</tr>
+									</tbody>
+								</table>
+							)}
+							{payment_system && (
+								<table>
+									<tbody>
+										<tr>
+											<td className="px-6 py-2">Total Price</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													methods={methods}
+													name={`total_price_auto_rate`}
+													type="number"
+													placeholder="Total Price"
+												/>
+											</td>
+										</tr>
+										<tr hidden className="">
+											<td className="px-6 py-2">Discount Type</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<FormField
+													control={methods.control}
+													name="discount_type"
+													render={({ field }) => (
+														<FormItem>
+															<Select
+																onValueChange={field.onChange}
+																defaultValue={'percentage'}
+															>
+																<FormControl>
+																	<SelectTrigger>
+																		<SelectValue placeholder="Select a verified email to display" />
+																	</SelectTrigger>
+																</FormControl>
+																<SelectContent>
+																	<SelectItem value="percentage">
+																		Percentage
+																	</SelectItem>
+																</SelectContent>
+															</Select>
+
+															<FormMessage />
+														</FormItem>
+													)}
+												/>
+											</td>
+										</tr>
+
+										<tr>
+											<td className="px-6 py-2">Discount Value (%)</td>
 											<td className="px-6 py-2">:</td>
 											<td className="px-6 py-2">
 												<RFrom.RFInput
@@ -743,73 +1050,73 @@ const removeVariant = (productIndex: number, variantIndex: number) => {
 												/>
 											</td>
 										</tr>
-									)}
-									{(discount_type === 'fixed' ||
-										discount_type === 'percentage') && (
+
 										<tr className="border-t text-center font-bold">
 											<td className="px-6 py-2">After Discount</td>
 											<td className="px-6 py-2">:</td>
 											<td className="px-6 py-2">
-												{totalAfterDiscount.toFixed(2)}
+												{calculateAutoDiscountRate().toFixed(2)}
 											</td>
 										</tr>
-									)}
 
-									<tr>
-										<td className="px-6 py-2">Tax (%)</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-6 py-2">
-											<RFrom.RFInput
-												label=""
-												methods={methods}
-												name="tax"
-												type="number"
-											/>
-										</td>
-									</tr>
-									<tr>
-										<td className="px-6 py-2">Shipping Cost</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-6 py-2">
-											<RFrom.RFInput
-												label=""
-												methods={methods}
-												name="shipping_cost"
-												type="number"
-											/>
-										</td>
-									</tr>
-									<tr>
-										<td className="px-6 py-2">Paid</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-6 py-2">
-											<RFrom.RFInput
-												methods={methods}
-												name={`paid_amount`}
-												type="number"
-												placeholder="Paid Value"
-											/>
-										</td>
-									</tr>
-									<tr>
-										<td className="px-6 py-4">Due</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-8 py-4">{dueAmount.toFixed(2)}</td>
-									</tr>
-									{exchangeAmount > 0 && (
 										<tr>
-											<td className="px-6 py-4">Exchange</td>
+											<td className="px-6 py-2">Tax (%)</td>
 											<td className="px-6 py-2">:</td>
-											<td className="px-8 py-4">{exchangeAmount.toFixed(2)}</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													label=""
+													methods={methods}
+													name="tax"
+													type="number"
+												/>
+											</td>
 										</tr>
-									)}
-									<tr className="border-t text-center font-bold">
-										<td className="px-6 py-2">Grand Total</td>
-										<td className="px-6 py-2">:</td>
-										<td className="px-6 py-2">{grandTotal.toFixed(2)}</td>
-									</tr>
-								</tbody>
-							</table>
+										<tr>
+											<td className="px-6 py-2">Shipping Cost</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													label=""
+													methods={methods}
+													name="shipping_cost"
+													type="number"
+												/>
+											</td>
+										</tr>
+										<tr>
+											<td className="px-6 py-2">Paid</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">
+												<RFrom.RFInput
+													methods={methods}
+													name={`paid_amount`}
+													type="number"
+													placeholder="Paid Value"
+												/>
+											</td>
+										</tr>
+										<tr>
+											<td className="px-6 py-4">Due</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-8 py-4">{dueAmount.toFixed(2)}</td>
+										</tr>
+										{exchangeAmount > 0 && (
+											<tr>
+												<td className="px-6 py-4">Exchange</td>
+												<td className="px-6 py-2">:</td>
+												<td className="px-8 py-4">
+													{exchangeAmount.toFixed(2)}
+												</td>
+											</tr>
+										)}
+										<tr className="border-t text-center font-bold">
+											<td className="px-6 py-2">Grand Total</td>
+											<td className="px-6 py-2">:</td>
+											<td className="px-6 py-2">{grandTotal.toFixed(2)}</td>
+										</tr>
+									</tbody>
+								</table>
+							)}
 						</div>
 					</div>
 

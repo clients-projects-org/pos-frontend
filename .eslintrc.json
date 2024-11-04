@@ -2,10 +2,10 @@
 	"extends": ["next/core-web-vitals"],
 	// "plugins": ["prettier"],
 	"rules": {
-		// "prettier/prettier": "error",
-		// "no-unused-vars": "error",
-		// "prefer-const": "error",
-		// "no-unused-expressions": "error",
+		"prettier/prettier": "error",
+		"no-unused-vars": "error",
+		"prefer-const": "error",
+		"no-unused-expressions": "error",
 		"no-undef": "off"
 		// "no-console": "warn"
 	}

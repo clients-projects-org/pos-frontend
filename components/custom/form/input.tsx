@@ -602,6 +602,7 @@ export function SelectSearch({
 	frameworks: { _id: string; name: string }[];
 	placeholder?: string;
 	value: string;
+	// eslint-disable-next-line no-unused-vars
 	onChange: (value: string) => void;
 }) {
 	const [open, setOpen] = React.useState(false);
@@ -660,6 +661,7 @@ type RFISearchAbleProps<T extends FieldValues> = {
 	label: string;
 	OPTIONS?: any[];
 	name: Path<T>;
+	disabled?: boolean;
 };
 
 function SearchAbleSelect<T extends FieldValues>({
@@ -698,6 +700,7 @@ function SearchSelectMultiple<T extends FieldValues>({
 	OPTIONS,
 	name,
 	getTargetValue,
+	disabled = false,
 }: RFISearchAbleProps<T>) {
 	return (
 		<FormField
@@ -713,6 +716,7 @@ function SearchSelectMultiple<T extends FieldValues>({
 								value={field.value || []} // Ensure the value is an array
 								onChange={field.onChange} // Pass the onChange handler
 								getTargetValue={getTargetValue}
+								disabled={disabled}
 							/>
 						)}
 					</FormControl>
@@ -724,12 +728,14 @@ function SearchSelectMultiple<T extends FieldValues>({
 	);
 }
 
-function SelectSearchMultiple({
+export function SelectSearchMultiple({
 	frameworks,
 	onChange,
 	value, // value will now be an array of selected ids
 	getTargetValue,
+	disabled = false,
 }: {
+	disabled?: boolean;
 	frameworks: { _id: string; name: string }[];
 	value: string[]; // Array of selected values
 	onChange: (value: string[]) => void; // Update onChange to accept an array
@@ -784,6 +790,7 @@ function SelectSearchMultiple({
 								<CommandItem
 									className="capitalize"
 									key={framework._id}
+									disabled={disabled}
 									value={framework.name}
 									onSelect={() => {
 										handleSelect(framework._id); // Toggle selection on click

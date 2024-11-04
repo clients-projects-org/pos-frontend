@@ -3,6 +3,6 @@ node_modules
 .env
 .next
 .vscode
-app
-components
-lib
+# app
+# components
+# lib

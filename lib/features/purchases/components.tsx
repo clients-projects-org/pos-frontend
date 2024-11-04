@@ -52,6 +52,7 @@ import {
 } from '@/components/ui/form';
 import { useGetPaymentMethodQuery } from '../payment-method';
 import { RFrom } from '@/components/custom/form';
+import { PurchaseStoreModalNew2 } from './new-create2';
 
 const Column: any = [
 	TableItem.SelectBox(),
@@ -370,7 +371,8 @@ const Actions = ({ data }: { data: PurchaseType }) => {
 };
 
 const Add = () => {
-	return <PurchaseStoreModalNew />;
+	return <PurchaseStoreModalNew2 />;
+	// return <PurchaseStoreModalNew />;
 	// return <PurchaseStoreModal />;
 };
 
