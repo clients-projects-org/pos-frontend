@@ -8,6 +8,7 @@ import createSlice from './features/dev-permission/createSlice';
 import roleSlice from './features/role/roleSlice';
 import purchaseSlice from './features/purchases/purchaseSlice';
 import posSlice from './features/pos-sell/posSlice';
+import purchaseSliceV3 from './features/purchases/v3/actions-slice';
 
 // const rootReducer = combineSlices(counterSlice, quotesApiSlice);
 const rootReducer = combineReducers({
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
 	quotesApi: quotesApiSlice.reducer,
 	role: roleSlice.reducer,
 	variantPos: posSlice.reducer,
+	purchase: purchaseSliceV3.reducer,
 	purchaseProductsSelect: purchaseSlice.reducer,
 	[apiSlice.reducerPath]: apiSlice.reducer,
 });

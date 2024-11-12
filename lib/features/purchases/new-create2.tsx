@@ -40,6 +40,7 @@ import {
 import { createZodFromNew2, FormSchema2 } from './new-zod2';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { PurchaseCreate } from './v3/purchase-create';
 type FormValues = z.infer<typeof FormSchema2>;
 
 interface FormProps {
@@ -104,9 +105,6 @@ const FormMutation: React.FC<FormProps> = ({
 	const payment_system = methods.watch('payment_system');
 	const total_price_auto_rate = methods.watch('total_price_auto_rate');
 
-	console.log({ product_ids });
-	console.log({ products });
-
 	const prevSupplierId = useRef(supplier_id);
 	const {
 		fields: productFields,
@@ -117,7 +115,6 @@ const FormMutation: React.FC<FormProps> = ({
 		name: 'products',
 	});
 	const { data, isLoading } = useGetCreateDataPurchaseQuery(undefined);
-	console.log(data?.data?.product);
 
 	useEffect(() => {
 		if (total_price_auto_rate && discount_value) {
@@ -159,7 +156,7 @@ const FormMutation: React.FC<FormProps> = ({
 					// Set the calculated rate for this variant in the form
 					methods.setValue(
 						`products.${productIndex}.variants.${variantIndex}.rate`,
-						ratePerItem
+						Number(ratePerItem.toFixed(2))
 					);
 				});
 			});
@@ -439,6 +436,7 @@ const FormMutation: React.FC<FormProps> = ({
 						</FormItem>
 					)}
 				/>
+				<PurchaseCreate />
 
 				<div className="grid gap-4  max-h-[80vh] overflow-y-auto p-4">
 					<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-5 ">

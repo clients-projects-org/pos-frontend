@@ -51,8 +51,6 @@ export function CreateProduct() {
 	const checkError = methods.formState.errors;
 	const testWatch = methods.watch();
 
-	console.log(checkError, 'err');
-
 	useEffect(() => {
 		// Whenever category_id changes, clear the sub_category_id
 		if (category) {

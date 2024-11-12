@@ -40,7 +40,7 @@ export function SellItems() {
 
 	const dispatch = useAppDispatch();
 	const items = useAppSelector((state) => state.variantPos.variants);
-	console.log(items, 'items');
+
 	const handleInputChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
 		variant: Variant

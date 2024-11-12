@@ -1,6 +1,56 @@
 import { ApiResponse, PurchaseType, ReturnType } from '@/lib/type';
 import { apiSlice } from '../api/apiSlice';
 
+type GetCreateData = {
+	statusCode: number;
+	success: boolean;
+	message: string;
+	data: {
+		supplier: {
+			_id: string;
+			name: string;
+			business_name: string;
+		}[];
+		paymentMethod: {
+			_id: string;
+			name: string;
+		}[];
+		product: {
+			_id: string;
+			supplier_id: {
+				_id: string;
+				name: string;
+				business_name: string;
+			};
+			warehouse_id: {
+				_id: string;
+				name: string;
+			}[];
+			store_id: {
+				_id: string;
+				name: string;
+			}[];
+			name: string;
+			sell_price: number;
+		}[];
+		variant: {
+			_id: string;
+			name: string;
+			attributes: {
+				name: string;
+				_id: string;
+			}[];
+		}[];
+		unit: {
+			_id: string;
+			name: string;
+		}[];
+		warranty: {
+			_id: string;
+			name: string;
+		}[];
+	};
+};
 export const purchaseApi = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getPurchase: builder.query<ApiResponse<any>, string>({
@@ -10,7 +60,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getCreateDataPurchase: builder.query<any, any>({
+		getCreateDataPurchase: builder.query<GetCreateData, any>({
 			query: (): string => `purchase/create-data`,
 
 			providesTags: (result, error, arg) => {
